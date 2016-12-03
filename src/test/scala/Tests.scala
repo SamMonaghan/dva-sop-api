@@ -98,20 +98,10 @@ class ParserTests extends FunSuite {
   }
 
 
-  test("Parse factor list with or as separator terminating in period.")
-  {
-    // note 25 changed to 25.0 to check periods parsed correctly in numbers
-    val testinput = "(y) lifting loads of at least 25.0 kilograms while bearing weight through the lumbar spine to a cumulative total of at least 120 000 kilograms within any ten year period before the clinical worsening of lumbar spondylosis; or (z) carrying loads of at least 25 kilograms while bearing weight through the lumbar spine to a cumulative total of at least 3 800 hours within any ten year period before the clinical worsening of lumbar spondylosis; or (aa) being obese for at least ten years before the clinical worsening of lumbar spondylosis; or (bb) flying in a powered aircraft as operational aircrew, for a cumulative total of at least 1 000 hours within the 25 years before the clinical worsening of lumbar spondylosis; or (cc) extreme forward flexion of the lumbar spine for a cumulative total of at least 1 500 hours before the clinical worsening of lumbar spondylosis; or (dd) having acromegaly involving the lumbar spine before the clinical worsening of lumbar spondylosis; or (ee) having Paget's disease of bone involving the lumbar spine before the clinical worsening of lumbar spondylosis; or (ff) inability to obtain appropriate clinical management for lumbar spondylosis."
 
-    val underTest = new LsParser
-    val result = underTest.parseAll(underTest.separatedFactorListParser, testinput);
-    System.out.print(result)
-    assert(result.successful && result.get.size == 8)
-
-  }
 
   test("Parse all factors from Lumbar Spondylosis"){
-    val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedFactorsText.txt")).mkString;
+    val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedFactorsText.txt"),"UTF-8").mkString;
     val underTest = new LsParser();
     val result = underTest.parseAll(underTest.completeFactorSectionParser,testInput)
     System.out.print(result)
