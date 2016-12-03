@@ -113,8 +113,10 @@ class ParserTests extends FunSuite {
   test("Parse all factors from Lumbar Spondylosis"){
     val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedFactorsText.txt")).mkString;
     val underTest = new LsParser();
-    val result = underTest.parseFactorTextToParagraphs(testInput);
-//     assert(result.size == 32)
+    val result = underTest.parseAll(underTest.completeFactorSectionParser,testInput)
+    System.out.print(result)
+    assert(result.successful)
+     assert(result.get._2.size == 32)
   }
 }
 

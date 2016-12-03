@@ -36,7 +36,7 @@ class LsParser extends SoPParser with RegexParsers{
     case para ~ text => (para,text)
   }
 
-  def separatedFactorListParser : Parser[List[(String,String)]] = repsep(paraAndTextParser,orTerminator) <~ periodTerminator ^^ {
+  def separatedFactorListParser : Parser[List[(String,String)]] = repsep(paraAndTextParser,orTerminator)  ^^ {
     case listOfFactors: Seq[(String, String)] => listOfFactors
   }
 
@@ -49,15 +49,10 @@ class LsParser extends SoPParser with RegexParsers{
     case head ~ factorList => (head,factorList)
   }
 
-//  def completeFactorListParser : Parser[(String,List[(String,String)])] = headParser ~
-
-  def parseFactorTextToParagraphs(factorsSectionText : String) : Map[String,String] = {
-       null
+  def completeFactorSectionParser : Parser[(String,List[(String,String)])] = headParser ~ separatedFactorListParser <~ periodTerminator  ^^ {
+    case head ~ factorList => (head,factorList)
   }
 
-
-
-
-
-
+  override def parseFactorTextToParagraphs(factorsSection: String): Map[String, String] =  {
+  null}
 }
