@@ -86,6 +86,17 @@ class ParserTests extends FunSuite {
     assert(result.successful && result.get.size == 7)
   }
 
+  test("Parse head and factors"){
+    val testinput = "The factor that must as a minimum exist before it can be said that a reasonable hypothesis has been raised connecting lumbar spondylosis or death from lumbar spondylosis with the circumstances of a person’s relevant service is: (a) being a prisoner of war before the clinical onset of lumbar spondylosis; or (b) having inflammatory joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or (c) having an infection of the affected joint as specified at least one year before the clinical onset of lumbar spondylosis; or "
+
+    val underTest = new LsParser
+    val result = underTest.parseAll(underTest.headAndFactorsParser,testinput)
+
+    System.out.print(result)
+    assert(result.successful && result.get._2.size == 3)
+
+  }
+
   test("Parse all factors from Lumbar Spondylosis"){
     val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedFactorsText.txt")).mkString;
     val underTest = new LsParser();

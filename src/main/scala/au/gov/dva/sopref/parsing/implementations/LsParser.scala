@@ -21,19 +21,25 @@ class LsParser extends SoPParser with RegexParsers{
   // factor text
 
   def paraParser : Parser[String] = """\([a-z]+\)""".r
-  def factorBodyTextParser : Parser[String] = """[A-Za-z0-9\-'’,\)\(\s\.]+""".r
+  def bodyTextParser : Parser[String] = """[A-Za-z0-9\-'’,\)\(\s\.]+""".r
   def orTerminator : Parser[String] = """;\s+or""".r
   def periodTerminator : Parser[String] = """\.""".r
   def paraTerminatorParser : Parser[String] = orTerminator | periodTerminator
-  def singleFactorParser: Parser[(String, String)] = paraParser ~ factorBodyTextParser <~ paraTerminatorParser ^^ {
+  def singleFactorParser: Parser[(String, String)] = paraParser ~ bodyTextParser <~ paraTerminatorParser ^^ {
     case para ~ factorText => (para,factorText)
   }
+
+  def headParser : Parser[String] = """[A-Z]+[A-Za-z0-9\-'’,\)\(\s\.]+""".r <~ """:""".r
+
 
   def factorListParser : Parser[List[(String,String)]] = rep1(singleFactorParser) ^^  {
     case listOfFactors: Seq[(String, String)] => listOfFactors
       .sortBy(_._1)
   }
 
+  def headAndFactorsParser : Parser[(String,List[(String,String)])] = headParser ~ factorListParser ^^ {
+    case head ~ factorList => (head,factorList)
+  }
 
   def parseFactorTextToParagraphs(factorsSectionText : String) : Map[String,String] = {
        null
