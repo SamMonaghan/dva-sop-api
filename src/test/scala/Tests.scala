@@ -70,6 +70,13 @@ class ParserTests extends FunSuite {
     assert(result.size == 9)
   }
 
+  test("Parse single factor") {
+    val testInput = "(a) being a prisoner of war before the clinical onset of lumbar spondylosis; or ";
+    val undertest = new LsParser
+    val result = undertest.parseAll(undertest.singleFactorParser, testInput)
+    assert(result.successful)
+  }
+
   test("Parse all factors from Lumbar Spondylosis"){
     val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedFactorsText.txt")).mkString;
     val underTest = new LsParser();
