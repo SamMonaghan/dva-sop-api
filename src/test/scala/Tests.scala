@@ -74,7 +74,16 @@ class ParserTests extends FunSuite {
     val testInput = "(a) being a prisoner of war before the clinical onset of lumbar spondylosis; or ";
     val undertest = new LsParser
     val result = undertest.parseAll(undertest.singleFactorParser, testInput)
-    assert(result.successful)
+    System.out.print(result)
+  }
+
+  test("Parse several factors") {
+    val testinput = "(a) being a prisoner of war before the clinical onset of lumbar spondylosis; or (b) having inflammatory joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or (c) having an infection of the affected joint as specified at least one year before the clinical onset of lumbar spondylosis; or (d) having an intra-articular fracture of the lumbar spine at least one year before the clinical onset of lumbar spondylosis; or (e) having a specified spinal condition affecting the lumbar spine for at least the one year before the clinical onset of lumbar spondylosis; or (f) having leg length inequality for at least the two years before the clinical onset of lumbar spondylosis; or (g) having a depositional joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or ";
+
+    val underTest = new LsParser
+    val result = underTest.parseAll(underTest.factorListParser,testinput)
+    System.out.print(result)
+    assert(result.successful && result.get.size == 7)
   }
 
   test("Parse all factors from Lumbar Spondylosis"){
