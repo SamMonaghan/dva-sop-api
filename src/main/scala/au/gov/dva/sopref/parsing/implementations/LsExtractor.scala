@@ -38,4 +38,8 @@ class LsExtractor extends SoPExtractor {
             .map(regexMatch => new BasicICDCode("ICD-10-AM",regexMatch.matched.trim));
     individualsCodes.toList
   }
+
+  // todo: Standard of Proof
+
+  // todo: Instrument number - parse from citation
 }

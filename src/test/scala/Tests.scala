@@ -1,7 +1,7 @@
 
 import au.gov.dva.sopref.parsing.SoPExtractorUtilities._
 import au.gov.dva.sopref.parsing._
-import au.gov.dva.sopref.parsing.implementations.{GenericClenser, LsExtractor}
+import au.gov.dva.sopref.parsing.implementations.{GenericClenser, LsExtractor, LsParser}
 import com.google.common.io.Resources
 import org.scalatest.{FlatSpec, FunSuite}
 import org.junit.runner.RunWith
@@ -68,6 +68,13 @@ class ParserTests extends FunSuite {
     val result = underTest.extractICDCodes(testInput);
     result.foreach(c => System.out.print(c))
     assert(result.size == 9)
+  }
+
+  test("Parse all factors from Lumbar Spondylosis"){
+    val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedFactorsText.txt")).mkString;
+    val underTest = new LsParser();
+    val result = underTest.parseFactorTextToParagraphs(testInput);
+    assert(result.size == 32)
   }
 }
 

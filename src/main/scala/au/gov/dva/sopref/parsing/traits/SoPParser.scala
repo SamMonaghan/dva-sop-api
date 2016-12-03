@@ -1,9 +1,10 @@
 package au.gov.dva.sopref.parsing.traits
 
-import au.gov.dva.sopref.interfaces.model.SoP
+import au.gov.dva.sopref.interfaces.model.{Factor, SoP}
 
 trait SoPParser {
-  def parse(rawText : String) : SoP
+  def parseFactorTextToParagraphs(factorsSection : String) : Map[String,String]
+
 }
 
 
