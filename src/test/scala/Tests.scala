@@ -1,4 +1,5 @@
 
+import au.gov.dva.sopref.interfaces.model.StandardOfProof
 import au.gov.dva.sopref.parsing.SoPExtractorUtilities._
 import au.gov.dva.sopref.parsing._
 import au.gov.dva.sopref.parsing.implementations.{GenericClenser, LsExtractor, LsParser}
@@ -72,7 +73,7 @@ class ParserTests extends FunSuite {
 
   test("Parse single factor") {
     val testInput = "(a) being a prisoner of war before the clinical onset of lumbar spondylosis; or ";
-    val undertest = new LsParser
+    val undertest = LsParser
     val result = undertest.parseAll(undertest.singleFactorParser, testInput)
     System.out.print(result)
   }
@@ -80,7 +81,7 @@ class ParserTests extends FunSuite {
   test("Parse several factors") {
     val testinput = "(a) being a prisoner of war before the clinical onset of lumbar spondylosis; or (b) having inflammatory joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or (c) having an infection of the affected joint as specified at least one year before the clinical onset of lumbar spondylosis; or (d) having an intra-articular fracture of the lumbar spine at least one year before the clinical onset of lumbar spondylosis; or (e) having a specified spinal condition affecting the lumbar spine for at least the one year before the clinical onset of lumbar spondylosis; or (f) having leg length inequality for at least the two years before the clinical onset of lumbar spondylosis; or (g) having a depositional joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or ";
 
-    val underTest = new LsParser
+    val underTest =  LsParser
     val result = underTest.parseAll(underTest.factorListParser, testinput)
     System.out.print(result)
     assert(result.successful && result.get.size == 7)
@@ -89,7 +90,7 @@ class ParserTests extends FunSuite {
   test("Parse head and factors") {
     val testinput = "The factor that must as a minimum exist before it can be said that a reasonable hypothesis has been raised connecting lumbar spondylosis or death from lumbar spondylosis with the circumstances of a person’s relevant service is: (a) being a prisoner of war before the clinical onset of lumbar spondylosis; or (b) having inflammatory joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or (c) having an infection of the affected joint as specified at least one year before the clinical onset of lumbar spondylosis; or "
 
-    val underTest = new LsParser
+    val underTest = LsParser
     val result = underTest.parseAll(underTest.headAndFactorsParser, testinput)
 
     System.out.print(result)
@@ -99,15 +100,24 @@ class ParserTests extends FunSuite {
 
 
 
-
   test("Parse all factors from Lumbar Spondylosis"){
     val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedFactorsText.txt"),"UTF-8").mkString;
-    val underTest = new LsParser();
+    val underTest = LsParser;
     val result = underTest.parseAll(underTest.completeFactorSectionParser,testInput)
     System.out.print(result)
     assert(result.successful)
      assert(result.get._2.size == 32)
   }
+
+  test("Ls parser implements interface correctly") {
+
+    val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedFactorsText.txt"),"UTF-8").mkString;
+    val underTest = LsParser;
+    val result = underTest.parseFactors(testInput)
+    assert(result._1 == StandardOfProof.ReasonableHypothesis)
+    assert(result._2.size == 32)
+  }
+
 }
 
 

@@ -1,9 +1,9 @@
 package au.gov.dva.sopref.parsing.traits
 
-import au.gov.dva.sopref.interfaces.model.{Factor, SoP}
+import au.gov.dva.sopref.interfaces.model.{Factor, SoP, StandardOfProof}
 
 trait SoPParser {
-  def parseFactorTextToParagraphs(factorsSection : String) : Map[String,String]
+  def parseFactors(factorsSection : String) : (StandardOfProof, List[(String,String)])
 
 }
 
