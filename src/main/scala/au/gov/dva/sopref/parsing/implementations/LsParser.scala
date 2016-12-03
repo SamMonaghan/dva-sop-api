@@ -20,17 +20,25 @@ class LsParser extends SoPParser with RegexParsers{
   // para terminator
   // factor text
 
+
   def paraParser : Parser[String] = """\([a-z]+\)""".r
-  def bodyTextParser : Parser[String] = """[A-Za-z0-9\-'’,\)\(\s\.]+""".r
+  def bodyTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|(?<![a-zA-Z])\.))+""".r
   def orTerminator : Parser[String] = """;\s+or""".r
-  def periodTerminator : Parser[String] = """\.""".r
+  def periodTerminator : Parser[String] = """\.$""".r
   def paraTerminatorParser : Parser[String] = orTerminator | periodTerminator
   def singleFactorParser: Parser[(String, String)] = paraParser ~ bodyTextParser <~ paraTerminatorParser ^^ {
     case para ~ factorText => (para,factorText)
   }
 
-  def headParser : Parser[String] = """[A-Z]+[A-Za-z0-9\-'’,\)\(\s\.]+""".r <~ """:""".r
+  def headParser : Parser[String] = bodyTextParser <~ """:""".r
 
+  def paraAndTextParser : Parser[(String,String)] = paraParser ~ bodyTextParser ^^  {
+    case para ~ text => (para,text)
+  }
+
+  def separatedFactorListParser : Parser[List[(String,String)]] = repsep(paraAndTextParser,orTerminator) <~ periodTerminator ^^ {
+    case listOfFactors: Seq[(String, String)] => listOfFactors
+  }
 
   def factorListParser : Parser[List[(String,String)]] = rep1(singleFactorParser) ^^  {
     case listOfFactors: Seq[(String, String)] => listOfFactors
@@ -40,6 +48,8 @@ class LsParser extends SoPParser with RegexParsers{
   def headAndFactorsParser : Parser[(String,List[(String,String)])] = headParser ~ factorListParser ^^ {
     case head ~ factorList => (head,factorList)
   }
+
+//  def completeFactorListParser : Parser[(String,List[(String,String)])] = headParser ~
 
   def parseFactorTextToParagraphs(factorsSectionText : String) : Map[String,String] = {
        null
