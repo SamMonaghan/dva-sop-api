@@ -118,6 +118,13 @@ class ParserTests extends FunSuite {
     assert(result._2.size == 32)
   }
 
+  test("Parse instrument number") {
+    val testInput = "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014."
+    val result = LsParser.parseInstrumentNumber(testInput)
+    assert(result.getNumber == 62 && result.getYear == 2014)
+
+  }
+
 }
 
 

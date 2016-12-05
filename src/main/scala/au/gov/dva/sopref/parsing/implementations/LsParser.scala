@@ -2,7 +2,7 @@ package au.gov.dva.sopref.parsing.implementations
 
 import au.gov.dva.sopref.data.sops.StoredFactor
 import au.gov.dva.sopref.exceptions.SopParserError
-import au.gov.dva.sopref.interfaces.model.{Factor, SoP, StandardOfProof}
+import au.gov.dva.sopref.interfaces.model.{Factor, InstrumentNumber, SoP, StandardOfProof}
 import au.gov.dva.sopref.parsing.traits.SoPParser
 
 import scala.collection.immutable.{ListMap, Seq}
@@ -64,4 +64,23 @@ object LsParser extends SoPParser with RegexParsers{
       throw new SopParserError("Cannot determine standard of proof from text: " + headerText)
     }
   }
+
+  class ParsedInstrumentNumber(number: Int, year: Int) extends InstrumentNumber {
+    override def getNumber: Int = number
+    override def getYear: Int = year
+  }
+
+  override def parseInstrumentNumber(citationSection: String): InstrumentNumber = {
+    val instrumentNumberRegex = """No\.?\s+([0-9]+)\s+of\s+([0-9]{4,4})""".r
+    val regexMatch = instrumentNumberRegex.findFirstMatchIn(citationSection);
+    if (regexMatch.isEmpty)
+      throw new SopParserError("Cannot determine instrument number from this citation: " + citationSection)
+
+    val number = regexMatch.get.group(1).toInt
+    val year = regexMatch.get.group(2).toInt
+    new  ParsedInstrumentNumber(number.toInt, year.toInt);
+
+  }
 }
+
+

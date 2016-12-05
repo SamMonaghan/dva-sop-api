@@ -39,7 +39,6 @@ class LsExtractor extends SoPExtractor {
     individualsCodes.toList
   }
 
-  // todo: Standard of Proof
 
   // todo: Instrument number - parse from citation
 }
