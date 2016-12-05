@@ -125,35 +125,26 @@ class ParserTests extends FunSuite {
 
   }
 
-  test("Parse simple definition") {
-    val testinput = "\"ICD-10-AM code\" means a number assigned to a particular kind of injury or\ndisease in The International Statistical Classification of Diseases and Related\nHealth Problems, 10th Revision, Australian Modification (ICD-10-AM),\nEighth Edition, effective date of 1 July 2013, copyrighted by the Independent\nHospital Pricing Authority, and having ISBN 978-1-74128-213-9;"
-
-    val result = LsParser.parseAll(LsParser.simpleDefinitionParser,testinput)
-    assert(result.successful && result.get._1 == "ICD-10-AM code" && result.get._2.endsWith("74128-213-9"))
-
-  }
-
-
-  test("Parse simple definition body with ; terminator") {
-    val testinput = "a number assigned to a particular kind of injury or disease in The International Statistical Classification of Diseases and Related Health Problems, 10th Revision, Australian Modification (ICD-10-AM), Eighth Edition, effective date of 1 July 20.13, copyrighted by the Independent Hospital Pricing Authority, and having ISBN 978-1-74128-213-9;"
-
-    val result = LsParser.parseAll(LsParser.simpleWordMeaningParser,testinput)
-    assert(result.successful && result.get.endsWith("-9"))
-  }
-  test("Parse simple definition body with . terminator") {
-    val testinput = "a number assigned to a particular kind of injury or disease in The International\n Statistical Classification of Diseases and Related Health Problems, 10th Revision, Australian Modification (ICD-10-AM), Eighth Edition, effective date of 1 July 20.13,\n copyrighted by the Independent Hospital Pricing Authority, and having ISBN 978-1-74128-213-9."
-
-    val result = LsParser.parseAll(LsParser.simpleWordMeaningParser,testinput)
-    assert(result.successful && result.get.endsWith("-9"))
-
-  }
-
-
   test("Divide definitions section to individual definitions") {
     val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedDefinitionsSection.txt"),"UTF-8").mkString;
     val result = DefinitionsParsers.splitToDefinitions(testInput)
     assert(result.size == 17 && result.drop(1).forall(s => s.endsWith(";")))
   }
+
+  test("Parse single definition section") {
+    val testInput = "\"trauma to the lumbar spine\" means a discrete event involving the\napplication of significant physical force, including G force, to the lumbar spine\nthat causes the development within twenty-four hours of the injury being\nsustained, of symptoms and signs of pain and tenderness and either altered\nmobility or range of movement of the lumbar spine. In the case of sustained\nunconsciousness or the masking of pain by analgesic medication, these\nsymptoms and signs must appear on return to consciousness or the withdrawal\nof the analgesic medication. These symptoms and signs must last for a period\nof at least seven days following their onset; save for where medical\nintervention has occurred and that medical intervention involves either:\n(a) immobilisation of the lumbar spine by splinting, or similar external\nagent;\n(b) injection of corticosteroids or local anaesthetics into the lumbar spine; or\n(c) surgery to the lumbar spine."
+
+    val result = DefinitionsParsers.parseSingleDefinition(testInput)
+    assert(result._1 == "trauma to the lumbar spine" && result._2.startsWith("means a ") && result._2.endsWith("lumbar spine."))
+  }
+
+  test("Parse LS definitions section") {
+
+    val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedDefinitionsSection.txt"),"UTF-8").mkString;
+    val result = LsParser.parseDefinitions(testInput)
+    assert(result.size == 17)
+  }
+
 
 
 

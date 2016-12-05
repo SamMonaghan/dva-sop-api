@@ -1,5 +1,7 @@
 package au.gov.dva.sopref.parsing.implementations
 
+import au.gov.dva.sopref.exceptions.SopParserError
+
 import scala.collection.mutable.ListBuffer
 
 object DefinitionsParsers {
@@ -25,5 +27,15 @@ object DefinitionsParsers {
     }
   }
 
+  def parseSingleDefinition(definition : String) : (String,String) = {
+    val definedWordRegex = """"[A-Za-z\-\s0-9']+"""".r
+    val m = definedWordRegex.findFirstMatchIn(definition)
+    if (m.isEmpty)
+      throw new SopParserError("Cannot find the defined word in this definition: " + definition)
+    val toTrim = m.get.matched.size;
+    var remainder = definition.drop(toTrim).trim
+    var word = m.get.matched.drop(1).dropRight(1)
+    return (word,remainder)
+  }
 
 }

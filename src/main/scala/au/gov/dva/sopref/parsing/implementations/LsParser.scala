@@ -50,16 +50,6 @@ object LsParser extends SoPParser with RegexParsers{
   }
 
 
-  //def definitionSectionParser : Parser[DefinedTerm] = headParser
-  def definedWordParser : Parser[String] = "\"" ~> """[A-Za-z\-\s0-9']+""".r <~ "\""
-  def simpleWordMeaningParser : Parser[String] = bodyTextParser <~ ("." | ";")
-  def simpleDefinitionParser : Parser[(String,String)] = definedWordParser ~ simpleWordMeaningParser ^^ {
-    case word ~ meaning => (word,meaning)
-  }
-
-  def definitionParser : Parser[(String,String)] = definedWordParser ~ """[.\s]*""".r ^^ {
-    case definedWord ~ rest => (definedWord,rest)
-  }
 
   override def parseFactors(factorsSection: String): (StandardOfProof,List[(String, String)]) =
   {
@@ -96,12 +86,10 @@ object LsParser extends SoPParser with RegexParsers{
   }
 
 
-
-
   override def parseDefinitions(definitionsSection: String): List[DefinedTerm] = {
-     val sections = DefinitionsParsers.splitToDefinitions(definitionsSection)
-     val parsed = sections.map(LsParser.parseAll(LsParser.definedWordParser,_))
-     null
+     DefinitionsParsers.splitToDefinitions(definitionsSection)
+      .map(DefinitionsParsers.parseSingleDefinition(_))
+      .map(t => new ParsedDefinedTerm(t._1,t._2))
   }
 }
 
