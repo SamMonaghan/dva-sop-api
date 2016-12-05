@@ -6,6 +6,7 @@ import au.gov.dva.sopref.interfaces.model._
 import au.gov.dva.sopref.parsing.traits.SoPParser
 
 import scala.collection.immutable.{ListMap, Seq}
+import scala.collection.mutable.ListBuffer
 import scala.util.parsing.combinator.RegexParsers
 
 
@@ -21,7 +22,7 @@ object LsParser extends SoPParser with RegexParsers{
   def andTerminator : Parser[String] = """;\s+and""".r
   def periodTerminator : Parser[String] = """\.$""".r
   def paraTerminatorParser : Parser[String] = orTerminator | andTerminator | periodTerminator
-  def singleFactorParser: Parser[(String, String)] = paraLetterParser ~ bodyTextParser <~ paraTerminatorParser ^^ {
+  def singleParaParser: Parser[(String, String)] = paraLetterParser ~ bodyTextParser <~ paraTerminatorParser ^^ {
     case para ~ factorText => (para,factorText)
   }
 
@@ -35,7 +36,7 @@ object LsParser extends SoPParser with RegexParsers{
     case listOfFactors: Seq[(String, String)] => listOfFactors
   }
 
-  def factorListParser : Parser[List[(String,String)]] = rep1(singleFactorParser) ^^  {
+  def factorListParser : Parser[List[(String,String)]] = rep1(singleParaParser) ^^  {
     case listOfFactors: Seq[(String, String)] => listOfFactors
       .sortBy(_._1)
   }
@@ -50,12 +51,15 @@ object LsParser extends SoPParser with RegexParsers{
 
 
   //def definitionSectionParser : Parser[DefinedTerm] = headParser
-  def definedWordParser : Parser[String] = "\"" ~> """[A-Za-z\-\s0-9']+""".r <~ "\"" ~ "means"
+  def definedWordParser : Parser[String] = "\"" ~> """[A-Za-z\-\s0-9']+""".r <~ "\""
   def simpleWordMeaningParser : Parser[String] = bodyTextParser <~ ("." | ";")
   def simpleDefinitionParser : Parser[(String,String)] = definedWordParser ~ simpleWordMeaningParser ^^ {
     case word ~ meaning => (word,meaning)
   }
 
+  def definitionParser : Parser[(String,String)] = definedWordParser ~ """[.\s]*""".r ^^ {
+    case definedWord ~ rest => (definedWord,rest)
+  }
 
   override def parseFactors(factorsSection: String): (StandardOfProof,List[(String, String)]) =
   {
@@ -91,9 +95,13 @@ object LsParser extends SoPParser with RegexParsers{
     new ParsedInstrumentNumber(number.toInt, year.toInt);
   }
 
+
+
+
   override def parseDefinitions(definitionsSection: String): List[DefinedTerm] = {
-    null
+     val sections = DefinitionsParsers.splitToDefinitions(definitionsSection)
+     val parsed = sections.map(LsParser.parseAll(LsParser.definedWordParser,_))
+     null
   }
 }
-
 

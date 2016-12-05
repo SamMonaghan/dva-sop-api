@@ -2,7 +2,7 @@
 import au.gov.dva.sopref.interfaces.model.StandardOfProof
 import au.gov.dva.sopref.parsing.SoPExtractorUtilities._
 import au.gov.dva.sopref.parsing._
-import au.gov.dva.sopref.parsing.implementations.{GenericClenser, LsExtractor, LsParser}
+import au.gov.dva.sopref.parsing.implementations.{DefinitionsParsers, GenericClenser, LsExtractor, LsParser}
 import com.google.common.io.Resources
 import org.scalatest.{FlatSpec, FunSuite}
 import org.junit.runner.RunWith
@@ -74,7 +74,7 @@ class ParserTests extends FunSuite {
   test("Parse single factor") {
     val testInput = "(a) being a prisoner of war before the clinical onset of lumbar spondylosis; or ";
     val undertest = LsParser
-    val result = undertest.parseAll(undertest.singleFactorParser, testInput)
+    val result = undertest.parseAll(undertest.singleParaParser, testInput)
     System.out.print(result)
   }
 
@@ -133,12 +133,6 @@ class ParserTests extends FunSuite {
 
   }
 
-  test("Parse defined word") {
-    val testinput = "\"ICD-10-AM code\" means"
-    val result = LsParser.parseAll(LsParser.definedWordParser,testinput)
-    assert(result.successful)
-
-  }
 
   test("Parse simple definition body with ; terminator") {
     val testinput = "a number assigned to a particular kind of injury or disease in The International Statistical Classification of Diseases and Related Health Problems, 10th Revision, Australian Modification (ICD-10-AM), Eighth Edition, effective date of 1 July 20.13, copyrighted by the Independent Hospital Pricing Authority, and having ISBN 978-1-74128-213-9;"
@@ -147,13 +141,19 @@ class ParserTests extends FunSuite {
     assert(result.successful && result.get.endsWith("-9"))
   }
   test("Parse simple definition body with . terminator") {
-    val testinput = "a number assigned to a particular kind of injury or disease in The International Statistical Classification of Diseases and Related Health Problems, 10th Revision, Australian Modification (ICD-10-AM), Eighth Edition, effective date of 1 July 20.13, copyrighted by the Independent Hospital Pricing Authority, and having ISBN 978-1-74128-213-9."
+    val testinput = "a number assigned to a particular kind of injury or disease in The International\n Statistical Classification of Diseases and Related Health Problems, 10th Revision, Australian Modification (ICD-10-AM), Eighth Edition, effective date of 1 July 20.13,\n copyrighted by the Independent Hospital Pricing Authority, and having ISBN 978-1-74128-213-9."
 
     val result = LsParser.parseAll(LsParser.simpleWordMeaningParser,testinput)
     assert(result.successful && result.get.endsWith("-9"))
+
   }
 
 
+  test("Divide definitions section to individual definitions") {
+    val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedDefinitionsSection.txt"),"UTF-8").mkString;
+    val result = DefinitionsParsers.splitToDefinitions(testInput)
+    assert(result.size == 17 && result.drop(1).forall(s => s.endsWith(";")))
+  }
 
 
 
