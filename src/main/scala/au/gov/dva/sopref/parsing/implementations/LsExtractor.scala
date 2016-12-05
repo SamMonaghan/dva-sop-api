@@ -40,5 +40,4 @@ class LsExtractor extends SoPExtractor {
   }
 
 
-  // todo: Instrument number - parse from citation
 }

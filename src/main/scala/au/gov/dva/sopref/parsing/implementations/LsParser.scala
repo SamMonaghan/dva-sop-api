@@ -2,7 +2,7 @@ package au.gov.dva.sopref.parsing.implementations
 
 import au.gov.dva.sopref.data.sops.StoredFactor
 import au.gov.dva.sopref.exceptions.SopParserError
-import au.gov.dva.sopref.interfaces.model.{Factor, InstrumentNumber, SoP, StandardOfProof}
+import au.gov.dva.sopref.interfaces.model._
 import au.gov.dva.sopref.parsing.traits.SoPParser
 
 import scala.collection.immutable.{ListMap, Seq}
@@ -12,18 +12,22 @@ import scala.util.parsing.combinator.RegexParsers
 
 object LsParser extends SoPParser with RegexParsers{
 
-  def paraParser : Parser[String] = """\([a-z]+\)""".r
-  def bodyTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|(?<![a-zA-Z])\.))+""".r
+
+
+  def paraLetterParser : Parser[String] = """\([a-z]+\)""".r
+  def bodyTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r
+
   def orTerminator : Parser[String] = """;\s+or""".r
+  def andTerminator : Parser[String] = """;\s+and""".r
   def periodTerminator : Parser[String] = """\.$""".r
-  def paraTerminatorParser : Parser[String] = orTerminator | periodTerminator
-  def singleFactorParser: Parser[(String, String)] = paraParser ~ bodyTextParser <~ paraTerminatorParser ^^ {
+  def paraTerminatorParser : Parser[String] = orTerminator | andTerminator | periodTerminator
+  def singleFactorParser: Parser[(String, String)] = paraLetterParser ~ bodyTextParser <~ paraTerminatorParser ^^ {
     case para ~ factorText => (para,factorText)
   }
 
-  def headParser : Parser[String] = bodyTextParser <~ """:""".r
+  def headParser : Parser[String] = bodyTextParser <~ ":"
 
-  def paraAndTextParser : Parser[(String,String)] = paraParser ~ bodyTextParser ^^  {
+  def paraAndTextParser : Parser[(String,String)] = paraLetterParser ~ bodyTextParser ^^  {
     case para ~ text => (para,text)
   }
 
@@ -43,6 +47,15 @@ object LsParser extends SoPParser with RegexParsers{
   def completeFactorSectionParser : Parser[(String,List[(String,String)])] = headParser ~ separatedFactorListParser <~ periodTerminator  ^^ {
     case head ~ factorList => (head,factorList)
   }
+
+
+  //def definitionSectionParser : Parser[DefinedTerm] = headParser
+  def definedWordParser : Parser[String] = "\"" ~> """[A-Za-z\-\s0-9']+""".r <~ "\"" ~ "means"
+  def simpleWordMeaningParser : Parser[String] = bodyTextParser <~ ("." | ";")
+  def simpleDefinitionParser : Parser[(String,String)] = definedWordParser ~ simpleWordMeaningParser ^^ {
+    case word ~ meaning => (word,meaning)
+  }
+
 
   override def parseFactors(factorsSection: String): (StandardOfProof,List[(String, String)]) =
   {
@@ -65,10 +78,7 @@ object LsParser extends SoPParser with RegexParsers{
     }
   }
 
-  class ParsedInstrumentNumber(number: Int, year: Int) extends InstrumentNumber {
-    override def getNumber: Int = number
-    override def getYear: Int = year
-  }
+
 
   override def parseInstrumentNumber(citationSection: String): InstrumentNumber = {
     val instrumentNumberRegex = """No\.?\s+([0-9]+)\s+of\s+([0-9]{4,4})""".r
@@ -78,8 +88,11 @@ object LsParser extends SoPParser with RegexParsers{
 
     val number = regexMatch.get.group(1).toInt
     val year = regexMatch.get.group(2).toInt
-    new  ParsedInstrumentNumber(number.toInt, year.toInt);
+    new ParsedInstrumentNumber(number.toInt, year.toInt);
+  }
 
+  override def parseDefinitions(definitionsSection: String): List[DefinedTerm] = {
+    null
   }
 }
 

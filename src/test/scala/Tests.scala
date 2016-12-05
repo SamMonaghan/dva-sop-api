@@ -125,6 +125,38 @@ class ParserTests extends FunSuite {
 
   }
 
+  test("Parse simple definition") {
+    val testinput = "\"ICD-10-AM code\" means a number assigned to a particular kind of injury or\ndisease in The International Statistical Classification of Diseases and Related\nHealth Problems, 10th Revision, Australian Modification (ICD-10-AM),\nEighth Edition, effective date of 1 July 2013, copyrighted by the Independent\nHospital Pricing Authority, and having ISBN 978-1-74128-213-9;"
+
+    val result = LsParser.parseAll(LsParser.simpleDefinitionParser,testinput)
+    assert(result.successful && result.get._1 == "ICD-10-AM code" && result.get._2.endsWith("74128-213-9"))
+
+  }
+
+  test("Parse defined word") {
+    val testinput = "\"ICD-10-AM code\" means"
+    val result = LsParser.parseAll(LsParser.definedWordParser,testinput)
+    assert(result.successful)
+
+  }
+
+  test("Parse simple definition body with ; terminator") {
+    val testinput = "a number assigned to a particular kind of injury or disease in The International Statistical Classification of Diseases and Related Health Problems, 10th Revision, Australian Modification (ICD-10-AM), Eighth Edition, effective date of 1 July 20.13, copyrighted by the Independent Hospital Pricing Authority, and having ISBN 978-1-74128-213-9;"
+
+    val result = LsParser.parseAll(LsParser.simpleWordMeaningParser,testinput)
+    assert(result.successful && result.get.endsWith("-9"))
+  }
+  test("Parse simple definition body with . terminator") {
+    val testinput = "a number assigned to a particular kind of injury or disease in The International Statistical Classification of Diseases and Related Health Problems, 10th Revision, Australian Modification (ICD-10-AM), Eighth Edition, effective date of 1 July 20.13, copyrighted by the Independent Hospital Pricing Authority, and having ISBN 978-1-74128-213-9."
+
+    val result = LsParser.parseAll(LsParser.simpleWordMeaningParser,testinput)
+    assert(result.successful && result.get.endsWith("-9"))
+  }
+
+
+
+
+
 }
 
 
