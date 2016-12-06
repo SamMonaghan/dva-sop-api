@@ -8,14 +8,10 @@ import au.gov.dva.sopref.parsing.traits.SoPFactory
 object LsSoPFactory extends SoPFactory{
   override def create(registerId : String, clensedText: String): SoP = {
     val extractor = new LsExtractor();
-    // factors
-
     val citation = extractor.extractCitation(clensedText);
     val instrumentNumber = LsParser.parseInstrumentNumber(citation);
 
-
     val definedTermsList: List[DefinedTerm] = LsParser.parseDefinitions(extractor.extractDefinitionsSection(clensedText))
-    val definedTermsMap: Map[String,DefinedTerm] = definedTermsList.map(i => (i.getDefinition, i)).toMap
 
     val factorsSection: (Int, String) = extractor.extractFactorSection(clensedText)
     val factors: (StandardOfProof, List[(String, String)]) = LsParser.parseFactors(factorsSection._2)
@@ -34,5 +30,4 @@ object LsSoPFactory extends SoPFactory{
     new ParsedSop(registerId,instrumentNumber,citation,Set(), factorObjects.toSet, effectiveFromDate,standardOfProof)
 
   }
-
 }
