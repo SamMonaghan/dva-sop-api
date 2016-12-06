@@ -4,9 +4,12 @@ import au.gov.dva.sopref.interfaces.model.ICDCode
 import au.gov.dva.sopref.data.sops.BasicICDCode
 import au.gov.dva.sopref.parsing.SoPExtractorUtilities
 import au.gov.dva.sopref.parsing.traits.SoPExtractor
+import com.typesafe.scalalogging.Logger
 
 
 class LsExtractor extends SoPExtractor {
+
+
   override def extractFactorSection(plainTextSop: String): (Int,String) = {
     val headingRegex = """^Factors$""".r;
     val factorsSection = SoPExtractorUtilities.getSection(plainTextSop,headingRegex)

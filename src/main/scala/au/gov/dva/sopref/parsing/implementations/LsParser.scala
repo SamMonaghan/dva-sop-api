@@ -86,7 +86,6 @@ object LsParser extends SoPParser with RegexParsers{
     new ParsedInstrumentNumber(number.toInt, year.toInt);
   }
 
-
   override def parseDefinitions(definitionsSection: String): List[DefinedTerm] = {
      DefinitionsParsers.splitToDefinitions(definitionsSection)
       .map(DefinitionsParsers.parseSingleDefinition(_))
