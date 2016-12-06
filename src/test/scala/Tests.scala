@@ -139,15 +139,15 @@ class ParserTests extends FunSuite {
   }
 
   test("Parse LS definitions section") {
-
     val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsExtractedDefinitionsSection.txt"),"UTF-8").mkString;
     val result = LsParser.parseDefinitions(testInput)
     assert(result.size == 17)
   }
 
-
-
-
+  test("Parse date of effect") {
+    val dateOfEffectSection = "This Instrument takes effect from 2 July 2014."
+    val result = LsParser.parseDateOfEffect(dateOfEffectSection)
+    assert(result.getYear == 2014)
+  }
 }
-
 

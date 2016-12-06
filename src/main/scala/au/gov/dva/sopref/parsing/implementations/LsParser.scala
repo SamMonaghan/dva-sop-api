@@ -1,5 +1,8 @@
 package au.gov.dva.sopref.parsing.implementations
 
+import java.time.LocalDate
+import java.time.format.{DateTimeFormatter, FormatStyle}
+
 import au.gov.dva.sopref.data.sops.StoredFactor
 import au.gov.dva.sopref.exceptions.SopParserError
 import au.gov.dva.sopref.interfaces.model._
@@ -49,8 +52,6 @@ object LsParser extends SoPParser with RegexParsers{
     case head ~ factorList => (head,factorList)
   }
 
-
-
   override def parseFactors(factorsSection: String): (StandardOfProof,List[(String, String)]) =
   {
     val result = this.parseAll(this.completeFactorSectionParser,factorsSection);
@@ -90,6 +91,14 @@ object LsParser extends SoPParser with RegexParsers{
      DefinitionsParsers.splitToDefinitions(definitionsSection)
       .map(DefinitionsParsers.parseSingleDefinition(_))
       .map(t => new ParsedDefinedTerm(t._1,t._2))
+  }
+
+  override def parseDateOfEffect(dateOfEffectSection: String): LocalDate = {
+    val doeRegex = """effect from ([0-9]+\s+[A-Za-z]+\s+[0-9]{4,4})""".r
+    val m = doeRegex.findFirstMatchIn(dateOfEffectSection)
+    if (m.isEmpty)
+      throw new SopParserError("Cannot determine date of effect from: " + dateOfEffectSection)
+    return LocalDate.parse(m.get.group(1),DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
   }
 }
 
