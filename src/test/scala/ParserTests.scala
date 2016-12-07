@@ -10,13 +10,7 @@ import org.scalatest.junit.JUnitRunner
 
 import scala.io.Source
 
-@RunWith(classOf[JUnitRunner])
-class Tests extends FunSuite {
-  test("example test") {
-     val underTest = true;
-    assert(underTest)
-  }
-}
+
 
 @RunWith(classOf[JUnitRunner])
 class ParserTests extends FunSuite {
@@ -154,6 +148,15 @@ class ParserTests extends FunSuite {
       val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsClensedText.txt"),"UTF-8").mkString;
       val result: SoP = LsSoPFactory.create("F2014L00933",testInput)
       assert(result != null)
+  }
+
+  test("Extract aggravation section from LS SoP")
+  {
+
+    val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsClensedText.txt"),"UTF-8").mkString;
+    val undertest = new LsExtractor
+    val result =undertest.extractAggravationSection(testInput)
+    assert(result == "Paragraphs 6(q) to 6(ff) applies only to material contribution to, or aggravation of, lumbar spondylosis where the person’s lumbar spondylosis was suffered or contracted before or during (but not arising out of) the person’s relevant service.")
   }
 }
 

@@ -102,5 +102,7 @@ object LsParser extends SoPParser with RegexParsers{
     return LocalDate.parse(m.get.group(1),DateTimeFormatter.ofPattern("d MMMM yyyy"))
   }
 
+
+
 }
 
