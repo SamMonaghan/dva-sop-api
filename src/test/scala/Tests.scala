@@ -1,8 +1,8 @@
 
-import au.gov.dva.sopref.interfaces.model.StandardOfProof
+import au.gov.dva.sopref.interfaces.model.{SoP, StandardOfProof}
 import au.gov.dva.sopref.parsing.SoPExtractorUtilities._
 import au.gov.dva.sopref.parsing._
-import au.gov.dva.sopref.parsing.implementations.{DefinitionsParsers, GenericClenser, LsExtractor, LsParser}
+import au.gov.dva.sopref.parsing.implementations._
 import com.google.common.io.Resources
 import org.scalatest.{FlatSpec, FunSuite}
 import org.junit.runner.RunWith
@@ -148,6 +148,12 @@ class ParserTests extends FunSuite {
     val dateOfEffectSection = "This Instrument takes effect from 2 July 2014."
     val result = LsParser.parseDateOfEffect(dateOfEffectSection)
     assert(result.getYear == 2014)
+  }
+
+  test("Parse entire LS SoP") {
+      val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsClensedText.txt"),"UTF-8").mkString;
+      val result: SoP = LsSoPFactory.create("F2014L00933",testInput)
+      assert(result != null)
   }
 }
 

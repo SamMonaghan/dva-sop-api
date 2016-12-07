@@ -1,7 +1,9 @@
 package au.gov.dva.sopref.parsing.implementations
 
 import java.time.LocalDate
-import java.time.format.{DateTimeFormatter, FormatStyle}
+import java.time.chrono.Chronology
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder, FormatStyle}
+import java.util.Locale
 
 import au.gov.dva.sopref.data.sops.StoredFactor
 import au.gov.dva.sopref.exceptions.SopParserError
@@ -97,7 +99,8 @@ object LsParser extends SoPParser with RegexParsers{
     val m = doeRegex.findFirstMatchIn(dateOfEffectSection)
     if (m.isEmpty)
       throw new SopParserError("Cannot determine date of effect from: " + dateOfEffectSection)
-    return LocalDate.parse(m.get.group(1),DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+    return LocalDate.parse(m.get.group(1),DateTimeFormatter.ofPattern("d MMMM yyyy"))
   }
+
 }
 
