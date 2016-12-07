@@ -85,6 +85,7 @@ object LsParser extends SoPParser with RegexParsers{
       .map(t => new ParsedDefinedTerm(t._1,t._2))
   }
 
+
   override def parseDateOfEffect(dateOfEffectSection: String): LocalDate = {
     val doeRegex = """effect from ([0-9]+\s+[A-Za-z]+\s+[0-9]{4,4})""".r
     val m = doeRegex.findFirstMatchIn(dateOfEffectSection)
