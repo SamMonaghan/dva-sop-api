@@ -13,7 +13,6 @@ import org.scalatest.junit.JUnitRunner
 import scala.io.Source
 
 
-
 @RunWith(classOf[JUnitRunner])
 class ParserTests extends FunSuite {
   test("Clense LS raw text") {
@@ -73,8 +72,6 @@ class ParserTests extends FunSuite {
     val result = undertest.parseAll(undertest.singleParaParser, testInput)
     System.out.print(result)
   }
-
-
 
 
   test("Parse all factors from Lumbar Spondylosis"){

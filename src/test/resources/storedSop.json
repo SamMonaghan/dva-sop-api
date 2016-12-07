@@ -5,7 +5,7 @@
   "instrumentNumber" : "62/2014",
   "citation" : "Statement of Principles concerning lumbar spondylosis No. 62 of 2014",
   "effectiveFrom" : "2014-07-02",
-  "standardOfProof" : "Reasonable Hypothesis",
+    "standardOfProof" : "Reasonable Hypothesis",
   "icdCodes" : [ {
     "version" : "ICD-10-AM",
     "code" : "M47.16"
