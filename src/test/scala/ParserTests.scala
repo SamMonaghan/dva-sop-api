@@ -109,7 +109,7 @@ class ParserTests extends FunSuite {
     val testInput = "\"trauma to the lumbar spine\" means a discrete event involving the\napplication of significant physical force, including G force, to the lumbar spine\nthat causes the development within twenty-four hours of the injury being\nsustained, of symptoms and signs of pain and tenderness and either altered\nmobility or range of movement of the lumbar spine. In the case of sustained\nunconsciousness or the masking of pain by analgesic medication, these\nsymptoms and signs must appear on return to consciousness or the withdrawal\nof the analgesic medication. These symptoms and signs must last for a period\nof at least seven days following their onset; save for where medical\nintervention has occurred and that medical intervention involves either:\n(a) immobilisation of the lumbar spine by splinting, or similar external\nagent;\n(b) injection of corticosteroids or local anaesthetics into the lumbar spine; or\n(c) surgery to the lumbar spine."
 
     val result = DefinitionsParsers.parseSingleDefinition(testInput)
-    assert(result._1 == "trauma to the lumbar spine" && result._2.startsWith("means a ") && result._2.endsWith("lumbar spine."))
+    assert(result._1 == "trauma to the lumbar spine" && result._2.startsWith("means a ") && result._2.endsWith("lumbar spine"))
   }
 
   test("Parse LS definitions section") {
@@ -158,7 +158,7 @@ class ParserTests extends FunSuite {
   test("Get citation from citation section") {
     val input = "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014."
     val result = LsParser.parseCitation(input)
-    assert(result == "Statement of Principles concerning lumbar spondylosis No. 62 of 2014." )
+    assert(result == "Statement of Principles concerning lumbar spondylosis No. 62 of 2014" )
   }
 }
 

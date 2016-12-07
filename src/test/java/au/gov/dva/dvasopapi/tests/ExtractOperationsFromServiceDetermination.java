@@ -6,6 +6,7 @@ import au.gov.dva.sopref.interfaces.model.ServiceDetermination;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.net.URL;
 
 public class ExtractOperationsFromServiceDetermination {
 
+    @Ignore
     @Test
     public void getWarlikeOps() throws IOException {
         URL inputDocx = Resources.getResource("F2016L00994.docx");
@@ -21,6 +23,7 @@ public class ExtractOperationsFromServiceDetermination {
         Assert.assertTrue(results.size() == 19);
     }
 
+    @Ignore
     @Test
     public void getNonWarlikeOps() throws IOException {
         URL inputDocx = Resources.getResource("F2016L00995.docx");
