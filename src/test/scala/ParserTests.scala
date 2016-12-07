@@ -74,25 +74,6 @@ class ParserTests extends FunSuite {
     System.out.print(result)
   }
 
-  test("Parse several factors") {
-    val testinput = "(a) being a prisoner of war before the clinical onset of lumbar spondylosis; or (b) having inflammatory joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or (c) having an infection of the affected joint as specified at least one year before the clinical onset of lumbar spondylosis; or (d) having an intra-articular fracture of the lumbar spine at least one year before the clinical onset of lumbar spondylosis; or (e) having a specified spinal condition affecting the lumbar spine for at least the one year before the clinical onset of lumbar spondylosis; or (f) having leg length inequality for at least the two years before the clinical onset of lumbar spondylosis; or (g) having a depositional joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or ";
-
-    val underTest =  LsParser
-    val result = underTest.parseAll(underTest.factorListParser, testinput)
-    System.out.print(result)
-    assert(result.successful && result.get.size == 7)
-  }
-
-  test("Parse head and factors") {
-    val testinput = "The factor that must as a minimum exist before it can be said that a reasonable hypothesis has been raised connecting lumbar spondylosis or death from lumbar spondylosis with the circumstances of a person’s relevant service is: (a) being a prisoner of war before the clinical onset of lumbar spondylosis; or (b) having inflammatory joint disease in the lumbar spine before the clinical onset of lumbar spondylosis; or (c) having an infection of the affected joint as specified at least one year before the clinical onset of lumbar spondylosis; or "
-
-    val underTest = LsParser
-    val result = underTest.parseAll(underTest.headAndFactorsParser, testinput)
-
-    System.out.print(result)
-    assert(result.successful && result.get._2.size == 3)
-
-  }
 
 
 
@@ -175,6 +156,12 @@ class ParserTests extends FunSuite {
     val testData = List("(a)","(b)","(c)","(d)","(e)")
     val result = LsSoPFactory.splitFactors(testData,"(b)","(d)")
     assert(result == (List("(a)","(e)"),List("(b)","(c)","(d)")));
+  }
+
+  test("Get citation from citation section") {
+    val input = "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014."
+    val result = LsParser.parseCitation(input)
+    assert(result == "Statement of Principles concerning lumbar spondylosis No. 62 of 2014." )
   }
 }
 
