@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
@@ -35,12 +36,12 @@ public class StoredSop implements SoP, JsonSerializable {
     private final String registerId;
     private final InstrumentNumber instrumentNumber;
     private final String citation;
-    private final ImmutableSet<Factor> aggravationFactors;
-    private final ImmutableSet<Factor> onsetFactors;
+    private final ImmutableList<Factor> aggravationFactors;
+    private final ImmutableList<Factor> onsetFactors;
     private final LocalDate effectiveFromDate;
     private final StandardOfProof standardOfProof;
 
-    public StoredSop(@Nonnull String registerId, @Nonnull InstrumentNumber instrumentNumber, @Nonnull String citation, @Nonnull ImmutableSet<Factor> onsetFactors, @Nonnull ImmutableSet<Factor> aggravationFactors, @Nonnull LocalDate effectiveFromDate, @Nonnull StandardOfProof standardOfProof) {
+    public StoredSop(@Nonnull String registerId, @Nonnull InstrumentNumber instrumentNumber, @Nonnull String citation, @Nonnull ImmutableList<Factor> onsetFactors, @Nonnull ImmutableList<Factor> aggravationFactors, @Nonnull LocalDate effectiveFromDate, @Nonnull StandardOfProof standardOfProof) {
         this.registerId = registerId;
         this.instrumentNumber = instrumentNumber;
         this.citation = citation;
@@ -70,11 +71,11 @@ public class StoredSop implements SoP, JsonSerializable {
         return toJson(this);
     }
 
-    private static ImmutableSet<Factor> factorListFromJsonArray(JsonNode jsonNode)
+    private static ImmutableList<Factor> factorListFromJsonArray(JsonNode jsonNode)
     {
         assert (jsonNode.isArray());
 
-        ImmutableSet<Factor> factors = ImmutableSet.copyOf(getChildrenOfArrayNode(jsonNode).stream().map(jsonNode1 -> factorFromJson(jsonNode1)).collect(Collectors.toList()));
+        ImmutableList<Factor> factors = ImmutableList.copyOf(getChildrenOfArrayNode(jsonNode).stream().map(jsonNode1 -> factorFromJson(jsonNode1)).collect(Collectors.toList()));
 
         return factors;
     }
@@ -84,7 +85,7 @@ public class StoredSop implements SoP, JsonSerializable {
 
 
     @Override
-    public ImmutableSet<Factor> getAggravationFactors() {
+    public ImmutableList<Factor> getAggravationFactors() {
         return aggravationFactors;
     }
 
@@ -99,7 +100,7 @@ public class StoredSop implements SoP, JsonSerializable {
     }
 
     @Override
-    public ImmutableSet<Factor> getOnsetFactors() {
+    public ImmutableList<Factor> getOnsetFactors() {
         return onsetFactors;
     }
 

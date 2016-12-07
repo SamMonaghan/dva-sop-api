@@ -1,4 +1,6 @@
 
+import au.gov.dva.dvasopapi.tests.TestUtils
+import au.gov.dva.sopref.data.sops.StoredSop
 import au.gov.dva.sopref.interfaces.model.{SoP, StandardOfProof}
 import au.gov.dva.sopref.parsing.SoPExtractorUtilities._
 import au.gov.dva.sopref.parsing._
@@ -147,6 +149,8 @@ class ParserTests extends FunSuite {
   test("Parse entire LS SoP") {
       val testInput = Source.fromInputStream(getClass().getResourceAsStream("lsClensedText.txt"),"UTF-8").mkString;
       val result: SoP = LsSoPFactory.create("F2014L00933",testInput)
+      val asJson = StoredSop.toJson(result)
+      System.out.print(TestUtils.prettyPrint(asJson))
       assert(result != null)
   }
 
