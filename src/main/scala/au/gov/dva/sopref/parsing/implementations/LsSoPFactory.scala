@@ -2,7 +2,7 @@ package au.gov.dva.sopref.parsing.implementations
 
 import java.time.LocalDate
 
-import au.gov.dva.sopref.interfaces.model.{DefinedTerm, SoP, StandardOfProof}
+import au.gov.dva.sopref.interfaces.model.{DefinedTerm, ICDCode, SoP, StandardOfProof}
 import au.gov.dva.sopref.parsing.traits.SoPFactory
 
 object LsSoPFactory extends SoPFactory{
@@ -34,7 +34,10 @@ object LsSoPFactory extends SoPFactory{
     val effectiveFromDate: LocalDate = LsParser.parseDateOfEffect(extractor.extractDateOfEffectSection(clensedText))
 
     val standardOfProof = factors._1
-    new ParsedSop(registerId,instrumentNumber,citation,aggravationFactors, onsetFactors, effectiveFromDate,standardOfProof)
+
+    val icdCodes: List[ICDCode] = extractor.extractICDCodes(clensedText)
+
+    new ParsedSop(registerId,instrumentNumber,citation,aggravationFactors, onsetFactors, effectiveFromDate,standardOfProof,icdCodes)
   }
 
 
