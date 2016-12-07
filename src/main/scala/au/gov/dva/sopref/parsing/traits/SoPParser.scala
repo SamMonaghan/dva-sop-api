@@ -9,6 +9,7 @@ trait SoPParser {
   def parseInstrumentNumber(citationSection : String) : InstrumentNumber
   def parseDefinitions(definitionsSection : String) : List[DefinedTerm]
   def parseDateOfEffect(dateOfEffectSection : String) : LocalDate
+  def parseStartAndEndAggravationParas(aggravationSection : String) : (String,String)
 }
 
 

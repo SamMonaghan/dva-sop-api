@@ -102,7 +102,12 @@ object LsParser extends SoPParser with RegexParsers{
     return LocalDate.parse(m.get.group(1),DateTimeFormatter.ofPattern("d MMMM yyyy"))
   }
 
-
-
+  override def parseStartAndEndAggravationParas(aggravationSection: String): (String, String) = {
+    val paraIntervalRegex = """Paragraphs [0-9]+(\([a-z]+\)) to [0-9]+(\([a-z]+\))""".r
+    val m = paraIntervalRegex.findFirstMatchIn(aggravationSection)
+    if (m.isEmpty)
+      throw new SopParserError("Cannot determine aggravation paras from: " + aggravationSection)
+    (m.get.group(1),m.get.group(2))
+  }
 }
 

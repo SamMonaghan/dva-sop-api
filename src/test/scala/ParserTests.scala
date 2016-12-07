@@ -158,5 +158,13 @@ class ParserTests extends FunSuite {
     val result =undertest.extractAggravationSection(testInput)
     assert(result == "Paragraphs 6(q) to 6(ff) applies only to material contribution to, or aggravation of, lumbar spondylosis where the person’s lumbar spondylosis was suffered or contracted before or during (but not arising out of) the person’s relevant service.")
   }
+
+
+  test("Parse start and end of aggravation paras for LS") {
+    val testInput = "Paragraphs 6(q) to 6(ff) applies only to material contribution to, or aggravation of, lumbar spondylosis where the person’s lumbar spondylosis was suffered or contracted before or during (but not arising out of) the person’s relevant service."
+
+    val result = LsParser.parseStartAndEndAggravationParas(testInput)
+    assert(result._1 == "(q)" && result._2 == "(ff)")
+  }
 }
 
