@@ -30,4 +30,6 @@ object LsSoPFactory extends SoPFactory{
     new ParsedSop(registerId,instrumentNumber,citation,Set(), factorObjects.toSet, effectiveFromDate,standardOfProof)
 
   }
+
+
 }

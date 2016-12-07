@@ -166,5 +166,11 @@ class ParserTests extends FunSuite {
     val result = LsParser.parseStartAndEndAggravationParas(testInput)
     assert(result._1 == "(q)" && result._2 == "(ff)")
   }
+
+  test("Divide factors into onset and aggravation") {
+    val testData = List("(a)","(b)","(c)","(d)","(e)")
+    val result = LsSoPFactory.splitFactors(testData,"(b)","(d)")
+    assert(result == (List("(a)","(e)"),List("(b)","(c)","(d)")));
+  }
 }
 
