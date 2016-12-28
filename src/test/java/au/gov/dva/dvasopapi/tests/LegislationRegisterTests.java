@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class LegislationRegisterTests {
@@ -49,5 +50,19 @@ public class LegislationRegisterTests {
         byte[] result = underTest.getAuthorisedInstrumentPdf(testRegisterId).get();
         Assert.assertTrue(result.length == 391904);
     }
+
+    @Category(IntegrationTest.class)
+    @Test
+    public void noLongerInForceStatusTextRetrieved() throws IOException {
+
+        // Statement of Principles concerning animal envenomation No. 67 of 2008 (https://www.legislation.gov.au/Series/F2008L03183) was revoked by
+        // Statement of Principles concerning animal envenomation (Balance of Probabilities) (No. 82 of 2016) (https://www.legislation.gov.au/Details/F2016L01666)
+        // https://www.legislation.gov.au/Series/F2008L03183/RepealedBy lists the repealing SoP, including its RegisterId
+
+        Optional<String> result = FederalRegisterOfLegislation.getStatus(Resources.toString(Resources.getResource("legislationRegister/ceasedNoLongerInForce.html"),Charsets.UTF_8));
+        String expectedStatus =  "No longer in force";
+        Assert.assertTrue(result.get().contentEquals(expectedStatus));
+    }
+
 
 }

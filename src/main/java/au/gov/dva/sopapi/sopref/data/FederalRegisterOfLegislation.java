@@ -2,28 +2,25 @@ package au.gov.dva.sopapi.sopref.data;
 
 import au.gov.dva.sopapi.exceptions.LegislationRegisterError;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
+import org.asynchttpclient.AsyncHttpClient;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-
-import org.jsoup.*;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import static org.asynchttpclient.Dsl.*;
-
-import org.asynchttpclient.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.ExecutionException;
+
+import static org.asynchttpclient.Dsl.asyncHttpClient;
 
 public class FederalRegisterOfLegislation implements RegisterClient {
 
-    // Warlike service: https://www.legislation.gov.au/Latest/F2016L00994
-    // NonWarlike service: https://www.legislation.gov.au/Details/F2016L00995
 
     final static Logger logger = LoggerFactory.getLogger(FederalRegisterOfLegislation.class);
 
@@ -32,13 +29,12 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         URL latestDownloadPageUrl;
         try {
             latestDownloadPageUrl = new URL(buildUrlForLatestDownloadPage(registerId));
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new LegislationRegisterError(e);
         }
 
         CompletableFuture<byte[]> promise = getRedirectTarget(latestDownloadPageUrl)
-                .thenCompose(url -> downloadHtml(url) )
+                .thenCompose(url -> downloadHtml(url))
                 .thenApply(htmlString -> {
                     try {
                         return getAuthorisedDocumentLinkFromHtml(htmlString, registerId);
@@ -81,11 +77,11 @@ public class FederalRegisterOfLegislation implements RegisterClient {
                 .thenApply(response -> {
                     assert (response.getStatusCode() == 302);
                     String redirectValue = response.getHeader("Location");
-                if (redirectValue.isEmpty())
+                    if (redirectValue.isEmpty())
                         throw new LegislationRegisterError(String.format("Could not get redirect to Details page from URL: %s\n%s", originalUrl.toString(), response.toString()));
                     try {
                         assert (!URI.create(redirectValue).isAbsolute() && redirectValue.startsWith("/"));
-                        URL   redirectTarget =  URI.create(String.format("%s://%s%s", originalUrl.getProtocol(), originalUrl.getHost(), redirectValue)).toURL();
+                        URL redirectTarget = URI.create(String.format("%s://%s%s", originalUrl.getProtocol(), originalUrl.getHost(), redirectValue)).toURL();
                         return redirectTarget;
                     } catch (MalformedURLException e) {
                         throw new LegislationRegisterError(e);
@@ -105,6 +101,39 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         String linkUrl = elements.attr("href");
         assert !linkUrl.isEmpty();
         return URI.create(linkUrl).toURL();
+    }
+
+    public static Optional<String> getStatus(String html) {
+
+//        <li id="MainContent_ucLegItemPane_liStatus" class="info2">
+//            <span id="MainContent_ucLegItemPane_lblTitleStatus" class="RedText">No longer in force</span>
+//
+//            <span id="MainContent_ucLegItemPane_lblVersionStatus" class="RedText"></span>
+//        </li>
+
+        Document htmlDocument = Jsoup.parse(html);
+        String cssSelector = String.format("#MainContent_ucLegItemPane_lblTitleStatus");
+        Elements elements = htmlDocument.select(cssSelector);
+        if (elements.isEmpty()) {
+            logger.error(String.format("Could not determine current status of instrument using selector '%s' from HTML: \n%s", cssSelector, html));
+            return Optional.empty();
+        }
+        Element element = elements.first();
+        String status = element.text();
+        if (status.isEmpty())
+        {
+            logger.error(String.format("Empty string value for status using selector '%s' from HTML: \n%s", cssSelector, html));
+            return Optional.empty();
+        }
+        return Optional.of(status.trim());
+
+    }
+
+    public static String getLatestCompilation(String registerId) {
+        // eg https://www.legislation.gov.au/Series/F2014L01389/Compilations
+
+
+        return null;
     }
 
     private static String buildUrlForLatestDownloadPage(String registerId) {
