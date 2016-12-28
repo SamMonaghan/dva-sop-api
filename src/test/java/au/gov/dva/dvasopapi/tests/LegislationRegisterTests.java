@@ -31,7 +31,7 @@ public class LegislationRegisterTests {
     public void directDownloadPdf() throws ExecutionException, InterruptedException, IOException {
         URL testURL = URI.create("https://www.legislation.gov.au/Details/F2014L00930/d88e6f5d-a696-4e2f-8b68-cf8a56acfdd6").toURL();
         byte[] result = new FederalRegisterOfLegislation().downloadFile(testURL).get();
-        Assert.assertTrue(result.length == 391904);
+        Assert.assertTrue( result.length == 391904);
     }
 
     @Category(IntegrationTest.class)
@@ -51,7 +51,6 @@ public class LegislationRegisterTests {
         Assert.assertTrue(result.length == 391904);
     }
 
-    @Category(IntegrationTest.class)
     @Test
     public void noLongerInForceStatusTextRetrieved() throws IOException {
 
@@ -59,10 +58,45 @@ public class LegislationRegisterTests {
         // Statement of Principles concerning animal envenomation (Balance of Probabilities) (No. 82 of 2016) (https://www.legislation.gov.au/Details/F2016L01666)
         // https://www.legislation.gov.au/Series/F2008L03183/RepealedBy lists the repealing SoP, including its RegisterId
 
-        Optional<String> result = FederalRegisterOfLegislation.getStatus(Resources.toString(Resources.getResource("legislationRegister/ceasedNoLongerInForce.html"),Charsets.UTF_8));
+        Optional<String> result = FederalRegisterOfLegislation.getTitleStatus(Resources.toString(Resources.getResource("legislationRegister/ceasedNoLongerInForce.html"),Charsets.UTF_8));
         String expectedStatus =  "No longer in force";
         Assert.assertTrue(result.get().contentEquals(expectedStatus));
     }
 
+//       <li id="MainContent_ucLegItemPane_liStatus" class="info2">
+//            <span id="MainContent_ucLegItemPane_lblTitleStatus" class="RedText">In force</span>
+//            <span id="MainContent_ucLegItemPane_lblStatusSeperator" class="RedText"> - </span>
+//            <span id="MainContent_ucLegItemPane_lblVersionStatus" class="RedText">Superseded Version</span>
+//        </li>
+
+    @Test
+    public void inForceLatest() throws IOException {
+
+    Optional<String> result = FederalRegisterOfLegislation.getTitleStatus(Resources.toString(Resources.getResource("legislationRegister/inForceLatest.html"),Charsets.UTF_8));
+        String expectedStatus =  "In force";
+        Assert.assertTrue(result.get().contentEquals(expectedStatus));
+    }
+
+    @Test
+    public void inForceSuperceded() throws IOException {
+
+        Optional<String> result = FederalRegisterOfLegislation.getTitleStatus(Resources.toString(Resources.getResource("legislationRegister/inForceSuperceded.html"),Charsets.UTF_8));
+        String expectedStatus =  "In force";
+        Assert.assertTrue(result.get().contentEquals(expectedStatus));
+    }
+
+    @Test
+    public void getVersionStatus() throws IOException {
+        // when there is a later compilation
+        Optional<String> result = FederalRegisterOfLegislation.getVersionStatus(Resources.toString(Resources.getResource("legislationRegister/inForceSuperceded.html"),Charsets.UTF_8));
+        String expectedStatus =  "Superseded Version";
+        Assert.assertTrue(result.get().contentEquals(expectedStatus));
+    }
+
+    @Test
+    public void getUrlOfRepealedCeasedBy() throws IOException {
+        Optional<String> result = FederalRegisterOfLegislation.getRegisterIdOfRepealedByCeasedBy(Resources.toString(Resources.getResource("legislationRegister/seriesRepealedBy.html"),Charsets.UTF_8));
+        Assert.assertTrue(result.get().contentEquals("F2016L01667"));
+    }
 
 }

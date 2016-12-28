@@ -16,6 +16,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.asynchttpclient.Dsl.asyncHttpClient;
 
@@ -103,7 +105,8 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         return URI.create(linkUrl).toURL();
     }
 
-    public static Optional<String> getStatus(String html) {
+
+    public static Optional<String> getTitleStatus(String html) {
 
 //        <li id="MainContent_ucLegItemPane_liStatus" class="info2">
 //            <span id="MainContent_ucLegItemPane_lblTitleStatus" class="RedText">No longer in force</span>
@@ -111,8 +114,47 @@ public class FederalRegisterOfLegislation implements RegisterClient {
 //            <span id="MainContent_ucLegItemPane_lblVersionStatus" class="RedText"></span>
 //        </li>
 
+        return getCssIdValue(html, "MainContent_ucLegItemPane_lblTitleStatus");
+    }
+
+
+
+    public static Optional<String> getVersionStatus(String html) {
+
+        return getCssIdValue(html, "MainContent_ucLegItemPane_lblVersionStatus");
+    }
+
+
+    public static Optional<String> getRegisterIdOfRepealedByCeasedBy(String html)  {
         Document htmlDocument = Jsoup.parse(html);
-        String cssSelector = String.format("#MainContent_ucLegItemPane_lblTitleStatus");
+        String cssSelector = String.format("a[id*='SeriesRepealedBy']");
+        Elements elements = htmlDocument.select(cssSelector);
+        assert !elements.isEmpty();
+        String linkUrl = elements.attr("href");
+
+        assert !linkUrl.isEmpty();
+        Pattern pattern =  Pattern.compile("(F[0-9]{4,4}[A-Z][0-9]+)");
+        Matcher matcher = pattern.matcher(linkUrl);
+
+        if (!matcher.find())
+            return Optional.empty();
+
+        String registerId = matcher.group(1);
+        return Optional.of(registerId);
+    }
+
+    public static String getLatestCompilation(String registerId) {
+        // eg https://www.legislation.gov.au/Series/F2014L01389/Compilations
+
+
+        return null;
+    }
+
+
+    private static Optional<String> getCssIdValue(String html, String id)
+    {
+        Document htmlDocument = Jsoup.parse(html);
+        String cssSelector = String.format("#%s",id);
         Elements elements = htmlDocument.select(cssSelector);
         if (elements.isEmpty()) {
             logger.error(String.format("Could not determine current status of instrument using selector '%s' from HTML: \n%s", cssSelector, html));
@@ -126,14 +168,6 @@ public class FederalRegisterOfLegislation implements RegisterClient {
             return Optional.empty();
         }
         return Optional.of(status.trim());
-
-    }
-
-    public static String getLatestCompilation(String registerId) {
-        // eg https://www.legislation.gov.au/Series/F2014L01389/Compilations
-
-
-        return null;
     }
 
     private static String buildUrlForLatestDownloadPage(String registerId) {
