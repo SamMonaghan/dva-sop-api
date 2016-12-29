@@ -12,6 +12,7 @@ public interface Repository {
      Optional<SoP> getSop(String registerId);
      ImmutableSet<SoP> getAllSops();
      Iterable<InstrumentChange> getInstrumentChanges();
+     void addInstrumentChange(InstrumentChange instrumentChange);
      void addServiceDetermination(ServiceDetermination serviceDetermination);
      ImmutableSet<ServiceDetermination> getServiceDeterminations();
 

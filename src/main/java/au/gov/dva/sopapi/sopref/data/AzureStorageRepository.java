@@ -27,6 +27,7 @@ public class AzureStorageRepository implements Repository {
     private String _storageConnectionString = null;
     private static final String SOP_CONTAINER_NAME = "sops";
     private static final String SERVICE_DETERMINATIONS_CONTAINER_NAME = "servicedeterminations";
+    private static final String INSTRUMENT_CHANGES_CONTAINER_NAME = "instrumentchanges";
     private CloudStorageAccount _cloudStorageAccount = null;
     private CloudBlobClient _cloudBlobClient = null;
 
@@ -102,12 +103,11 @@ public class AzureStorageRepository implements Repository {
         try {
             CloudBlobContainer cloudBlobContainer = _cloudBlobClient.getContainerReference(SOP_CONTAINER_NAME);
 
-            Iterable<ListBlobItem> blobs =  cloudBlobContainer.listBlobs();
+            Iterable<ListBlobItem> blobs = cloudBlobContainer.listBlobs();
 
             List<SoP> retrievedSops = new ArrayList<>();
             for (ListBlobItem blobItem : blobs) {
-                if (blobItem instanceof  CloudBlob)
-                {
+                if (blobItem instanceof CloudBlob) {
                     SoP sop = blobToSoP((CloudBlob) blobItem);
                     retrievedSops.add(sop);
                 }
@@ -157,8 +157,47 @@ public class AzureStorageRepository implements Repository {
     }
 
     @Override
-    public Iterable<InstrumentChange> getInstrumentChanges() {
+    public ImmutableSet<InstrumentChange> getInstrumentChanges() {
+//        CloudBlobContainer cloudBlobContainer = _cloudBlobClient.getContainerReference(INSTRUMENT_CHANGES_CONTAINER_NAME);
+
+        //Iterable<ListBlobItem> blobs = cloudBlobContainer.listBlobs();
+
+//        List<ServiceDetermination> instrumentChanges = new ArrayList<>();
+//        for (ListBlobItem blobItem : blobs) {
+//            if (blobItem instanceof CloudBlob) {
+//                ServiceDetermination serviceDetermination = blobToServiceDetermination((CloudBlob) blobItem);
+//                instrumentChanges.add(serviceDetermination);
+//            }
+//        }
+//
+//        return ImmutableSet.copyOf(instrumentChanges);
+//    } catch(
+//    RuntimeException e)
+//
+//    {
+//        throw new RepositoryError(e);
+//    } catch(
+//    Exception e)
+//
+//    {
+//        throw new RepositoryError(e);
+//    }
+
         return null;
+    }
+
+    private static InstrumentChange blobToInstrumentChange(CloudBlob cloudBlob) throws IOException, StorageException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = getJsonNode(cloudBlob);
+        return null;
+
+    }
+
+
+
+    @Override
+    public void addInstrumentChange(InstrumentChange instrumentChange) {
+
     }
 
     @Override

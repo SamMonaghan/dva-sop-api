@@ -17,13 +17,13 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class LumbarSpondylosisTests extends FunSuite {
 
-  ignore("CI debug")
+  test("CI debug")
   {
     val bytes = ParserTestUtils.resourceToBytes("sops_rh/F2014L00933.pdf")
     val rawText = Conversions.pdfToPlainText(bytes);
     val genericClenser = new GenericClenser();
     val clensedText = genericClenser.clense(rawText)
-    // for some reason below returns null in CI only:
+    // for some reason below returns n ull in CI only:
     val sopFactory = SoPFactoryLocator.findFactory("F2014L00933")
     //
     val sop = sopFactory.create("F2014L00933", clensedText)
@@ -44,7 +44,7 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(f("One") != null)
   }
 
-  ignore("Parse entire RH LS SoP") {
+  test("Parse entire RH LS SoP") {
       val result = ParserTestUtils.executeWholeParsingPipeline("F2014L00933", "sops_rh/F2014L00933.pdf")
       System.out.print(TestUtils.prettyPrint(StoredSop.toJson(result)))
       assert(result != null)

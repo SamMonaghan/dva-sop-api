@@ -99,4 +99,5 @@ public class LegislationRegisterTests {
         Assert.assertTrue(result.get().contentEquals("F2016L01667"));
     }
 
+
 }

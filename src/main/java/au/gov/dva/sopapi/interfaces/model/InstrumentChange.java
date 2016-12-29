@@ -1,10 +1,12 @@
 package au.gov.dva.sopapi.interfaces.model;
 
+import au.gov.dva.sopapi.interfaces.Repository;
+
 import java.time.LocalDate;
 
-public interface InstrumentChange {
+public interface InstrumentChange  {
      String getInstrumentId();
-     InstrumentChangeType getInstrumentChangeType();
      LocalDate getDate();
+     void Apply(Repository repository);
 }
 

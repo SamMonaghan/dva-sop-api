@@ -151,6 +151,8 @@ public class FederalRegisterOfLegislation implements RegisterClient {
     }
 
 
+
+
     private static Optional<String> getCssIdValue(String html, String id)
     {
         Document htmlDocument = Jsoup.parse(html);
