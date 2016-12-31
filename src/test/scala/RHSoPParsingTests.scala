@@ -1,0 +1,48 @@
+package au.gov.dva.sopapi.tests.parsers
+
+import java.io.PrintWriter
+
+import au.gov.dva.dvasopapi.tests.TestUtils
+import au.gov.dva.sopapi.sopref.data.sops.StoredSop
+import org.junit.runner.RunWith
+import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
+
+import scala.collection.mutable
+
+@RunWith(classOf[JUnitRunner])
+class RHSoPParsingTests extends FunSuite {
+
+  test("Parse all RH SoPs") {
+    val rhIds = ParserTestUtils.resourceToString("rhSopRegisterIds.txt").split("\n");
+
+    val errorMap = mutable.HashMap.empty[String, Throwable];
+
+    for (rhId <- rhIds) {
+
+      try {
+        val result = ParserTestUtils.executeWholeParsingPipeline(rhId, "sops_rh/" + rhId + ".pdf")
+
+        if (result == null) {
+          errorMap += (rhId -> null)
+        }
+      } catch {
+        case e: Throwable => errorMap += (rhId -> e)
+      }
+
+    }
+
+    val pw = new PrintWriter("rhParseFailures.txt")
+    for (rhId <- errorMap.keySet) {
+      System.out.println("FAILED " + rhId);
+      pw.println("FAILED " + rhId)
+      errorMap(rhId).printStackTrace(pw)
+      pw.println()
+    }
+
+    if (!errorMap.isEmpty) {
+      fail("Parse failures: " + errorMap.keySet.mkString(","))
+    }
+  }
+
+}
