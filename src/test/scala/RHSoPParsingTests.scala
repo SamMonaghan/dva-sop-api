@@ -17,6 +17,7 @@ class RHSoPParsingTests extends FunSuite {
     val rhIds = ParserTestUtils.resourceToString("rhSopRegisterIds.txt").split("\n");
 
     val errorMap = mutable.HashMap.empty[String, Throwable];
+    val passedList = mutable.MutableList.empty[String];
 
     for (rhId <- rhIds) {
 
@@ -25,6 +26,8 @@ class RHSoPParsingTests extends FunSuite {
 
         if (result == null) {
           errorMap += (rhId -> null)
+        } else {
+          passedList += rhId
         }
       } catch {
         case e: Throwable => errorMap += (rhId -> e)
@@ -32,7 +35,13 @@ class RHSoPParsingTests extends FunSuite {
 
     }
 
-    val pw = new PrintWriter("rhParseFailures.txt")
+    val pw = new PrintWriter("rhParseResults.txt")
+
+    for (rhId <- passedList) {
+      System.out.println("PASSED " + rhId);
+      pw.println("PASSED " + rhId);
+    }
+
     for (rhId <- errorMap.keySet) {
       System.out.println("FAILED " + rhId);
       pw.println("FAILED " + rhId)

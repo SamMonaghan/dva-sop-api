@@ -17,6 +17,7 @@ class BoPSoPParsingTests extends FunSuite {
     val rhIds = ParserTestUtils.resourceToString("bopSopRegisterIds.txt").split("\n");
 
     val errorMap = mutable.HashMap.empty[String, Throwable];
+    val passedList = mutable.MutableList.empty[String];
 
     for (rhId <- rhIds) {
 
@@ -25,6 +26,8 @@ class BoPSoPParsingTests extends FunSuite {
 
         if (result == null) {
           errorMap += (rhId -> null)
+        } else {
+          passedList += rhId
         }
       } catch {
         case e: Throwable => errorMap += (rhId -> e)
@@ -32,12 +35,22 @@ class BoPSoPParsingTests extends FunSuite {
 
     }
 
-    val pw = new PrintWriter("bopParseFailures.txt")
+    val pw = new PrintWriter("bopParseResults.txt")
+
+    for (rhId <- passedList) {
+      System.out.println("PASSED " + rhId);
+      pw.println("PASSED " + rhId);
+    }
+
     for (rhId <- errorMap.keySet) {
       System.out.println("FAILED " + rhId);
       pw.println("FAILED " + rhId)
       errorMap(rhId).printStackTrace(pw)
       pw.println()
+    }
+
+    for (rhId <- passedList) {
+      System.out.println(rhId);
     }
 
     if (!errorMap.isEmpty) {
