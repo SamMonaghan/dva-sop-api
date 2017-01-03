@@ -10,6 +10,7 @@ import au.gov.dva.sopapi.sopref.data.updates.SoPLoader;
 import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -17,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 public class IntegrationTests {
 
     @Test
+    @Category(IntegrationTests.class)
     public void getSoPTaskTest() throws ExecutionException, InterruptedException, JsonProcessingException {
 
         Repository localRepository = new AzureStorageRepository("UseDevelopmentStorage=true");
