@@ -1,15 +1,17 @@
 package au.gov.dva.sopapi.sopref.data;
 
-import au.gov.dva.sopapi.sopref.data.servicedeterminations.StoredServiceDetermination;
-import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import au.gov.dva.sopapi.exceptions.RepositoryError;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.ServiceDetermination;
 import au.gov.dva.sopapi.interfaces.model.SoP;
+import au.gov.dva.sopapi.sopref.data.servicedeterminations.StoredServiceDetermination;
+import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
@@ -21,6 +23,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class AzureStorageRepository implements Repository {
 
@@ -151,49 +157,39 @@ public class AzureStorageRepository implements Repository {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         cloudBlob.download(outputStream);
         String jsonString = outputStream.toString(Charsets.UTF_8.name());
-
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readTree(jsonString);
     }
 
     @Override
     public ImmutableSet<InstrumentChange> getInstrumentChanges() {
-//        CloudBlobContainer cloudBlobContainer = _cloudBlobClient.getContainerReference(INSTRUMENT_CHANGES_CONTAINER_NAME);
 
-        //Iterable<ListBlobItem> blobs = cloudBlobContainer.listBlobs();
-
-//        List<ServiceDetermination> instrumentChanges = new ArrayList<>();
-//        for (ListBlobItem blobItem : blobs) {
-//            if (blobItem instanceof CloudBlob) {
-//                ServiceDetermination serviceDetermination = blobToServiceDetermination((CloudBlob) blobItem);
-//                instrumentChanges.add(serviceDetermination);
-//            }
-//        }
-//
-//        return ImmutableSet.copyOf(instrumentChanges);
-//    } catch(
-//    RuntimeException e)
-//
-//    {
-//        throw new RepositoryError(e);
-//    } catch(
-//    Exception e)
-//
-//    {
-//        throw new RepositoryError(e);
-//    }
-
-        return null;
+        CloudBlobContainer cloudBlobContainer = null;
+        try {
+            cloudBlobContainer = _cloudBlobClient.getContainerReference(INSTRUMENT_CHANGES_CONTAINER_NAME);
+        } catch (URISyntaxException e) {
+            throw new RepositoryError(e);
+        } catch (StorageException e) {
+            throw new RepositoryError(e);
+        }
+        Stream<ListBlobItem> blobs = StreamSupport.stream(cloudBlobContainer.listBlobs().spliterator(), false);
+        return blobs.flatMap(listBlobItem -> {
+            try {
+                return blobToInstrumentChangeStream((CloudBlob) listBlobItem);
+            } catch (IOException e) {
+                throw new RepositoryError(e);
+            } catch (StorageException e) {
+                throw new RepositoryError(e);
+            }
+        }).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
     }
 
-    private static InstrumentChange blobToInstrumentChange(CloudBlob cloudBlob) throws IOException, StorageException {
+    private static Stream<InstrumentChange> blobToInstrumentChangeStream(CloudBlob cloudBlob) throws IOException, StorageException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = getJsonNode(cloudBlob);
-        return null;
-
+        ImmutableList<JsonNode> jsonObjects = JsonUtils.getChildrenOfArrayNode(jsonNode);
+        return jsonObjects.stream().map(n -> InstrumentChangeBase.fromJson(n));
     }
-
-
 
     @Override
     public void addInstrumentChange(InstrumentChange instrumentChange) {
@@ -220,12 +216,11 @@ public class AzureStorageRepository implements Repository {
         try {
             CloudBlobContainer cloudBlobContainer = _cloudBlobClient.getContainerReference(SERVICE_DETERMINATIONS_CONTAINER_NAME);
 
-            Iterable<ListBlobItem> blobs =  cloudBlobContainer.listBlobs();
+            Iterable<ListBlobItem> blobs = cloudBlobContainer.listBlobs();
 
             List<ServiceDetermination> retrievedServiceDeterminations = new ArrayList<>();
             for (ListBlobItem blobItem : blobs) {
-                if (blobItem instanceof  CloudBlob)
-                {
+                if (blobItem instanceof CloudBlob) {
                     ServiceDetermination serviceDetermination = blobToServiceDetermination((CloudBlob) blobItem);
                     retrievedServiceDeterminations.add(serviceDetermination);
                 }
@@ -239,5 +234,10 @@ public class AzureStorageRepository implements Repository {
         }
     }
 
-
+    private static <T> T retrieve(Function<JsonNode, T> deserializer) {
+        return null;
+    }
 }
+
+
+

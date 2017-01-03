@@ -1,13 +1,10 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
-import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.LocalDate;
 
@@ -21,6 +18,8 @@ public class NewInstrument extends InstrumentChangeBase implements InstrumentCha
         this.date = date;
     }
 
+    public static final String TYPE_NAME = "new";
+
     @Override
     public String getInstrumentId() {
         return instrumentId;
@@ -33,10 +32,17 @@ public class NewInstrument extends InstrumentChangeBase implements InstrumentCha
 
     public JsonNode toJson()
     {
-        return getCommonNode("new",instrumentId,date);
+        return getCommonNode(TYPE_NAME,instrumentId,date);
     }
 
     @Override
     public void Apply(Repository repository) {
     }
+
+
+    public static NewInstrument fromJson(JsonNode jsonNode)
+    {
+        return new NewInstrument(extractInstrumentId(jsonNode),extractDate(jsonNode));
+    }
+
 }

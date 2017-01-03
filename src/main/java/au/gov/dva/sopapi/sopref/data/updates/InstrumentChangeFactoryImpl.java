@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 public class InstrumentChangeFactoryImpl implements InstrumentChangeFactory {
     @Override
     public ImmutableSet<InstrumentChange> createChanges(RegisterClient registerClient, InstrumentUpdatesSource updatesSource) {
+
         return null;
     }
 }

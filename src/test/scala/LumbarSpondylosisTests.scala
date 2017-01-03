@@ -30,6 +30,4 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(result != null)
   }
 
-
-
 }

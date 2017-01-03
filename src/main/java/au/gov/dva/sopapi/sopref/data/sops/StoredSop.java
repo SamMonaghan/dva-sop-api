@@ -1,8 +1,9 @@
 package au.gov.dva.sopapi.sopref.data.sops;
 
+import au.gov.dva.sopapi.dtos.StandardOfProof;
 import au.gov.dva.sopapi.exceptions.RepositoryError;
 import au.gov.dva.sopapi.interfaces.model.*;
-import au.gov.dva.sopapi.dtos.StandardOfProof;
+import au.gov.dva.sopapi.sopref.data.JsonUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -13,9 +14,6 @@ import com.google.common.collect.ImmutableSet;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class StoredSop implements SoP, HasSchemaVersion {
@@ -176,15 +174,7 @@ public class StoredSop implements SoP, HasSchemaVersion {
 
     private static ImmutableList<JsonNode> getChildrenOfArrayNode(JsonNode jsonNode)
     {
-        assert (jsonNode.isArray());
-        List<JsonNode> children = new ArrayList<>();
-
-        for (Iterator<JsonNode> it = jsonNode.elements(); it.hasNext(); ) {
-            JsonNode el = it.next();
-            children.add(el);
-        }
-
-        return ImmutableList.copyOf(children);
+       return JsonUtils.getChildrenOfArrayNode(jsonNode);
     }
 
     public static JsonNode toJson(SoP sop)
