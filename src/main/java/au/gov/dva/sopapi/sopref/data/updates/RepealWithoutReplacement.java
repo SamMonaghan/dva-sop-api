@@ -4,7 +4,7 @@ import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 public class RepealWithoutReplacement implements InstrumentChange {
     @Override
@@ -13,9 +13,10 @@ public class RepealWithoutReplacement implements InstrumentChange {
     }
 
     @Override
-    public LocalDate getDate() {
+    public OffsetDateTime getDate() {
         return null;
     }
+
 
     @Override
     public void Apply(Repository repository) {

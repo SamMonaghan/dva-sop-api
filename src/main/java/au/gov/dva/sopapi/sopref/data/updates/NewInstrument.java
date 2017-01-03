@@ -7,13 +7,14 @@ import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 public class NewInstrument extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
     private final String instrumentId;
-    private final LocalDate date;
+    private final OffsetDateTime date;
 
-    public NewInstrument(String instrumentId, LocalDate date) {
+    public NewInstrument(String instrumentId, OffsetDateTime date) {
         this.instrumentId = instrumentId;
         this.date = date;
     }
@@ -26,7 +27,7 @@ public class NewInstrument extends InstrumentChangeBase implements InstrumentCha
     }
 
     @Override
-    public LocalDate getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 

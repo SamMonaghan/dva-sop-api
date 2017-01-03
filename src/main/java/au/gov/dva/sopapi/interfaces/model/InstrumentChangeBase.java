@@ -1,13 +1,12 @@
 package au.gov.dva.sopapi.interfaces.model;
 
-import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.sopref.data.updates.NewInstrument;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class InstrumentChangeBase {
@@ -15,13 +14,13 @@ public class InstrumentChangeBase {
    protected static final String DATE_LABEL = "date";
    protected static final String INSTRUMENT_ID_LABEL = "registerId";
 
-   protected ObjectNode getCommonNode(String typeName, String instrumentId, LocalDate date)
+   protected ObjectNode getCommonNode(String typeName, String instrumentId, OffsetDateTime date)
    {
       ObjectMapper objectMapper = new ObjectMapper();
       ObjectNode objectNode = objectMapper.createObjectNode();
       objectNode.put(TYPE_LABEL,typeName);
       objectNode.put(INSTRUMENT_ID_LABEL,instrumentId);
-      objectNode.put(DATE_LABEL, DateTimeUtils.localDateToUtcLocalDate(date));
+      objectNode.put(DATE_LABEL, date.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
       return objectNode;
    }
 
@@ -40,10 +39,10 @@ public class InstrumentChangeBase {
        return jsonNode.findValue(TYPE_LABEL).asText();
    }
 
-   protected static LocalDate extractDate(JsonNode jsonNode)
+   protected static OffsetDateTime extractDate(JsonNode jsonNode)
    {
        String dateText = jsonNode.findValue(DATE_LABEL).asText();
-       LocalDate date = LocalDate.parse(dateText, DateTimeFormatter.ISO_LOCAL_DATE);
+       OffsetDateTime date = OffsetDateTime.parse(dateText, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
        return date;
    }
 

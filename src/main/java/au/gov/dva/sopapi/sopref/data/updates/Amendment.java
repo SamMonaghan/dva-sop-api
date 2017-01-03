@@ -4,7 +4,7 @@ import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 // Legislation Register points to latest compilation at /Latest route
 public class Amendment implements InstrumentChange {
@@ -14,9 +14,10 @@ public class Amendment implements InstrumentChange {
     }
 
     @Override
-    public LocalDate getDate() {
+    public OffsetDateTime getDate() {
         return null;
     }
+
 
     @Override
     public void Apply(Repository repository) {
