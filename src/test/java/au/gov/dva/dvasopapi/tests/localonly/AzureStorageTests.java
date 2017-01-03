@@ -53,6 +53,7 @@ public class AzureStorageTests {
         results.forEach(instrumentChange -> System.out.println(instrumentChange));
         Assert.assertTrue(results.size() > 0);
     }
+
 }
 
 

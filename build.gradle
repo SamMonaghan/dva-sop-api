@@ -13,6 +13,17 @@ allprojects {
 
 }
 
+sourceSets {
+    main {
+        scala {
+            srcDirs = ['src/main/scala', 'src/main/java']
+        }
+        java {
+            srcDirs = []
+        }
+    }
+}
+
 findbugs {
     effort = "max"
     reportLevel = "low"

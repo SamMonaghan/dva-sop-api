@@ -41,10 +41,14 @@ public class SoPLoader {
 
     }
 
-    private CompletableFuture<SoP> createGetSopTask(String registerId, RegisterClient registerClient, Function<String,SoPCleanser> sopCleanserProvider, Function<String,SoPFactory> sopFactoryProvider)
+    public CompletableFuture<SoP> createGetSopTask(String registerId)
     {
-        CompletableFuture<byte[]> pdfBytes = registerClient.getAuthorisedInstrumentPdf(registerId);
-        CompletableFuture promise = pdfBytes.thenApply(bytes ->  {
+        return createGetSopTask(registerId,s -> registerClient.getAuthorisedInstrumentPdf(s),sopCleanserProvider,sopFactoryProvider);
+    }
+
+    private CompletableFuture<SoP> createGetSopTask(String registerId, Function<String,CompletableFuture<byte[]>> authorisedPdfProvider, Function<String,SoPCleanser> sopCleanserProvider, Function<String,SoPFactory> sopFactoryProvider)
+    {
+        CompletableFuture<SoP> promise = authorisedPdfProvider.apply(registerId).thenApply(bytes ->  {
             try {
                 String text = Conversions.pdfToPlainText(bytes);
                 SoPCleanser cleanser = sopCleanserProvider.apply(registerId);
@@ -59,7 +63,6 @@ public class SoPLoader {
         });
 
         return promise;
-
     }
 }
 
