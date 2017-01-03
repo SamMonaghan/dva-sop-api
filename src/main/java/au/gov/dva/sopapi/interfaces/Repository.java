@@ -15,5 +15,4 @@ public interface Repository {
      void addInstrumentChange(InstrumentChange instrumentChange);
      void addServiceDetermination(ServiceDetermination serviceDetermination);
      ImmutableSet<ServiceDetermination> getServiceDeterminations();
-
 }

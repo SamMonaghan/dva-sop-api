@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +26,7 @@ public class FederalRegisterOfLegislation implements RegisterClient {
     final static Logger logger = LoggerFactory.getLogger(FederalRegisterOfLegislation.class);
 
     @Override
-    public CompletableFuture<byte[]> getAuthorisedInstrumentPdf(String registerId) throws ExecutionException, InterruptedException {
+    public CompletableFuture<byte[]> getAuthorisedInstrumentPdf(String registerId) {
         URL latestDownloadPageUrl;
         try {
             latestDownloadPageUrl = new URL(buildUrlForLatestDownloadPage(registerId));

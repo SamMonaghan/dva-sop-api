@@ -5,8 +5,8 @@ package au.gov.dva.sopapi.tests.parsers;
 import au.gov.dva.dvasopapi.tests.TestUtils
 import au.gov.dva.sopapi.sopref.data.Conversions
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop
-import au.gov.dva.sopapi.sopref.parsing.factories.SoPFactoryLocator
-import au.gov.dva.sopapi.sopref.parsing.implementations.GenericClenser
+import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator
+import au.gov.dva.sopapi.sopref.parsing.implementations.GenericCleanser
 import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

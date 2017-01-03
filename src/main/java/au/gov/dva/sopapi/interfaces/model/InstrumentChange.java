@@ -4,11 +4,13 @@ import au.gov.dva.sopapi.interfaces.JsonSerializable;
 import au.gov.dva.sopapi.interfaces.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
+import java.util.function.Function;
 
 public interface InstrumentChange extends JsonSerializable {
      String getInstrumentId();
      OffsetDateTime getDate();
-     void Apply(Repository repository);
+     void Apply(Repository repository, Function<String,Optional<SoP>> soPProvider);
 }
 
 

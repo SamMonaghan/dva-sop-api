@@ -5,9 +5,9 @@ import com.typesafe.scalalogging.Logger
 import scala.util.matching.Regex
 
 
-trait GenericTextClenser extends SoPClenser  {
+trait GenericTextCleanser extends SoPCleanser  {
 
-  val logger = Logger[GenericTextClenser]
+  val logger = Logger[GenericTextCleanser]
 
   private def removeAuthorisedFootnote(raw : String) : String = {
     val footNoteRegex1 = """(?i)Federal\s+Register\s+of\s+Legislative\s+Instruments(?-i)\s+F[0-9]{4,4}[A-Z0-9]{6,6}(?-i)""".r

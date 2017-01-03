@@ -1,5 +1,5 @@
 package au.gov.dva.sopapi.sopref.parsing.traits
 
-trait SoPClenser {
+trait SoPCleanser {
   def clense(rawText : String) : String;
 }
