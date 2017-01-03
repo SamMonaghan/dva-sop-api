@@ -6,10 +6,17 @@ import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 public class NewInstrument extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
+
+    @Override
+    public String toString() {
+        return "NewInstrument{" +
+                "instrumentId='" + instrumentId + '\'' +
+                ", date=" + date +
+                '}';
+    }
 
     private final String instrumentId;
     private final OffsetDateTime date;
