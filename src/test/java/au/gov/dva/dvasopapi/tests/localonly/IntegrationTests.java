@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -24,11 +25,10 @@ public class IntegrationTests {
 
         Repository localRepository = new AzureStorageRepository("UseDevelopmentStorage=true");
         SoPLoader underTest = new SoPLoader(localRepository, new FederalRegisterOfLegislation(),s -> ServiceLocator.findTextCleanser(s),s -> ServiceLocator.findSoPFactory(s));
-        CompletableFuture<SoP> result = underTest.createGetSopTask("F2014L00933");
-        Assert.assertTrue(result.get() != null);
-        SoP sop = result.get();
+        CompletableFuture<Optional<SoP>> result = underTest.createGetSopTask("F2014L00933");
+        Assert.assertTrue(result.get().isPresent());
+        SoP sop = result.get().get();
 
         System.out.println(TestUtils.prettyPrint(StoredSop.toJson(sop)));
-
     }
 }
