@@ -7,6 +7,8 @@ import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.Conversions;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPCleanser;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,17 +42,25 @@ public class SoPLoader {
     }
 
     public void UpdateAll(long timeOutMinutes) {
-        // get updates
-        // prefetch all updated sops
-        // create sopprovider
-        // apply all updates where sop exists
-
         ImmutableSet<InstrumentChange> instrumentChanges = repository.getInstrumentChanges();
         Stream<String> instrumentIds = instrumentChanges.stream().map(ic -> ic.getInstrumentId());
         List<CompletableFuture<Optional<SoP>>> updateTasks = instrumentIds.map(id -> createGetSopTask(id)).collect(Collectors.toList());
         CompletableFuture<List<Optional<SoP>>> allTasksAsOneFuture = sequence(updateTasks);
         try {
-            List<Optional<SoP>> allSops = allTasksAsOneFuture.get(timeOutMinutes, TimeUnit.MINUTES);
+           List<Optional<SoP>> allSops = allTasksAsOneFuture.get(timeOutMinutes, TimeUnit.MINUTES);
+           Stream<SoP> nonEmptySops = allSops.stream().filter(s -> s.isPresent()).map(s -> s.get());
+           ImmutableMap<String,SoP> sopMap = toMap(nonEmptySops);
+
+           Function<String,Optional<SoP>> sopProvider = registerId -> {
+                if (sopMap.containsKey(registerId))
+                    return Optional.of(sopMap.get(registerId));
+                else return Optional.empty();
+           };
+
+           // todo: could make this asynchronous and batched
+           // todo: network timeout, failure handling
+           instrumentChanges.forEach(ic -> ic.Apply(repository,sopProvider));
+
         } catch (InterruptedException e) {
             logger.error("Bulk task to update SoPs was interrupted.",e);
         } catch (ExecutionException e) {
@@ -59,6 +69,16 @@ public class SoPLoader {
             logger.error(String.format("Bulk task to update SoPs timed out after %d minutes.", timeOutMinutes));
         }
     }
+
+    private ImmutableMap<String,SoP> toMap(Stream<SoP> sops)
+    {
+        Builder<String,SoP> builder = ImmutableMap.builder();
+        sops.forEach(s -> builder.put(s.getRegisterId(),s));
+        return builder.build();
+    }
+
+
+
 
     // http://www.nurkiewicz.com/2013/05/java-8-completablefuture-in-action.html
     private static <T> CompletableFuture<List<Optional<T>>> sequence(List<CompletableFuture<Optional<T>>> futures) {
@@ -71,16 +91,7 @@ public class SoPLoader {
         );
     }
 
-    private ImmutableSet<CompletableFuture> CreateUpdateTasks(Repository repository, RegisterClient registerClient) {
-        // retrieve updates from repository
-        // apply each update
 
-        ImmutableSet<InstrumentChange> instrumentChanges = repository.getInstrumentChanges();
-        Stream<CompletableFuture<Optional<SoP>>> updateTasks = instrumentChanges.stream()
-                .map(instrumentChange -> createGetSopTask(instrumentChange.getInstrumentId()));
-
-        return null;
-    }
 
     public CompletableFuture<Optional<SoP>> createGetSopTask(String registerId) {
         return createGetSopTask(registerId, s -> registerClient.getAuthorisedInstrumentPdf(s), sopCleanserProvider, sopFactoryProvider);
