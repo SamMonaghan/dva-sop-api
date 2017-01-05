@@ -16,6 +16,8 @@ import com.google.common.collect.ImmutableSet;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,12 +32,16 @@ import java.util.stream.StreamSupport;
 
 public class AzureStorageRepository implements Repository {
 
+    private static Logger logger = LoggerFactory.getLogger(AzureStorageRepository.class);
+
     private String _storageConnectionString = null;
     private static final String SOP_CONTAINER_NAME = "sops";
     private static final String SERVICE_DETERMINATIONS_CONTAINER_NAME = "servicedeterminations";
     private static final String INSTRUMENT_CHANGES_CONTAINER_NAME = "instrumentchanges";
     private CloudStorageAccount _cloudStorageAccount = null;
     private CloudBlobClient _cloudBlobClient = null;
+
+
 
 
     public AzureStorageRepository(String storageConnectionString) {
@@ -76,16 +82,16 @@ public class AzureStorageRepository implements Repository {
     }
 
     @Override
-    public void deleteSoP(String registerId) {
+    public void deleteSoPIfExists(String registerId) {
         try
         {
             CloudBlobContainer container = getOrCreateContainer(SOP_CONTAINER_NAME);
             CloudBlockBlob blob = container.getBlockBlobReference(registerId);
             boolean success =  blob.deleteIfExists();
-            if (!success)
-            {
-                throw new RepositoryError(String.format("Failed to delete SoP with register ID: %s", registerId));
+            if (!success) {
+                logger.trace(String.format("SoP not found, therefore not deleted: %s", registerId));
             }
+
         }
         catch (Exception e)
         {
@@ -212,7 +218,6 @@ public class AzureStorageRepository implements Repository {
 
     @Override
     public void addInstrumentChange(InstrumentChange instrumentChange) {
-
     }
 
     @Override

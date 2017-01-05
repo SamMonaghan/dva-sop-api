@@ -3,11 +3,8 @@ package au.gov.dva.dvasopapi.tests;
 import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
-import au.gov.dva.sopapi.interfaces.model.SoP;
-import au.gov.dva.sopapi.sopref.data.AzureStorageRepository;
 import au.gov.dva.sopapi.sopref.data.JsonUtils;
 import au.gov.dva.sopapi.sopref.data.updates.NewInstrument;
-import au.gov.dva.sopapi.sopref.data.updates.SoPLoader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +16,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 public class AutoUpdateTests {
@@ -40,6 +36,9 @@ public class AutoUpdateTests {
         Stream<InstrumentChange> results = jsonObjects.stream().map(n -> InstrumentChangeBase.fromJson(n));
         Assert.assertTrue(results.count() == 2);
     }
+
+
+
 
 
 }

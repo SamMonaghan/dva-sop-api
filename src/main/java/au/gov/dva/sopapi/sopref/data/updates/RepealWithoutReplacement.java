@@ -28,7 +28,7 @@ public class RepealWithoutReplacement extends InstrumentChangeBase implements In
 
     @Override
     public void Apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
-        repository.deleteSoP(getInstrumentId());
+        repository.deleteSoPIfExists(getInstrumentId());
     }
 
 

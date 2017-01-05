@@ -139,6 +139,3 @@ This works similarly to the previous case, except that the repealing instrument 
 
 
 
-
-
-

@@ -36,11 +36,12 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
     @Override
     public void Apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
 
+
         // todo WIP
         // remove old register id
         // add new
 
-        repository.deleteSoP(oldRegisterId);
+        repository.deleteSoPIfExists(oldRegisterId);
 //        repository.saveSop(soPProvider.apply(getInstrumentId()).);
 
     }

@@ -41,13 +41,13 @@ public class SoPLoader {
         this.sopFactoryProvider = sopFactoryProvider;
     }
 
-    public void UpdateAll(long timeOutMinutes) {
+    public void UpdateAll(long timeOutSeconds) {
         ImmutableSet<InstrumentChange> instrumentChanges = repository.getInstrumentChanges();
         Stream<String> instrumentIds = instrumentChanges.stream().map(ic -> ic.getInstrumentId());
         List<CompletableFuture<Optional<SoP>>> updateTasks = instrumentIds.map(id -> createGetSopTask(id)).collect(Collectors.toList());
         CompletableFuture<List<Optional<SoP>>> allTasksAsOneFuture = sequence(updateTasks);
         try {
-           List<Optional<SoP>> allSops = allTasksAsOneFuture.get(timeOutMinutes, TimeUnit.MINUTES);
+           List<Optional<SoP>> allSops = allTasksAsOneFuture.get(timeOutSeconds, TimeUnit.MINUTES);
            Stream<SoP> nonEmptySops = allSops.stream().filter(s -> s.isPresent()).map(s -> s.get());
            ImmutableMap<String,SoP> sopMap = toMap(nonEmptySops);
 
@@ -66,7 +66,7 @@ public class SoPLoader {
         } catch (ExecutionException e) {
             logger.error("Bulk task to update SoPs failed to execute.",e);
         } catch (TimeoutException e) {
-            logger.error(String.format("Bulk task to update SoPs timed out after %d minutes.", timeOutMinutes));
+            logger.error(String.format("Bulk task to update SoPs timed out after %d seconds.", timeOutSeconds));
         }
     }
 

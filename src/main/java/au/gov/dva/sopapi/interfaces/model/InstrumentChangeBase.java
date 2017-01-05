@@ -47,7 +47,7 @@ public class InstrumentChangeBase {
 
    protected static String extractInstrumentId(JsonNode jsonNode)
    {
-       return jsonNode.findValue(TYPE_LABEL).asText();
+       return jsonNode.findValue(INSTRUMENT_ID_LABEL).asText();
    }
 
    protected static OffsetDateTime extractDate(JsonNode jsonNode)

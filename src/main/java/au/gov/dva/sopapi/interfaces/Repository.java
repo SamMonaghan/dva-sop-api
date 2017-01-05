@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface Repository {
      void saveSop(SoP sop);
-     void deleteSoP(String registerId);
+     void deleteSoPIfExists(String registerId);
      Optional<SoP> getSop(String registerId);
      ImmutableSet<SoP> getAllSops();
      ImmutableSet<InstrumentChange> getInstrumentChanges();
