@@ -14,37 +14,33 @@ import java.util.function.Function;
 
 public class NewInstrument extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
+    public NewInstrument(String registerId, OffsetDateTime date) {
+        super(registerId, date);
+    }
+
     @Override
     public String toString() {
         return "NewInstrument{" +
-                "instrumentId='" + instrumentId + '\'' +
-                ", date=" + date +
+                "instrumentId='" + getInstrumentId() + '\'' +
+                ", date=" + getDate() +
                 '}';
-    }
-
-    private final String instrumentId;
-    private final OffsetDateTime date;
-
-    public NewInstrument(String instrumentId, OffsetDateTime date) {
-        this.instrumentId = instrumentId;
-        this.date = date;
     }
 
     public static final String TYPE_NAME = "new";
 
     @Override
     public String getInstrumentId() {
-        return instrumentId;
+        return super.getInstrumentId();
     }
 
     @Override
     public OffsetDateTime getDate() {
-        return date;
+        return super.getDate();
     }
 
     public JsonNode toJson()
     {
-        return getCommonNode(TYPE_NAME,instrumentId,date);
+        return getCommonNode(TYPE_NAME, getInstrumentId(),getDate());
     }
 
     @Override

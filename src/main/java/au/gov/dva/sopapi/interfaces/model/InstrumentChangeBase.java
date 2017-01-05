@@ -13,6 +13,17 @@ public class InstrumentChangeBase {
    protected static final String TYPE_LABEL = "type";
    protected static final String DATE_LABEL = "date";
    protected static final String INSTRUMENT_ID_LABEL = "registerId";
+   private final String registerId;
+   private final OffsetDateTime date;
+
+   protected InstrumentChangeBase(String registerId, OffsetDateTime date)
+   {
+
+      this.registerId = registerId;
+      this.date = date;
+   }
+
+
 
    protected ObjectNode getCommonNode(String typeName, String instrumentId, OffsetDateTime date)
    {
@@ -46,4 +57,11 @@ public class InstrumentChangeBase {
        return date;
    }
 
+   public String getInstrumentId() {
+      return registerId;
+   }
+
+   public OffsetDateTime getDate() {
+      return date;
+   }
 }

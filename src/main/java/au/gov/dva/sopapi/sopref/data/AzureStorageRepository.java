@@ -76,6 +76,25 @@ public class AzureStorageRepository implements Repository {
     }
 
     @Override
+    public void deleteSoP(String registerId) {
+        try
+        {
+            CloudBlobContainer container = getOrCreateContainer(SOP_CONTAINER_NAME);
+            CloudBlockBlob blob = container.getBlockBlobReference(registerId);
+            boolean success =  blob.deleteIfExists();
+            if (!success)
+            {
+                throw new RepositoryError(String.format("Failed to delete SoP with register ID: %s", registerId));
+            }
+        }
+        catch (Exception e)
+        {
+            throw new RepositoryError(String.format("Failed to delete SoP with register ID: %s", registerId),e);
+        }
+
+    }
+
+    @Override
     public Optional<SoP> getSop(String registerId) {
         try {
             CloudBlobContainer cloudBlobContainer = getOrCreateContainer(SOP_CONTAINER_NAME);
