@@ -10,6 +10,7 @@ import au.gov.dva.sopapi.sopref.data.servicedeterminations.StoredServiceDetermin
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -25,6 +26,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,6 +40,7 @@ public class AzureStorageRepository implements Repository {
     private static final String SOP_CONTAINER_NAME = "sops";
     private static final String SERVICE_DETERMINATIONS_CONTAINER_NAME = "servicedeterminations";
     private static final String INSTRUMENT_CHANGES_CONTAINER_NAME = "instrumentchanges";
+
     private CloudStorageAccount _cloudStorageAccount = null;
     private CloudBlobClient _cloudBlobClient = null;
 
@@ -56,7 +59,7 @@ public class AzureStorageRepository implements Repository {
 
     private CloudBlobContainer getOrCreateContainer(String containerName) throws URISyntaxException, StorageException {
         CloudBlobClient serviceClient = _cloudStorageAccount.createCloudBlobClient();
-        CloudBlobContainer container = serviceClient.getContainerReference(SOP_CONTAINER_NAME);
+        CloudBlobContainer container = serviceClient.getContainerReference(containerName);
 
         if (!container.exists()) {
             container.create();
@@ -218,6 +221,19 @@ public class AzureStorageRepository implements Repository {
 
     @Override
     public void addInstrumentChange(InstrumentChange instrumentChange) {
+        try {
+            CloudBlobContainer container = getOrCreateContainer(INSTRUMENT_CHANGES_CONTAINER_NAME);
+            String newBlobName = String.format("%s_%s.json", instrumentChange.getInstrumentId(), UUID.randomUUID());
+            CloudBlockBlob blob = container.getBlockBlobReference(newBlobName);
+            ObjectMapper objectMapper = new ObjectMapper();
+            ArrayNode root = objectMapper.createArrayNode();
+            root.add(instrumentChange.toJson());
+            blob.uploadText(Conversions.toString(root));
+        } catch (RuntimeException e) {
+            throw new RepositoryError(e);
+        } catch (Exception e) {
+            throw new RepositoryError(e);
+        }
     }
 
     @Override
