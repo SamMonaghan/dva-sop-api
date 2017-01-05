@@ -78,7 +78,7 @@ public class ConversionTests {
     }
 
     @Test
-    public void produceClensedTextForLSBop() throws IOException {
+    public void producecleansedTextForLSBop() throws IOException {
 
             URL inputPdf = Resources.getResource("sops_bop/F2014L00930.pdf");
             byte[] pdfBytes = Resources.toByteArray(inputPdf);

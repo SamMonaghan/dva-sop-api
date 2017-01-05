@@ -13,7 +13,7 @@ import scala.collection.mutable
 @RunWith(classOf[JUnitRunner])
 class RHSoPParsingTests extends FunSuite {
 
-  test("Parse all RH SoPs") {
+  ignore("Parse all RH SoPs") {
     val rhIds = ParserTestUtils.resourceToString("rhSopRegisterIds.txt").split("\n");
 
     val errorMap = mutable.HashMap.empty[String, Throwable];
