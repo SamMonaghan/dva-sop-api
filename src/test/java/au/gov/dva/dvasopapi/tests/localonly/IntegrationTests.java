@@ -43,8 +43,8 @@ public class IntegrationTests {
 
         Repository localRepository = new AzureStorageRepository("UseDevelopmentStorage=true");
         // setup
-        localRepository.deleteSoPIfExists("F2014L00929");
-        NewInstrument newInstrument = new NewInstrument("F2014L00929", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,1)));
+        localRepository.deleteSoPIfExists("F2014L00933");
+        NewInstrument newInstrument = new NewInstrument("F2014L00933", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,1)));
         localRepository.addInstrumentChange(newInstrument);
         // end setup
 
