@@ -1,5 +1,6 @@
 package au.gov.dva.sopapi.sopref.parsing.implementations
 
+import java.text.ParseException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -10,6 +11,7 @@ import au.gov.dva.sopapi.sopref.parsing.traits.SoPParser
 
 import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
+import com.frequal.romannumerals.Converter
 
 object OsteoarthritisParser extends SoPParser with RegexParsers {
 
@@ -22,41 +24,61 @@ object OsteoarthritisParser extends SoPParser with RegexParsers {
 
   def semicolonTerminator: Parser[String] = """;""".r
 
-  def subParaBodyTextParser: Parser[String] = """[A-Za-z0-9\-'’,\s]+""".r
+  def factorTerminatorParser: Parser[String] = orTerminator | periodTerminator
+
+  def subParaBodyTextParser: Parser[String] = """[A-Za-z0-9\-'’,\s]+[A-Za-z0-9]""".r
   def subParaLetterParser: Parser[String] = """\([a-z]+\)""".r
   def paraHeadParser: Parser[String] = """[A-Za-z0-9\-'’,\s]+,\s""".r
 
-  def subParaTerminatorParser: Parser[String] = andTerminator | orTerminator | semicolonTerminator
+  def subParaSeparatorParser: Parser[String] = andTerminator | orTerminator
 
-  def subParaParser: Parser[(String, String)] = subParaLetterParser ~ subParaBodyTextParser ~ subParaTerminatorParser ^^ {
-    case subParaLetter ~ subParaBody ~ subParaTerminator => (subParaLetter, subParaBody + subParaTerminator)
+  def finalSubParaParser: Parser[(String, String)] = subParaLetterParser ~ subParaBodyTextParser ^? {
+    case subParaLetter ~ subParaBody if (verifySubparagraphLabel(subParaLetter)) => { currentSubparagraphNumber+=1; (subParaLetter, subParaBody) }
   }
 
-  def listSubParasParser: Parser[List[(String, String)]] = rep1(subParaParser) ^^ {
-    case listOfSubFactors: Seq[(String, String)] => listOfSubFactors
+  def subParaParser: Parser[(String, String)] = subParaLetterParser ~ subParaBodyTextParser ~ subParaSeparatorParser ^? {
+    case subParaLetter ~ subParaBody ~ subParaSeparator if (verifySubparagraphLabel(subParaLetter)) => { currentSubparagraphNumber+=1; (subParaLetter, subParaBody + subParaSeparator) }
   }
 
-  def paraFooterParser: Parser[String] = """[A-Za-z0-9\-'’,\s]+[A-Za-z0-9]""".r
+  def listSubParasParser: Parser[List[(String, String)]] = rep1(subParaParser) ~ finalSubParaParser ^^ {
+    case listOfSubFactors ~ finalSubPara => listOfSubFactors :+ finalSubPara
+  }
+
+  def paraFooterParser: Parser[String] = semicolonTerminator ~> paraFooterTextParser
+
+  def paraFooterTextParser: Parser[String] = """[A-Za-z0-9\-'’,\s]+[A-Za-z0-9]""".r
 
 
-  def factorBodyTextParser: Parser[(String, List[(String, String)], String)] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r ^^ {
+  def factorBodyTextParser: Parser[(String, List[(String, String)], String)] = """(([A-Za-z0-9\-'’,\)\(\s](?!\(i\))|\.(?=[A-Za-z0-9])(?!\(i\))))+""".r ^^ {
     case factorBody => (factorBody, null, null)
   }
 
 
   def paraWithSubParasParser: Parser[(String, List[(String, String)], String)] = paraHeadParser ~ listSubParasParser ~ paraFooterParser.? ^^ {
-    case head ~ subFactorList ~ footer => (head, subFactorList, footer.orNull)
+    case head ~ subFactorList ~ footer => currentSubparagraphNumber=0; (head, subFactorList, footer.orNull)
+  }
+
+  var currentSubparagraphNumber : Int = 0
+
+  def verifySubparagraphLabel(label : String) : Boolean = {
+    def strippedLabel = label.replace("(", "").replace(")", "").toUpperCase()
+    try {
+        var number = new Converter().toNumber(strippedLabel)
+        return number == currentSubparagraphNumber + 1
+    } catch {
+      case ex: ParseException => false
+    }
   }
 
   def paraBodyParser: Parser[(String, List[(String, String)], String)] = paraWithSubParasParser | factorBodyTextParser
 
   def paraLetterParser: Parser[String] = """\([a-z]+\)""".r
 
-  def paraAndTextParser: Parser[(String, String, List[(String, String)], String)] = paraLetterParser ~ paraBodyParser ^^ {
+  def paraAndTextParser: Parser[(String, String, List[(String, String)], String)] = paraLetterParser ~ paraBodyParser <~ factorTerminatorParser ^^ {
     case para ~ factorComponents => (para, factorComponents._1, factorComponents._2, factorComponents._3)
   }
 
-  def separatedFactorListParser: Parser[List[(String, String, List[(String, String)], String)]] = repsep(paraAndTextParser, orTerminator) ^^ {
+  def separatedFactorListParser: Parser[List[(String, String, List[(String, String)], String)]] = rep1(paraAndTextParser) ^^ {
     case listOfFactors: Seq[(String, String)] => listOfFactors
   }
 
