@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 
 public class SoPLoader {
 
-
     private final Repository repository;
     private final RegisterClient registerClient;
     private final Function<String, SoPCleanser> sopCleanserProvider;
