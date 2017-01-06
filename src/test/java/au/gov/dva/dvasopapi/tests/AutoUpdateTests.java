@@ -56,7 +56,7 @@ public class AutoUpdateTests {
         ImmutableList<String> both =  new ImmutableList.Builder<String>().addAll(rh).addAll(bop).build();
         OffsetDateTime creationDate = DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,6));
         Stream<JsonNode> instrumentChangeStream = both.stream()
-                .p(id -> new NewInstrument(id,creationDate))
+                .map(id -> new NewInstrument(id,creationDate))
                 .map(ni -> ni.toJson());
 
         ObjectMapper objectMapper = new ObjectMapper();
