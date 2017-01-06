@@ -38,7 +38,7 @@ public class LegislationRegisterTests {
     @Test
     public void getRedirectForDetails() throws MalformedURLException, ExecutionException, InterruptedException {
         URL testInstrumentPage = URI.create("https://www.legislation.gov.au/Latest/F2014L00930/Download").toURL();
-        URL result = FederalRegisterOfLegislation.getRedirectTarget(testInstrumentPage).get();
+        URL result = FederalRegisterOfLegislation.getRedirectTargetUrl(testInstrumentPage).get();
         Assert.assertTrue(result.equals(URI.create("https://www.legislation.gov.au/Details/F2014L00930/Download").toURL()));
     }
 
