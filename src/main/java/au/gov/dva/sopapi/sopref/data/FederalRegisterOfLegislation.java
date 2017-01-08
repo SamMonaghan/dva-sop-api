@@ -53,31 +53,31 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         } catch (MalformedURLException e) {
             throw new LegislationRegisterError(e);
         }
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Optional<String>> getRedirectTargetRegisterId(String registerId) {
+        URL urlForWhichToGetRedirect;
+        try {
+            urlForWhichToGetRedirect = new URL(buildUrlToGetRedirect(registerId));
+        } catch (MalformedURLException e) {
+            throw new LegislationRegisterError(e);
+        }
+//        return getRedirectTargetUrl(urlForWhichToGetRedirect)
+//                .thenApply(url ->  extractTargetRegisterIdFromRedirectUrl(url));
 
         return null;
     }
 
-    public CompletableFuture<String> getRedirectTargetRegisterId(String registerId) {
-        URL urlToGetRedirect;
-        try {
-            urlToGetRedirect = new URL(buildUrlToGetRedirect(registerId));
-        } catch (MalformedURLException e) {
-            throw new LegislationRegisterError(e);
-        }
-        return getRedirectTargetUrl(urlToGetRedirect)
-                .thenApply(url -> extractTargetRegisterIdFromRedirectUrl(url))
-
-
-    }
-
-    private static String extractTargetRegisterIdFromRedirectUrl(URL redirectTargetUrl)
+    public static String extractTargetRegisterIdFromRedirectUrl(URL redirectTargetUrl)
     {
-        String[] pathParts = redirectTargetUrl.getPath().split("//");
+        String[] pathParts = redirectTargetUrl.getPath().split("/");
         return pathParts[pathParts.length - 1];
     }
 
     @Override
-    public CompletableFuture<byte[]> getAuthorisedInstrumentPdf(String registerId) {
+    public CompletableFuture<byte[]> getLatestAuthorisedInstrumentPdf(String registerId) {
         URL latestDownloadPageUrl;
         try {
             latestDownloadPageUrl = new URL(buildUrlForLatestDownloadPage(registerId));
@@ -183,7 +183,7 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         String linkUrl = elements.attr("href");
 
         assert !linkUrl.isEmpty();
-        Pattern pattern = Pattern.compile("(F[0-9]{4,4}[A-Z][0-9]+)");
+        Pattern pattern = Pattern.compile("(F[0-9]{4}[A-Z][0-9]+)");
         Matcher matcher = pattern.matcher(linkUrl);
 
         if (!matcher.find())

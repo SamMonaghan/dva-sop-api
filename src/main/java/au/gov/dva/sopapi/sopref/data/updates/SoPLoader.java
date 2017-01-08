@@ -24,6 +24,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static au.gov.dva.sopapi.sopref.data.updates.AsyncUtils.sequence;
+
 public class SoPLoader {
 
     private final Repository repository;
@@ -79,21 +81,10 @@ public class SoPLoader {
 
 
 
-    // http://www.nurkiewicz.com/2013/05/java-8-completablefuture-in-action.html
-    private static <T> CompletableFuture<List<Optional<T>>> sequence(List<CompletableFuture<Optional<T>>> futures) {
-        CompletableFuture<Void> allDoneFuture =
-                CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
-        return allDoneFuture.thenApply(v ->
-                futures.stream().
-                        map(future -> future.join()).
-                        collect(Collectors.toList())
-        );
-    }
-
 
 
     public CompletableFuture<Optional<SoP>> createGetSopTask(String registerId) {
-        return createGetSopTask(registerId, s -> registerClient.getAuthorisedInstrumentPdf(s), sopCleanserProvider, sopFactoryProvider);
+        return createGetSopTask(registerId, s -> registerClient.getLatestAuthorisedInstrumentPdf(s), sopCleanserProvider, sopFactoryProvider);
     }
 
 

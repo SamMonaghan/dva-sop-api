@@ -3,6 +3,7 @@ package au.gov.dva.dvasopapi.tests;
 import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
+import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislation;
 import au.gov.dva.sopapi.sopref.data.JsonUtils;
 import au.gov.dva.sopapi.sopref.data.updates.NewInstrument;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,6 +19,9 @@ import org.junit.Test;
 import scala.util.parsing.json.JSON;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -66,7 +70,13 @@ public class AutoUpdateTests {
 
     }
 
+    @Test
+    public void testRedirectUrlGet() throws MalformedURLException {
+        URL redirectTarget = URI.create("http://www.legislation.gov.au/Details/F2014C383817").toURL();
 
+        String result = FederalRegisterOfLegislation.extractTargetRegisterIdFromRedirectUrl(redirectTarget);
+        Assert.assertTrue(result.contentEquals("F2014C383817"));
+    }
 
 
 
