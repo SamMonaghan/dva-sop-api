@@ -57,17 +57,16 @@ public class FederalRegisterOfLegislation implements RegisterClient {
     }
 
     @Override
-    public CompletableFuture<Optional<String>> getRedirectTargetRegisterId(String registerId) {
+    public CompletableFuture<String> getRedirectTargetRegisterId(String registerId) {
         URL urlForWhichToGetRedirect;
         try {
             urlForWhichToGetRedirect = new URL(buildUrlToGetRedirect(registerId));
         } catch (MalformedURLException e) {
             throw new LegislationRegisterError(e);
         }
-//        return getRedirectTargetUrl(urlForWhichToGetRedirect)
-//                .thenApply(url ->  extractTargetRegisterIdFromRedirectUrl(url));
+        return getRedirectTargetUrl(urlForWhichToGetRedirect)
+                .thenApply(url ->  extractTargetRegisterIdFromRedirectUrl(url));
 
-        return null;
     }
 
     public static String extractTargetRegisterIdFromRedirectUrl(URL redirectTargetUrl)
