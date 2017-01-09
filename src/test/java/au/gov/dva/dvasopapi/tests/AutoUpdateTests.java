@@ -100,9 +100,5 @@ public class AutoUpdateTests {
         }
 
         Assert.assertTrue(newCompilations.size() == 3);
-
     }
-
-
-
 }

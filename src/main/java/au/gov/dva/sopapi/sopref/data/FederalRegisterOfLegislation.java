@@ -31,11 +31,11 @@ public class FederalRegisterOfLegislation implements RegisterClient {
 
         public AuthorisedInstrumentResult(String registerId, byte[] pdfBytes) {
             this.registerId = registerId;
-            this.pdfBytes = pdfBytes;
+            this.pdfBytes = pdfBytes.clone();
         }
 
         public byte[] getPdfBytes() {
-            return pdfBytes;
+            return pdfBytes.clone();
         }
 
         public String getRegisterId() {
@@ -205,13 +205,13 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         String cssSelector = String.format("#%s", id);
         Elements elements = htmlDocument.select(cssSelector);
         if (elements.isEmpty()) {
-            logger.error(String.format("Could not determine current status of instrument using selector '%s' from HTML: \n%s", cssSelector, html));
+            logger.error(String.format("Could not determine current status of instrument using selector '%s' from HTML: %n%s", cssSelector, html));
             return Optional.empty();
         }
         Element element = elements.first();
         String status = element.text();
         if (status.isEmpty()) {
-            logger.error(String.format("Empty string value for status using selector '%s' from HTML: \n%s", cssSelector, html));
+            logger.error(String.format("Empty string value for status using selector '%s' from HTML: %n%s", cssSelector, html));
             return Optional.empty();
         }
         return Optional.of(status.trim());
