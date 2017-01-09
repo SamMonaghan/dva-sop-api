@@ -119,7 +119,6 @@
     <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpcore:4.4.4" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.xmlbeans:xmlbeans:2.6.0" level="project" />
     <orderEntry type="library" name="Gradle: stax:stax-api:1.0.1" level="project" />
-    <orderEntry type="library" name="scala-sdk-2.12.0" level="application" />
   </component>
   <component name="TestModuleProperties" production-module="dva-sop-api_main" />
 </module>
