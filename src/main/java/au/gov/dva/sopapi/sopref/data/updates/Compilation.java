@@ -17,8 +17,15 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
 
     private final String oldRegisterId;
 
-    public Compilation(String registerId, OffsetDateTime date, String oldRegisterId) {
-        super(registerId, date);
+    @Override
+    public String toString() {
+        return "Compilation{" +
+                "oldRegisterId='" + oldRegisterId + '\'' +
+                "} " + super.toString();
+    }
+
+    public Compilation(String currentRegisterId, OffsetDateTime date, String oldRegisterId) {
+        super(currentRegisterId, date);
         this.oldRegisterId = oldRegisterId;
     }
 
@@ -45,7 +52,6 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
 //        repository.saveSop(soPProvider.apply(getInstrumentId()).);
 
     }
-
 
 
     @Override

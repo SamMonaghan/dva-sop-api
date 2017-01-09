@@ -1,21 +1,25 @@
 package au.gov.dva.dvasopapi.tests;
 
+import au.gov.dva.dvasopapi.tests.categories.IntegrationTest;
 import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislation;
 import au.gov.dva.sopapi.sopref.data.JsonUtils;
 import au.gov.dva.sopapi.sopref.data.updates.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.SoPChangeDetector;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import scala.util.parsing.json.JSON;
 
 import java.io.IOException;
@@ -78,6 +82,26 @@ public class AutoUpdateTests {
         Assert.assertTrue(result.contentEquals("F2014C383817"));
     }
 
+    @Test
+    @Category(IntegrationTest.class)
+    public void testBulkRedirectTargetGet() {
+        ImmutableSet<String> testSourceIds = ImmutableSet.of(
+                "F2014L01390", // Statement of Principles concerning anxiety disorder No. 103 of 2014,  already amended with compilation
+                "F2014L01389", // Statement of Principles concerning anxiety disorder No. 102 of 2014,  already amended with compilation
+                "F2010L00557"  // Statement of Principles concerning osteoarthritis No. 13 of 2010, already amended with compilation
+        );
+
+        SoPChangeDetector underTest = new SoPChangeDetector(new FederalRegisterOfLegislation());
+        ImmutableSet<InstrumentChange> newCompilations = underTest.detectNewCompilations(testSourceIds);
+
+        for (InstrumentChange s : newCompilations)
+        {
+            System.out.println(s);
+        }
+
+        Assert.assertTrue(newCompilations.size() == 3);
+
+    }
 
 
 

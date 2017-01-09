@@ -1,9 +1,7 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
-import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +12,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SoPChangeDetector {
 
@@ -32,11 +29,11 @@ public class SoPChangeDetector {
                 .collect(Collectors.toList());
         try {
             List<RedirectResult> results = AsyncUtils.sequence(tasks).get();
-            List<Compilation> streamCompilations = results.stream()
+            List<Compilation> compilations = results.stream()
                     .filter(RedirectResult::isUpdatedCompilation)
                     .map(redirectResult -> new Compilation(redirectResult.getTarget().get(), OffsetDateTime.now(),redirectResult.getSource()))
                     .collect(Collectors.toList());
-            return ImmutableSet.copyOf(streamCompilations);
+            return ImmutableSet.copyOf(compilations);
 
         } catch (InterruptedException e) {
             logger.error("Task to get all redirect targets for all Register IDs was interrupted.",e);
@@ -45,12 +42,7 @@ public class SoPChangeDetector {
             logger.error("Task to get all redirect targets for all Register IDs threw execution exception .",e);
             return ImmutableSet.of();
         }
-
-
     }
-
-
-
 
 
     private CompletableFuture<RedirectResult> getRedirectResult(String registerId)
@@ -92,12 +84,8 @@ public class SoPChangeDetector {
                 return false;
 
             else {
-                assert(target.get().contains("C"));
                 return !target.get().contentEquals(source);
             }
         }
     }
-    // new instruments - nothing to do
-    // check for updated compilation
-    // check for repeals
 }

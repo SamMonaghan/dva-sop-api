@@ -10,6 +10,14 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class InstrumentChangeBase {
+   @Override
+   public String toString() {
+      return "InstrumentChangeBase{" +
+              "registerId='" + registerId + '\'' +
+              ", date=" + date +
+              '}';
+   }
+
    protected static final String TYPE_LABEL = "type";
    protected static final String DATE_LABEL = "date";
    protected static final String INSTRUMENT_ID_LABEL = "registerId";
