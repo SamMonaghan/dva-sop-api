@@ -50,7 +50,7 @@ public class IntegrationTests {
 
 
         SoPLoader underTest = new SoPLoader(localRepository, new FederalRegisterOfLegislation(),s -> ServiceLocator.findTextCleanser(s),s -> ServiceLocator.findSoPFactory(s));
-        underTest.UpdateAll(10);
+        underTest.updateAll(10);
 
     }
 }

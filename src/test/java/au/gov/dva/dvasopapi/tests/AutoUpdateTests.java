@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import scala.util.parsing.json.JSON;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,7 +27,6 @@ import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableList.*;
@@ -100,5 +98,14 @@ public class AutoUpdateTests {
         }
 
         Assert.assertTrue(newCompilations.size() == 3);
+    }
+
+    @Test
+    @Category(IntegrationTest.class)
+    public void testGetRepealingRegisterId() {
+
+        // todo:
+        // find repealed Sop replaced with new sop
+        Assert.fail();
     }
 }

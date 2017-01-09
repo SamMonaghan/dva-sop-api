@@ -10,7 +10,6 @@ import java.util.function.Function;
 public interface InstrumentChange extends JsonSerializable {
      String getInstrumentId();
      OffsetDateTime getDate();
-     void Apply(Repository repository, Function<String,Optional<SoP>> soPProvider);
+     void apply(Repository repository, Function<String,Optional<SoP>> soPProvider);
 }
-
 

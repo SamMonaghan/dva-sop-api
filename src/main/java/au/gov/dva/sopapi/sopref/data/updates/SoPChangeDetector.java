@@ -44,6 +44,36 @@ public class SoPChangeDetector {
         }
     }
 
+    public ImmutableSet<InstrumentChange> detectReplacements(ImmutableSet<String> registerIds) {
+
+        List<CompletableFuture<ReplacementResult>> batch = registerIds.stream()
+                .map(s -> getReplacementResult(s))
+                .collect(Collectors.toList());
+
+        try {
+            List<InstrumentChange> results = AsyncUtils.sequence(batch).get()
+                    .stream()
+                    .filter(r -> r.getNewRegisterId().isPresent())
+                    .map(r -> new Replacement(r.getNewRegisterId().get(),OffsetDateTime.now(),r.getOriginalRegisterId()))
+                    .collect(Collectors.toList());
+
+            return ImmutableSet.copyOf(results);
+
+        } catch (InterruptedException e) {
+            logger.error("Task to get all replacing instruments was interrupted.",e);
+            return ImmutableSet.of();
+        } catch (ExecutionException e) {
+            logger.error("task to get all replacing instruments threw Execution Exception.",e);
+            return ImmutableSet.of();
+        }
+    }
+
+
+    private CompletableFuture<ReplacementResult> getReplacementResult(String originalRegisterId)
+    {
+        return registerClient.getRepealingRegisterId(originalRegisterId)
+                .thenApply(s -> new ReplacementResult(originalRegisterId,s));
+    }
 
     private CompletableFuture<RedirectResult> getRedirectResult(String registerId)
     {
@@ -58,6 +88,24 @@ public class SoPChangeDetector {
                         return new RedirectResult(registerId,Optional.empty());
                     }
                 });
+    }
+
+    private class ReplacementResult{
+        private final String originalRegisterId;
+        private final Optional<String> newRegisterId;
+
+        public ReplacementResult(String originalRegisterId, Optional<String> newRegisterId) {
+            this.originalRegisterId = originalRegisterId;
+            this.newRegisterId = newRegisterId;
+        }
+
+        public Optional<String> getNewRegisterId() {
+            return newRegisterId;
+        }
+
+        public String getOriginalRegisterId() {
+            return originalRegisterId;
+        }
     }
 
 

@@ -22,7 +22,7 @@ public class Amendment implements InstrumentChange {
     }
 
     @Override
-    public void Apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
+    public void apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
 
     }
 

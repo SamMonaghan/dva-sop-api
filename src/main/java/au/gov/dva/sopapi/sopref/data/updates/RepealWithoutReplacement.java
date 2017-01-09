@@ -18,16 +18,16 @@ public class RepealWithoutReplacement extends InstrumentChangeBase implements In
 
     @Override
     public String getInstrumentId() {
-        return getInstrumentId();
+        return super.getInstrumentId();
     }
 
     @Override
     public OffsetDateTime getDate() {
-        return getDate();
+        return super.getDate();
     }
 
     @Override
-    public void Apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
+    public void apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
         repository.deleteSoPIfExists(getInstrumentId());
     }
 

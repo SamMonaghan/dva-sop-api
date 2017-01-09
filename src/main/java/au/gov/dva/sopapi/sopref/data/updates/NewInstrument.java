@@ -44,7 +44,7 @@ public class NewInstrument extends InstrumentChangeBase implements InstrumentCha
     }
 
     @Override
-    public void Apply(Repository repository, Function<String,Optional<SoP>> soPProvider)
+    public void apply(Repository repository, Function<String,Optional<SoP>> soPProvider)
     {
         Optional<SoP> sop = soPProvider.apply(getInstrumentId());
         if (!sop.isPresent())

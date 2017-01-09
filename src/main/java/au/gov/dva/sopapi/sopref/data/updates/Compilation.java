@@ -41,7 +41,7 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
     }
 
     @Override
-    public void Apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
+    public void apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
 
 
         // todo WIP

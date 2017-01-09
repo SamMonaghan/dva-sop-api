@@ -42,7 +42,7 @@ public class SoPLoader {
         this.sopFactoryProvider = sopFactoryProvider;
     }
 
-    public void UpdateAll(long timeOutSeconds) {
+    public void updateAll(long timeOutSeconds) {
         ImmutableSet<InstrumentChange> instrumentChanges = repository.getInstrumentChanges();
         Stream<String> instrumentIds = instrumentChanges.stream().map(ic -> ic.getInstrumentId());
         List<CompletableFuture<Optional<SoP>>> updateTasks = instrumentIds.map(id -> createGetSopTask(id)).collect(Collectors.toList());
@@ -60,8 +60,6 @@ public class SoPLoader {
 
            // todo: could make this asynchronous and batched
            // todo: network timeout, failure handling
-           instrumentChanges.forEach(ic -> ic.Apply(repository,sopProvider));
-
         } catch (InterruptedException e) {
             logger.error("Bulk task to update SoPs was interrupted.",e);
         } catch (ExecutionException e) {
@@ -77,11 +75,6 @@ public class SoPLoader {
         sops.forEach(s -> builder.put(s.getRegisterId(),s));
         return builder.build();
     }
-
-
-
-
-
 
     public CompletableFuture<Optional<SoP>> createGetSopTask(String registerId) {
         return createGetSopTask(registerId, s -> registerClient.getLatestAuthorisedInstrumentPdf(s), sopCleanserProvider, sopFactoryProvider);
@@ -121,7 +114,6 @@ public class SoPLoader {
         });
 
         return promise;
-
     }
 
     private static String buildLoggerMessage(String registerId, String message) {

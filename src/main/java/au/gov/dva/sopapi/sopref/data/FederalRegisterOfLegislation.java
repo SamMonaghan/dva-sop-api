@@ -41,36 +41,21 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         public String getRegisterId() {
             return registerId;
         }
-
     }
 
     final static Logger logger = LoggerFactory.getLogger(FederalRegisterOfLegislation.class);
 
-    public CompletableFuture<AuthorisedInstrumentResult> getAuthorisedInstrument(String registerId) {
-        URL latestDownloadPageUrl;
-        try {
-            latestDownloadPageUrl = new URL(buildUrlForLatestDownloadPage(registerId));
-        } catch (MalformedURLException e) {
-            throw new LegislationRegisterError(e);
-        }
-        return null;
-    }
+
 
     @Override
     public CompletableFuture<String> getRedirectTargetRegisterId(String registerId) {
-        URL urlForWhichToGetRedirect;
-        try {
-            urlForWhichToGetRedirect = new URL(buildUrlToGetRedirect(registerId));
-        } catch (MalformedURLException e) {
-            throw new LegislationRegisterError(e);
-        }
+        URL urlForWhichToGetRedirect = BuildUrl.toGetRedirect(registerId);
         return getRedirectTargetUrl(urlForWhichToGetRedirect)
-                .thenApply(url ->  extractTargetRegisterIdFromRedirectUrl(url));
+                .thenApply(url -> extractTargetRegisterIdFromRedirectUrl(url));
 
     }
 
-    public static String extractTargetRegisterIdFromRedirectUrl(URL redirectTargetUrl)
-    {
+    public static String extractTargetRegisterIdFromRedirectUrl(URL redirectTargetUrl) {
         String[] pathParts = redirectTargetUrl.getPath().split("/");
         return pathParts[pathParts.length - 1];
     }
@@ -78,12 +63,7 @@ public class FederalRegisterOfLegislation implements RegisterClient {
     @Override
     public CompletableFuture<byte[]> getLatestAuthorisedInstrumentPdf(String registerId) {
         URL latestDownloadPageUrl;
-        try {
-            latestDownloadPageUrl = new URL(buildUrlForLatestDownloadPage(registerId));
-        } catch (MalformedURLException e) {
-            throw new LegislationRegisterError(e);
-        }
-
+        latestDownloadPageUrl = BuildUrl.forLatestDownloadPage(registerId);
         CompletableFuture<byte[]> promise = getRedirectTargetUrl(latestDownloadPageUrl)
                 .thenCompose(url -> downloadHtml(url))
                 .thenApply(htmlString -> {
@@ -173,6 +153,36 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         return getCssIdValue(html, "MainContent_ucLegItemPane_lblVersionStatus");
     }
 
+    @Override
+    public CompletableFuture<Optional<String>> getRepealingRegisterId(String repealedRegisterId) {
+
+        URL urlForSeriesPage = BuildUrl.forSeriesPage(repealedRegisterId);
+
+        AsyncHttpClient asyncHttpClient = asyncHttpClient();
+        CompletableFuture<Optional<String>> promise = asyncHttpClient
+                .prepareGet(urlForSeriesPage.toString())
+                .execute()
+                .toCompletableFuture()
+                .thenApply(response -> {
+                    if (response.getStatusCode() == 200)
+                    {
+                        Optional<String> registerIdOfRepealingInstrument = getRegisterIdOfRepealedByCeasedBy(response.getResponseBody());
+                        if (!registerIdOfRepealingInstrument.isPresent())
+                        {
+                            logger.trace("Did not find Register ID of repealing or ceasing instrument on this page: %n" + response.getResponseBody());
+                            return Optional.empty();
+                        }
+                        return Optional.of(registerIdOfRepealingInstrument.get());
+                    }
+                    else {
+                        logger.trace(String.format("Did not find Series page for Register ID: %s.%%nResponse Code: %d", repealedRegisterId, response.getStatusCode()));
+                        return Optional.empty();
+                    }
+                });
+
+        return promise;
+    }
+
 
     public static Optional<String> getRegisterIdOfRepealedByCeasedBy(String html) {
         Document htmlDocument = Jsoup.parse(html);
@@ -195,7 +205,6 @@ public class FederalRegisterOfLegislation implements RegisterClient {
     public static String getLatestCompilation(String registerId) {
         // eg https://www.legislation.gov.au/Series/F2014L01389/Compilations
 
-
         return null;
     }
 
@@ -217,12 +226,31 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         return Optional.of(status.trim());
     }
 
-    private static String buildUrlForLatestDownloadPage(String registerId) {
-        return String.format("%s/Latest/%s/Download", BASE_URL, registerId);
-    }
+    private static class BuildUrl {
+        public static URL toGetRedirect(String sourceRegisterId) {
+            try {
+                return new URL(String.format("%s/Latest/%s", BASE_URL, sourceRegisterId));
+            } catch (MalformedURLException e) {
+                throw new LegislationRegisterError(e);
+            }
+        }
 
-    private static String buildUrlToGetRedirect(String sourceRegisterId) {
-        return String.format("%s/Latest/%s", BASE_URL, sourceRegisterId);
+        public static URL forLatestDownloadPage(String registerId) {
+            try {
+                return new URL(String.format("%s/Latest/%s/Download", BASE_URL, registerId));
+            } catch (MalformedURLException e) {
+                throw new LegislationRegisterError(e);
+            }
+        }
+
+        public static URL forSeriesPage(String registerId)
+        {
+            try {
+                return new URL(String.format("%s/Series/%s",BASE_URL, registerId));
+            } catch (MalformedURLException e) {
+                throw new LegislationRegisterError(e);
+            }
+        }
     }
 
 }

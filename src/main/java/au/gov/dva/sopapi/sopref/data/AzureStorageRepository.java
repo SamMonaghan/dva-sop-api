@@ -45,8 +45,6 @@ public class AzureStorageRepository implements Repository {
     private CloudBlobClient _cloudBlobClient = null;
 
 
-
-
     public AzureStorageRepository(String storageConnectionString) {
         try {
             _storageConnectionString = storageConnectionString;
@@ -86,22 +84,19 @@ public class AzureStorageRepository implements Repository {
 
     @Override
     public void deleteSoPIfExists(String registerId) {
-        try
-        {
+        try {
             CloudBlobContainer container = getOrCreateContainer(SOP_CONTAINER_NAME);
             CloudBlockBlob blob = container.getBlockBlobReference(registerId);
-            boolean success =  blob.deleteIfExists();
+            boolean success = blob.deleteIfExists();
             if (!success) {
                 logger.trace(String.format("SoP not found, therefore not deleted: %s", registerId));
             }
 
+        } catch (Exception e) {
+            throw new RepositoryError(String.format("Failed to delete SoP with register ID: %s", registerId), e);
         }
-        catch (Exception e)
-        {
-            throw new RepositoryError(String.format("Failed to delete SoP with register ID: %s", registerId),e);
-        }
-
     }
+
 
     @Override
     public Optional<SoP> getSop(String registerId) {
