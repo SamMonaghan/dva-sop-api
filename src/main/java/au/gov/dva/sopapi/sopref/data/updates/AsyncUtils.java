@@ -8,8 +8,7 @@ import java.util.stream.Collectors;
 class AsyncUtils {
 
 
- // http://www.nurkiewicz.com/2013/05/java-8-completablefuture-in-action.html
- public static <T> CompletableFuture<List<Optional<T>>> sequence(List<CompletableFuture<Optional<T>>> futures) {
+ public static <T> CompletableFuture<List<T>> sequence(List<CompletableFuture<T>> futures) {
   CompletableFuture<Void> allDoneFuture =
           CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
   return allDoneFuture.thenApply(v ->

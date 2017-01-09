@@ -1,5 +1,6 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
+import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import com.google.common.collect.ImmutableList;
@@ -7,9 +8,11 @@ import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,28 +27,76 @@ public class SoPChangeDetector {
 
     public ImmutableSet<InstrumentChange> detectNewCompilations(ImmutableSet<String> registerIds)
     {
-//        List<CompletableFuture<Optional<String>>> tasks = registerIds.stream()
-//                .map(s -> {
-//
-//                       return registerClient.getRedirectTargetRegisterId(s)
-//                               .handle((result, throwable) -> {
-//                                   if (result != null)
-//                                   {
-//                                       return Optional.of(result);
-//                                   }
-//                                   else {
-//
-//                                   }
-//                               })
-//
-//                } registerClient.getRedirectTargetRegisterId(s))
-//                .
+        List<CompletableFuture<RedirectResult>> tasks = registerIds.stream()
+                .map(s -> getRedirectResult(s))
+                .collect(Collectors.toList());
+        try {
+            List<RedirectResult> results = AsyncUtils.sequence(tasks).get();
+            List<Compilation> streamCompilations = results.stream()
+                    .filter(RedirectResult::isUpdatedCompilation)
+                    .map(redirectResult -> new Compilation(redirectResult.getTarget().get(), OffsetDateTime.now(),redirectResult.getSource()))
+                    .collect(Collectors.toList());
+            return ImmutableSet.copyOf(streamCompilations);
 
-            return null;
+        } catch (InterruptedException e) {
+            logger.error("Task to get all redirect targets for all Register IDs was interrupted.",e);
+            return ImmutableSet.of();
+        } catch (ExecutionException e) {
+            logger.error("Task to get all redirect targets for all Register IDs threw execution exception .",e);
+            return ImmutableSet.of();
+        }
 
 
     }
 
+
+
+
+
+    private CompletableFuture<RedirectResult> getRedirectResult(String registerId)
+    {
+        return  registerClient.getRedirectTargetRegisterId(registerId)
+                .handle((s, throwable) -> {
+                    if (s != null)
+                    {
+                         return new RedirectResult(registerId,Optional.of(s));
+                    }
+                    else {
+                        logger.error(String.format("Could not get redirect target for Register ID %s", s));
+                        return new RedirectResult(registerId,Optional.empty());
+                    }
+                });
+    }
+
+
+    private class RedirectResult {
+        private final String source;
+        private final Optional<String> target;
+
+        public RedirectResult(String source, Optional<String> target) {
+            this.source = source;
+            this.target = target;
+        }
+
+        public Optional<String> getTarget() {
+            return target;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public boolean isUpdatedCompilation()
+        {
+            if (!getTarget().isPresent())
+                return false;
+
+            else {
+                assert(target.get().contains("C"));
+                return !target.get().contentEquals(source);
+            }
+        }
+    }
     // new instruments - nothing to do
     // check for updated compilation
     // check for repeals
