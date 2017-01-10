@@ -58,8 +58,10 @@ public class SoPLoader {
                 else return Optional.empty();
            };
 
-           // todo: could make this asynchronous and batched
-           // todo: network timeout, failure handling
+            // todo: could make this asynchronous and batched
+            // todo: network timeout, failure handling
+           instrumentChanges.stream().forEach(ic -> ic.apply(repository,sopProvider));
+
         } catch (InterruptedException e) {
             logger.error("Bulk task to update SoPs was interrupted.",e);
         } catch (ExecutionException e) {

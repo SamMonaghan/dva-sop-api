@@ -33,6 +33,9 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
 
     @Override
     public void apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
+        // end date old, adding register ID of repealing
+        // add new
+
 
     }
 

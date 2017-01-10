@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class StoredSop implements SoP, HasSchemaVersion {
@@ -132,6 +133,11 @@ public class StoredSop implements SoP, HasSchemaVersion {
     }
 
     @Override
+    public Optional<LocalDate> getEndDate() {
+        return null;
+    }
+
+    @Override
     public StandardOfProof getStandardOfProof() {
         return standardOfProof;
     }
@@ -204,7 +210,10 @@ public class StoredSop implements SoP, HasSchemaVersion {
         return rootNode;
     }
 
-
+    public static SoP repealed(LocalDate endDate, String repealingInstrument)
+    {
+        return null;
+    }
 
     private static JsonNode toJson(Factor factor)
     {
