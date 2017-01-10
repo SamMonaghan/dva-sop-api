@@ -12,8 +12,10 @@ public interface Repository {
      void deleteSoPIfExists(String registerId);
      Optional<SoP> getSop(String registerId);
      ImmutableSet<SoP> getAllSops();
+     void archiveSoP(String registerId);
      ImmutableSet<InstrumentChange> getInstrumentChanges();
      void addInstrumentChange(InstrumentChange instrumentChange);
      void addServiceDetermination(ServiceDetermination serviceDetermination);
      ImmutableSet<ServiceDetermination> getServiceDeterminations();
+
 }

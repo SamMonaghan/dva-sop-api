@@ -1,12 +1,16 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
+import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.SoP;
+import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import javax.mail.Store;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.function.Function;
@@ -33,8 +37,21 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
 
     @Override
     public void apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
-        // end date old, adding register ID of repealing
-        // add new
+        Optional<SoP> toEndDate = repository.getSop(oldInstrumentRegisterId);
+        if (!toEndDate.isPresent())
+        {
+            throw new AutoUpdateError(String.format("Attempt to update the end date of SoP %s failed because it is not present in the Repository.", oldInstrumentRegisterId));
+        }
+
+        Optional<SoP> repealingSop = soPProvider.apply(this.getInstrumentId());
+        if (!repealingSop.isPresent())
+        {
+            throw new AutoUpdateError(String.format("Replacement of repealed SoP %s failed because could not obtain new SoP %s", oldInstrumentRegisterId, getInstrumentId()));
+        }
+
+        LocalDate effectiveDateOfNewSoP = repealingSop.get().getEffectiveFromDate();
+
+        SoP endDated = StoredSop.withEndDate(toEndDate.get(), effectiveDateOfNewSoP.minusDays(1));
 
 
     }
