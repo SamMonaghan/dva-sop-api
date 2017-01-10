@@ -48,7 +48,6 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
             throw new AutoUpdateError(String.format("Attempt to update the end date of SoP %s failed because it is not present in the Repository.", oldInstrumentRegisterId));
         }
 
-
         Optional<SoP> repealingSop = soPProvider.apply(this.getInstrumentId());
         if (!repealingSop.isPresent())
         {
@@ -57,9 +56,7 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
 
         LocalDate effectiveDateOfNewSoP = repealingSop.get().getEffectiveFromDate();
         SoP endDated = StoredSop.withEndDate(toEndDate.get(), effectiveDateOfNewSoP.minusDays(1));
-        repository.deleteSoPIfExists(oldInstrumentRegisterId);
         repository.saveSop(endDated);
-        repository.archiveSoP(endDated.getRegisterId());
         repository.saveSop(repealingSop.get());
     }
 

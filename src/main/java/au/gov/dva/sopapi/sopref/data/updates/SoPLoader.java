@@ -95,14 +95,11 @@ public class SoPLoader {
 
         });
 
-
         // todo: compilations here
 
         List<InstrumentChange> replacedInstruments = instrumentChanges.stream()
                 .filter(ic -> ic instanceof Replacement)
                 .collect(Collectors.toList());
-
-
 
     }
 

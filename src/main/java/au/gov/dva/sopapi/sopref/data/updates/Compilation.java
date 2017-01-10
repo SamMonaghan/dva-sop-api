@@ -1,10 +1,12 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
+import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.SoP;
+import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.OffsetDateTime;
@@ -27,7 +29,7 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
         super(currentRegisterId, date);
         this.oldRegisterId = oldRegisterId;
     }
-    
+
 
     @Override
     public String getInstrumentId() {
@@ -42,17 +44,26 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
     @Override
     public void apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
 
+        Optional<SoP> existing = repository.getSop(getInstrumentId());
+        if (existing.isPresent())
+            return;
 
-        // todo WIP
-        // remove old register id
-        // archive it
-        // add new
+        Optional<SoP> toEndDate = repository.getSop(oldRegisterId);
+        if (!toEndDate.isPresent())
+        {
+            throw new AutoUpdateError(String.format("Attempt to update the end date of SoP %s failed because it is not present in the Repository.", oldRegisterId));
+        }
 
-        repository.deleteSoPIfExists(oldRegisterId);
-//        repository.saveSop(soPProvider.apply(getInstrumentId()).);
-
+        Optional<SoP> newCompilation = soPProvider.apply(getInstrumentId());
+        if (!newCompilation.isPresent())
+        {
+            throw new AutoUpdateError(String.format("Could not get new compliation for SoP: %s", getInstrumentId()));
+        }
+        SoP endDatedSop = StoredSop.withEndDate(toEndDate.get(), newCompilation.get().getEffectiveFromDate().minusDays(1));
+        repository.archiveSoP(oldRegisterId);
+        repository.saveSop(endDatedSop);
+        repository.saveSop(newCompilation.get());
     }
-
 
     @Override
     public JsonNode toJson() {
