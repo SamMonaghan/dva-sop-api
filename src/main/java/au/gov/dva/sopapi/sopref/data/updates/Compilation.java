@@ -57,8 +57,9 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
         Optional<SoP> newCompilation = soPProvider.apply(getInstrumentId());
         if (!newCompilation.isPresent())
         {
-            throw new AutoUpdateError(String.format("Could not get new compliation for SoP: %s", getInstrumentId()));
+            throw new AutoUpdateError(String.format("Could not get new compilation for SoP: %s", getInstrumentId()));
         }
+
         SoP endDatedSop = StoredSop.withEndDate(toEndDate.get(), newCompilation.get().getEffectiveFromDate().minusDays(1));
         repository.archiveSoP(oldRegisterId);
         repository.saveSop(endDatedSop);

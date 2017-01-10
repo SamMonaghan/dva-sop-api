@@ -38,7 +38,6 @@ public class SoPLoader {
     private final Logger logger = LoggerFactory.getLogger(SoPLoader.class);
 
     public SoPLoader(Repository repository, RegisterClient registerClient, Function<String, SoPCleanser> sopCleanserProvider, Function<String, SoPFactory> sopFactoryProvider) {
-
         this.repository = repository;
         this.registerClient = registerClient;
         this.sopCleanserProvider = sopCleanserProvider;
@@ -83,7 +82,6 @@ public class SoPLoader {
                 .sorted((o1, o2) -> o1.getDate().compareTo(o2.getDate()))
                 .collect(Collectors.toList());
 
-
         newInstrumentChangesOrderedFirstToLast.parallelStream().forEach(ic -> {
             try {
                 ic.apply(repository, sopProvider);
@@ -92,7 +90,6 @@ public class SoPLoader {
             {
                 logger.error("Failed to apply update to repository for instrument change: " + ic.toString(),e);
             }
-
         });
 
         // todo: compilations here
@@ -113,7 +110,6 @@ public class SoPLoader {
     public CompletableFuture<Optional<SoP>> createGetSopTask(String registerId) {
         return createGetSopTask(registerId, s -> registerClient.getLatestAuthorisedInstrumentPdf(s), sopCleanserProvider, sopFactoryProvider);
     }
-
 
     private CompletableFuture<Optional<SoP>> createGetSopTask(String registerId, Function<String, CompletableFuture<byte[]>> authorisedPdfProvider, Function<String, SoPCleanser> sopCleanserProvider, Function<String, SoPFactory> sopFactoryProvider) {
         CompletableFuture<Optional<SoP>> promise = authorisedPdfProvider.apply(registerId).thenApply(bytes -> {
