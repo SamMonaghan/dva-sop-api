@@ -14,7 +14,6 @@ import java.time.OffsetDateTime;
 import java.util.concurrent.ExecutionException;
 
 public class LegislationRegisterSubscriptionTests {
-
     @Test
     @Category(IntegrationTest.class)
     public void retrieve() throws ExecutionException, InterruptedException {
@@ -23,6 +22,5 @@ public class LegislationRegisterSubscriptionTests {
                 .getLatestAfter(DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,11))).get();
 
         Assert.assertTrue(!results.isEmpty());
-
     }
 }
