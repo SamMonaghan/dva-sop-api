@@ -130,7 +130,7 @@ This occurs for all SoPs in the database regularly, at least every 24 hours.  Wh
 
 ## New SoP instrument repealing existing instrument
 
-For SoP instruments already in its database, the API regularly polls the Legislation Register to check if they have been repealed, ceased or revoked.  When this has happened, the Register gives a pointer to the repealing instrument as well as the date of repeal.  The API retrieves this new instrument and loads it to its database as a replacement SoP.  It end dates the previous SoP.  The end date of the previous SoP is the date of effect of the new SoP.
+For SoP instruments already in its database, the API regularly polls the Legislation Register to check if they have been repealed, ceased or revoked.  When this has happened, the Register gives a pointer to the repealing instrument as well as the date of repeal.  The API retrieves this new instrument and loads it to its database as a replacement SoP.  It end dates the previous SoP.  The end date of the previous SoP is the date *one day before* the date of effect of the new SoP.
 
 ## Cease/Repeal without Replacement
 

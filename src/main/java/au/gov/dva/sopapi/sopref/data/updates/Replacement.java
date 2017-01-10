@@ -50,10 +50,11 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
         }
 
         LocalDate effectiveDateOfNewSoP = repealingSop.get().getEffectiveFromDate();
-
         SoP endDated = StoredSop.withEndDate(toEndDate.get(), effectiveDateOfNewSoP.minusDays(1));
-
-
+        repository.deleteSoPIfExists(oldInstrumentRegisterId);
+        repository.saveSop(endDated);
+        repository.archiveSoP(endDated.getRegisterId());
+        repository.saveSop(repealingSop.get());
     }
 
     @Override
