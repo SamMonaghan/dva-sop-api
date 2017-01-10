@@ -11,6 +11,6 @@ public class LegislationRegisterSubscriptionTests {
     @Category(IntegrationTest.class)
     public void retrieve()
     {
-        
+
     }
 }
