@@ -156,7 +156,7 @@ public class FederalRegisterOfLegislation implements RegisterClient {
     @Override
     public CompletableFuture<Optional<String>> getRepealingRegisterId(String repealedRegisterId) {
 
-        URL urlForSeriesPage = BuildUrl.forSeriesPage(repealedRegisterId);
+        URL urlForSeriesPage = BuildUrl.forSeriesRepealedByPage(repealedRegisterId);
 
         AsyncHttpClient asyncHttpClient = asyncHttpClient();
         CompletableFuture<Optional<String>> promise = asyncHttpClient
@@ -243,10 +243,10 @@ public class FederalRegisterOfLegislation implements RegisterClient {
             }
         }
 
-        public static URL forSeriesPage(String registerId)
+        public static URL forSeriesRepealedByPage(String registerId)
         {
             try {
-                return new URL(String.format("%s/Series/%s",BASE_URL, registerId));
+                return new URL(String.format("%s/Series/%s/RepealedBy",BASE_URL, registerId));
             } catch (MalformedURLException e) {
                 throw new LegislationRegisterError(e);
             }

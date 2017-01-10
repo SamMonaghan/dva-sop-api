@@ -103,9 +103,15 @@ public class AutoUpdateTests {
     @Test
     @Category(IntegrationTest.class)
     public void testGetRepealingRegisterId() {
+        ImmutableSet<String> testSourceIds = ImmutableSet.of(
+                "F2008L03179"
+        );
+        String expectedIdOfRepealingInstrument = "F2017L00016";
 
-        // todo:
-        // find repealed Sop replaced with new sop
-        Assert.fail();
+        SoPChangeDetector underTest = new SoPChangeDetector(new FederalRegisterOfLegislation());
+        ImmutableSet<InstrumentChange> results  = underTest.detectReplacements(testSourceIds);
+        results.stream().forEach(r -> System.out.println(r));
+
+        Assert.assertTrue(results.size() == 1 && ImmutableList.copyOf(results).get(0).getInstrumentId().contentEquals(expectedIdOfRepealingInstrument));
     }
 }

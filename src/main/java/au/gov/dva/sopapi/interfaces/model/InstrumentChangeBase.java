@@ -26,7 +26,6 @@ public class InstrumentChangeBase {
 
    protected InstrumentChangeBase(String registerId, OffsetDateTime date)
    {
-
       this.registerId = registerId;
       this.date = date;
    }
