@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class MockLumbarSpondylosisSopBoP implements SoP {
 
@@ -90,6 +91,11 @@ public class MockLumbarSpondylosisSopBoP implements SoP {
     @Override
     public LocalDate getEffectiveFromDate() {
         return LocalDate.of(2014,7,2);
+    }
+
+    @Override
+    public Optional<LocalDate> getEndDate() {
+        return null;
     }
 
     @Override

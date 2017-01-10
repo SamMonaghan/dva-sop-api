@@ -27,7 +27,6 @@ object SoPExtractorUtilities {
     }
   }
 
-
   def parseSectionBlock(sectionBlock : List[String]): (Option[Int], String, List[String]) = {
     val lines = sectionBlock
     val title: String = lines.head

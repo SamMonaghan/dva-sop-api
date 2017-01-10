@@ -1,10 +1,15 @@
 package au.gov.dva.sopapi.interfaces.model;
 
-import java.time.LocalDate;
+import au.gov.dva.sopapi.interfaces.JsonSerializable;
+import au.gov.dva.sopapi.interfaces.Repository;
 
-public interface InstrumentChange {
+import java.time.OffsetDateTime;
+import java.util.Optional;
+import java.util.function.Function;
+
+public interface InstrumentChange extends JsonSerializable {
      String getInstrumentId();
-     InstrumentChangeType getInstrumentChangeType();
-     LocalDate getDate();
+     OffsetDateTime getDate();
+     void apply(Repository repository, Function<String,Optional<SoP>> soPProvider);
 }
 

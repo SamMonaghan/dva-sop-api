@@ -4,6 +4,6 @@ import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 
 import java.time.LocalDate;
 
-public interface InstrumentUpdatesNotificationService {
+public interface InstrumentUpdatesSource {
     Iterable<InstrumentChange> getChangesFrom(LocalDate date);
 }

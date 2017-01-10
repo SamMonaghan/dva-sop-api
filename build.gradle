@@ -10,7 +10,17 @@ allprojects {
         mavenCentral()
     }
 
+}
 
+sourceSets {
+    main {
+        scala {
+            srcDirs = ['src/main/scala', 'src/main/java']
+        }
+        java {
+            srcDirs = []
+        }
+    }
 }
 
 findbugs {
@@ -43,6 +53,7 @@ test {
 }
 
 dependencies {
+    zinc 'com.typesafe.zinc:zinc:0.3.9'
     compile project(':dtos')
 
     compile group: 'com.sparkjava', name: 'spark-core', version: '2.5.2'

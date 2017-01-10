@@ -9,9 +9,12 @@ import java.util.Optional;
 
 public interface Repository {
      void saveSop(SoP sop);
+     void deleteSoPIfExists(String registerId);
      Optional<SoP> getSop(String registerId);
      ImmutableSet<SoP> getAllSops();
-     Iterable<InstrumentChange> getInstrumentChanges();
+     void archiveSoP(String registerId);
+     ImmutableSet<InstrumentChange> getInstrumentChanges();
+     void addInstrumentChange(InstrumentChange instrumentChange);
      void addServiceDetermination(ServiceDetermination serviceDetermination);
      ImmutableSet<ServiceDetermination> getServiceDeterminations();
 
