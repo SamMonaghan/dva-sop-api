@@ -114,4 +114,17 @@ public class AutoUpdateTests {
 
         Assert.assertTrue(results.size() == 1 && ImmutableList.copyOf(results).get(0).getInstrumentId().contentEquals(expectedIdOfRepealingInstrument));
     }
+
+    @Test
+    @Category(IntegrationTest.class)
+    // This test is obviously going to start failing if the instrument is actually repealed.
+    public void testGetRepealingIdWhenNoneExists()
+    {
+        ImmutableSet<String> testSourceIds = ImmutableSet.of(
+                "F2014L00930"
+        );
+        SoPChangeDetector underTest = new SoPChangeDetector(new FederalRegisterOfLegislation());
+        ImmutableSet<InstrumentChange> results = underTest.detectReplacements(testSourceIds);
+        Assert.assertTrue(results.isEmpty());
+    }
 }

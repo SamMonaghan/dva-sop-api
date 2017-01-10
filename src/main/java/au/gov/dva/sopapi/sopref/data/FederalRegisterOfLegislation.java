@@ -188,10 +188,16 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         Document htmlDocument = Jsoup.parse(html);
         String cssSelector = String.format("a[id*='SeriesRepealedBy']");
         Elements elements = htmlDocument.select(cssSelector);
-        assert !elements.isEmpty();
+        if (elements.isEmpty())
+        {
+            return Optional.empty();
+        }
         String linkUrl = elements.attr("href");
 
-        assert !linkUrl.isEmpty();
+        if (linkUrl.isEmpty())
+        {
+            return Optional.empty();
+        }
         Pattern pattern = Pattern.compile("(F[0-9]{4}[A-Z][0-9]+)");
         Matcher matcher = pattern.matcher(linkUrl);
 
