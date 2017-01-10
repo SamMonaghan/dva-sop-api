@@ -46,15 +46,17 @@ public class NewInstrument extends InstrumentChangeBase implements InstrumentCha
     @Override
     public void apply(Repository repository, Function<String,Optional<SoP>> soPProvider)
     {
+        Optional<SoP> existingIfAny = repository.getSop(this.getInstrumentId());
+        if (existingIfAny.isPresent())
+            return;
+
         Optional<SoP> sop = soPProvider.apply(getInstrumentId());
         if (!sop.isPresent())
         {
             throw new AutoUpdateError(String.format("Cannot get a SoP for instrument ID: %s", getInstrumentId()));
         }
 
-        Optional<SoP> existingIfAny = repository.getSop(this.getInstrumentId());
-        if (!existingIfAny.isPresent())
-            repository.saveSop(sop.get());
+        repository.saveSop(sop.get());
     }
 
 

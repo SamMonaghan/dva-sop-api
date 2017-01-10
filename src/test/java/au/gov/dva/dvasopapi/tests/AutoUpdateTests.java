@@ -127,4 +127,6 @@ public class AutoUpdateTests {
         ImmutableSet<InstrumentChange> results = underTest.detectReplacements(testSourceIds);
         Assert.assertTrue(results.isEmpty());
     }
+
+
 }

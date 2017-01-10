@@ -37,11 +37,17 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
 
     @Override
     public void apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
+
+        Optional<SoP> newInstrument = repository.getSop(getInstrumentId());
+        if (newInstrument.isPresent())
+            return;
+
         Optional<SoP> toEndDate = repository.getSop(oldInstrumentRegisterId);
         if (!toEndDate.isPresent())
         {
             throw new AutoUpdateError(String.format("Attempt to update the end date of SoP %s failed because it is not present in the Repository.", oldInstrumentRegisterId));
         }
+
 
         Optional<SoP> repealingSop = soPProvider.apply(this.getInstrumentId());
         if (!repealingSop.isPresent())

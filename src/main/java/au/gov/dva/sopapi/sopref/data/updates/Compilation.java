@@ -11,7 +11,6 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.function.Function;
 
-// /Latest route
 public class Compilation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
 
@@ -28,7 +27,7 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
         super(currentRegisterId, date);
         this.oldRegisterId = oldRegisterId;
     }
-
+    
 
     @Override
     public String getInstrumentId() {
@@ -46,6 +45,7 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
 
         // todo WIP
         // remove old register id
+        // archive it
         // add new
 
         repository.deleteSoPIfExists(oldRegisterId);

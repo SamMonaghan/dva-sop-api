@@ -2,12 +2,14 @@ package au.gov.dva.dvasopapi.tests.localonly;
 
 import au.gov.dva.dvasopapi.tests.TestUtils;
 import au.gov.dva.sopapi.DateTimeUtils;
+import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.AzureStorageRepository;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislation;
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import au.gov.dva.sopapi.sopref.data.updates.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.SoPChangeDetector;
 import au.gov.dva.sopapi.sopref.data.updates.SoPLoader;
 import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,6 +53,29 @@ public class IntegrationTests {
 
         SoPLoader underTest = new SoPLoader(localRepository, new FederalRegisterOfLegislation(),s -> ServiceLocator.findTextCleanser(s),s -> ServiceLocator.findSoPFactory(s));
         underTest.updateAll(10);
+
+    }
+
+    @Test
+    @Category(IntegrationTests.class)
+    public void sopLoaderReplacedInstrument()
+    {
+        //   "F2008L03179" is repealed by "F2017L00016";
+
+        String originalRegisterId = "F2008L03179";
+        String repealingRegisterId = "F2017L00016";
+        Repository localRepository = new AzureStorageRepository("UseDevelopmentStorage=true");
+
+        // setup
+        localRepository.deleteSoPIfExists(originalRegisterId);
+        localRepository.deleteSoPIfExists(repealingRegisterId);
+
+        RegisterClient registerClient = new FederalRegisterOfLegislation();
+
+        SoPLoader underTest = new SoPLoader(localRepository, new FederalRegisterOfLegislation(),s -> ServiceLocator.findTextCleanser(s),s -> ServiceLocator.findSoPFactory(s));
+        underTest.updateAll(10);
+
+        SoPChangeDetector soPChangeDetector = new SoPChangeDetector(registerClient);
 
     }
 }

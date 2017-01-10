@@ -1,5 +1,7 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
+import au.gov.dva.sopapi.exceptions.AutoUpdateError;
+import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
@@ -7,6 +9,7 @@ import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.Conversions;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPCleanser;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -42,33 +45,65 @@ public class SoPLoader {
         this.sopFactoryProvider = sopFactoryProvider;
     }
 
+    private Function<String,Optional<SoP>> sopProvider = registerId -> {
+
+        long timeoutSecs = 30;
+
+        CompletableFuture<Optional<SoP>> getSopTask = createGetSopTask(registerId);
+
+        CompletableFuture<Optional<SoP>> resultTask = getSopTask.handle((soP, throwable) -> {
+            if (soP == null) {
+                logger.error("Exception when running task to get SoP.",throwable);
+                return Optional.empty();
+            }
+            return soP;
+        });
+
+        try {
+            Optional<SoP> result = resultTask.get(timeoutSecs,TimeUnit.SECONDS);
+            return result;
+        } catch (InterruptedException e) {
+            logger.error(String.format("Task to get SoP was interrupted: %s", registerId),e);
+            return Optional.empty();
+        } catch (ExecutionException e) {
+            logger.error(String.format("Task to get SoP threw execution exception: %s", registerId, e));
+            return Optional.empty();
+        } catch (TimeoutException e) {
+            logger.error(String.format(String.format("Task to get SoP %s timed out after %d seconds.", registerId, timeoutSecs)));
+            return Optional.empty();
+        }
+    };
+
     public void updateAll(long timeOutSeconds) {
         ImmutableSet<InstrumentChange> instrumentChanges = repository.getInstrumentChanges();
-        Stream<String> instrumentIds = instrumentChanges.stream().map(ic -> ic.getInstrumentId());
-        List<CompletableFuture<Optional<SoP>>> updateTasks = instrumentIds.map(id -> createGetSopTask(id)).collect(Collectors.toList());
-        CompletableFuture<List<Optional<SoP>>> allTasksAsOneFuture = sequence(updateTasks);
-        try {
-           List<Optional<SoP>> allSops = allTasksAsOneFuture.get(timeOutSeconds, TimeUnit.MINUTES);
-           Stream<SoP> nonEmptySops = allSops.stream().filter(s -> s.isPresent()).map(s -> s.get());
-           ImmutableMap<String,SoP> sopMap = toMap(nonEmptySops);
 
-           Function<String,Optional<SoP>> sopProvider = registerId -> {
-                if (sopMap.containsKey(registerId))
-                    return Optional.of(sopMap.get(registerId));
-                else return Optional.empty();
-           };
+        List<InstrumentChange> newInstrumentChangesOrderedFirstToLast = instrumentChanges
+                .stream()
+                .filter(ic -> ic instanceof NewInstrument)
+                .sorted((o1, o2) -> o1.getDate().compareTo(o2.getDate()))
+                .collect(Collectors.toList());
 
-            // todo: could make this asynchronous and batched
-            // todo: network timeout, failure handling
-           instrumentChanges.stream().forEach(ic -> ic.apply(repository,sopProvider));
 
-        } catch (InterruptedException e) {
-            logger.error("Bulk task to update SoPs was interrupted.",e);
-        } catch (ExecutionException e) {
-            logger.error("Bulk task to update SoPs failed to execute.",e);
-        } catch (TimeoutException e) {
-            logger.error(String.format("Bulk task to update SoPs timed out after %d seconds.", timeOutSeconds));
-        }
+        newInstrumentChangesOrderedFirstToLast.parallelStream().forEach(ic -> {
+            try {
+                ic.apply(repository, sopProvider);
+            }
+            catch (DvaSopApiError e)
+            {
+                logger.error("Failed to apply update to repository for instrument change: " + ic.toString(),e);
+            }
+
+        });
+
+
+        // todo: compilations here
+
+        List<InstrumentChange> replacedInstruments = instrumentChanges.stream()
+                .filter(ic -> ic instanceof Replacement)
+                .collect(Collectors.toList());
+
+
+
     }
 
     private ImmutableMap<String,SoP> toMap(Stream<SoP> sops)
