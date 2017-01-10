@@ -1,5 +1,6 @@
 package au.gov.dva.sopapi.sopref.data.sops;
 
+import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.dtos.StandardOfProof;
 import au.gov.dva.sopapi.exceptions.RepositoryError;
 import au.gov.dva.sopapi.interfaces.model.*;
@@ -34,6 +35,7 @@ public class StoredSop implements SoP, HasSchemaVersion {
         public static final String CITATION = "citation";
         public static final String CONDITION_NAME = "conditionName";
         public static final String EFFECTIVE_FROM = "effectiveFrom";
+        public static final String END_DATE = "endDate";
         public static final String STANDARD_OF_PROOF = "standardOfProof";
         public static final String ONSET_FACTORS = "onsetFactors";
         public static final String AGGRAVATION_FACTORS = "aggravationFactors";
@@ -58,8 +60,9 @@ public class StoredSop implements SoP, HasSchemaVersion {
     private final ImmutableSet<ICDCode> icdCodes;
     @Nonnull
     private final String conditionName;
+    private Optional<LocalDate> endDate;
 
-    public StoredSop(@Nonnull String registerId, @Nonnull InstrumentNumber instrumentNumber, @Nonnull String citation, @Nonnull ImmutableList<Factor> onsetFactors, @Nonnull ImmutableList<Factor> aggravationFactors, @Nonnull LocalDate effectiveFromDate, @Nonnull StandardOfProof standardOfProof, @Nonnull ImmutableSet<ICDCode> icdCodes, @Nonnull String conditionName) {
+    public StoredSop(@Nonnull String registerId, @Nonnull InstrumentNumber instrumentNumber, @Nonnull String citation, @Nonnull ImmutableList<Factor> onsetFactors, @Nonnull ImmutableList<Factor> aggravationFactors, @Nonnull LocalDate effectiveFromDate, @Nonnull StandardOfProof standardOfProof, @Nonnull ImmutableSet<ICDCode> icdCodes, @Nonnull String conditionName, @Nonnull Optional<LocalDate> endDate) {
         this.registerId = registerId;
         this.instrumentNumber = instrumentNumber;
         this.citation = citation;
@@ -70,6 +73,7 @@ public class StoredSop implements SoP, HasSchemaVersion {
         this.icdCodes = icdCodes;
 
         this.conditionName = conditionName;
+        this.endDate = endDate;
     }
 
     public static SoP fromJson(JsonNode jsonNode)
@@ -89,10 +93,12 @@ public class StoredSop implements SoP, HasSchemaVersion {
                 LocalDate.parse(jsonNode.findValue(Labels.EFFECTIVE_FROM).asText()),
                 StandardOfProof.fromString(jsonNode.findValue(Labels.STANDARD_OF_PROOF).asText()),
                 icdCodeListFromJsonArray(jsonNode.findPath(Labels.ICD_CODES)),
-                jsonNode.findValue(Labels.CONDITION_NAME).asText()
+                jsonNode.findValue(Labels.CONDITION_NAME).asText(),
+                jsonNode.hasNonNull(Labels.END_DATE) ? Optional.of(LocalDate.parse(jsonNode.findValue(Labels.END_DATE).asText(),DateTimeFormatter.ISO_LOCAL_DATE)) : Optional.empty()
                 );
 
     }
+
 
 
     private static ImmutableList<Factor> factorListFromJsonArray(JsonNode jsonNode)
@@ -134,7 +140,7 @@ public class StoredSop implements SoP, HasSchemaVersion {
 
     @Override
     public Optional<LocalDate> getEndDate() {
-        return null;
+        return endDate;
     }
 
     @Override
@@ -159,6 +165,12 @@ public class StoredSop implements SoP, HasSchemaVersion {
         return registerId;
     }
 
+    public static SoP withEndDate(SoP sopToEndDate, LocalDate endDate)
+    {
+        return new StoredSop(sopToEndDate.getRegisterId(),sopToEndDate.getInstrumentNumber(),sopToEndDate.getCitation(),sopToEndDate.getOnsetFactors(),
+                sopToEndDate.getAggravationFactors(),sopToEndDate.getEffectiveFromDate(),
+                sopToEndDate.getStandardOfProof(),sopToEndDate.getICDCodes(),sopToEndDate.getConditionName(),Optional.of(endDate));
+    }
 
     private static Factor factorFromJson(JsonNode jsonNode) {
 
