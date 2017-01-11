@@ -1,12 +1,15 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
-import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.Conversions;
+import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.types.RepealWithoutReplacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPCleanser;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory;
 import com.google.common.collect.ImmutableList;
@@ -15,7 +18,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.reflect.internal.Trees;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -28,8 +30,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static au.gov.dva.sopapi.sopref.data.updates.AsyncUtils.sequence;
 
 public class SoPLoader {
 
@@ -75,16 +75,12 @@ public class SoPLoader {
         }
     };
 
-    public void updateAll(long timeOutSeconds) {
-        ImmutableSet<InstrumentChange> instrumentChanges = repository.getInstrumentChanges();
-
-        List<InstrumentChange> newInstrumentChangesOrderedFirstToLast = instrumentChanges
+    public void applyAll(long timeOutSeconds) {
+        Stream<InstrumentChange> sequencedInstrumentChanges = repository.getInstrumentChanges()
                 .stream()
-                .filter(ic -> ic instanceof NewInstrument)
-                .sorted(Comparator.comparing(InstrumentChange::getDate))
-                .collect(Collectors.toList());
+                .sorted(new InstrumentChangeComparator());
 
-        newInstrumentChangesOrderedFirstToLast.parallelStream().forEach(ic -> {
+        sequencedInstrumentChanges.forEach(ic -> {
             try {
                 ic.apply(repository, sopProvider);
             }
@@ -93,13 +89,6 @@ public class SoPLoader {
                 logger.error("Failed to apply update to repository for instrument change: " + ic.toString(),e);
             }
         });
-
-        // todo: compilations here
-
-        List<InstrumentChange> replacedInstruments = instrumentChanges.stream()
-                .filter(ic -> ic instanceof Replacement)
-                .collect(Collectors.toList());
-
     }
 
     private class InstrumentChangeComparator implements Comparator<InstrumentChange>
@@ -108,9 +97,8 @@ public class SoPLoader {
         ImmutableMap<String,Integer> ordering = ImmutableMap.of(
                 NewInstrument.class.getName(), 1,
                 Replacement.class.getName(), 2,
-
-                Compilation.class.getName(), 3
-
+                Compilation.class.getName(), 3,
+                RepealWithoutReplacement.class.getName(),4
         );
 
         @Override

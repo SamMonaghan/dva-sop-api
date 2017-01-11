@@ -1,7 +1,7 @@
 package au.gov.dva.sopapi.interfaces.model;
 
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
-import au.gov.dva.sopapi.sopref.data.updates.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

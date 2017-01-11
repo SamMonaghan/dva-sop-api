@@ -1,4 +1,4 @@
-package au.gov.dva.sopapi.sopref.data.updates;
+package au.gov.dva.sopapi.sopref.data.updates.types;
 
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
@@ -20,11 +20,10 @@ import java.util.function.Function;
 public class Replacement extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
     private final String oldInstrumentRegisterId;
 
-    protected Replacement(String newInstrumentRegisterId, OffsetDateTime date, String oldInstrumentRegisterId) {
+    public Replacement(String newInstrumentRegisterId, OffsetDateTime date, String oldInstrumentRegisterId) {
         super(newInstrumentRegisterId, date);
         this.oldInstrumentRegisterId = oldInstrumentRegisterId;
     }
-
 
     @Override
     public String getInstrumentId() {

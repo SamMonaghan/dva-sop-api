@@ -1,4 +1,4 @@
-package au.gov.dva.sopapi.sopref.data.updates;
+package au.gov.dva.sopapi.sopref.data.updates.types;
 
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.JsonSerializable;

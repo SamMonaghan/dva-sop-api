@@ -2,6 +2,8 @@ package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
+import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
