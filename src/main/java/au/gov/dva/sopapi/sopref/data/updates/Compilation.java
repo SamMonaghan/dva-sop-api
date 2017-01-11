@@ -30,6 +30,9 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
         this.oldRegisterId = oldRegisterId;
     }
 
+    public static final String TYPE_NAME = "compilation";
+
+
 
     @Override
     public String getInstrumentId() {

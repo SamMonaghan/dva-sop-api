@@ -28,6 +28,8 @@ public class NewInstrument extends InstrumentChangeBase implements InstrumentCha
 
     public static final String TYPE_NAME = "new";
 
+
+
     @Override
     public String getInstrumentId() {
         return super.getInstrumentId();

@@ -25,6 +25,7 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
         this.oldInstrumentRegisterId = oldInstrumentRegisterId;
     }
 
+
     @Override
     public String getInstrumentId() {
         return super.getInstrumentId();

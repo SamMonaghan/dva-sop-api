@@ -15,8 +15,10 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.reflect.internal.Trees;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -79,7 +81,7 @@ public class SoPLoader {
         List<InstrumentChange> newInstrumentChangesOrderedFirstToLast = instrumentChanges
                 .stream()
                 .filter(ic -> ic instanceof NewInstrument)
-                .sorted((o1, o2) -> o1.getDate().compareTo(o2.getDate()))
+                .sorted(Comparator.comparing(InstrumentChange::getDate))
                 .collect(Collectors.toList());
 
         newInstrumentChangesOrderedFirstToLast.parallelStream().forEach(ic -> {
@@ -98,6 +100,39 @@ public class SoPLoader {
                 .filter(ic -> ic instanceof Replacement)
                 .collect(Collectors.toList());
 
+    }
+
+    private class InstrumentChangeComparator implements Comparator<InstrumentChange>
+    {
+
+        ImmutableMap<String,Integer> ordering = ImmutableMap.of(
+                NewInstrument.class.getName(), 1,
+                Replacement.class.getName(), 2,
+
+                Compilation.class.getName(), 3
+
+        );
+
+        @Override
+        public int compare(InstrumentChange o1, InstrumentChange o2) {
+
+            if (ordering.containsKey(o1.getClass().getName()) && ordering.containsKey(o2.getClass().getName()))
+            {
+                Integer o1Order = ordering.get(o1.getClass().getName());
+                Integer o2Order = ordering.get(o2.getClass().getName());
+
+                if (o1Order.equals(o2Order))
+                {
+                   return o1.getDate().compareTo(o2.getDate());
+                }
+                else {
+                    return (o1Order.compareTo(o2Order));
+                }
+            }
+            else {
+                throw new DvaSopApiError(String.format("Do not know how to sequence these types of instrument changes: %s, %s", o1.getClass().getName(), o2.getClass().getName()));
+            }
+        }
     }
 
     private ImmutableMap<String,SoP> toMap(Stream<SoP> sops)
@@ -150,8 +185,3 @@ public class SoPLoader {
         return String.format("%s: %s", registerId, message);
     }
 }
-
-
-
-
-
