@@ -4,6 +4,7 @@ import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
+import au.gov.dva.sopapi.interfaces.model.SoP;
 import com.google.common.collect.ImmutableSet;
 import org.apache.log4j.spi.LoggerFactory;
 
@@ -14,22 +15,27 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactory {
+class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactory {
 
     private final LegislationRegisterEmailClient emailClient;
     private final Supplier<OffsetDateTime> getLastUpdatedDate;
+    private Supplier<SoP> getExistingInstruments;
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(EmailSubscriptionInstrumentChangeFactory.class);
 
-    public EmailSubscriptionInstrumentChangeFactory(LegislationRegisterEmailClient emailClient, Supplier<OffsetDateTime> getLastUpdatedDate)
+    public EmailSubscriptionInstrumentChangeFactory(LegislationRegisterEmailClient emailClient,
+                                                    Supplier<OffsetDateTime> getLastUpdatedDate,
+                                                    Supplier<SoP> getExistingInstruments)
     {
 
         this.emailClient = emailClient;
         this.getLastUpdatedDate = getLastUpdatedDate;
+        this.getExistingInstruments = getExistingInstruments;
     }
 
-    private static ImmutableSet<InstrumentChange> identifyNewInstruments(ImmutableSet<String> existingRegisterIds, ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates)
+    private static ImmutableSet<InstrumentChange> identifyNewInstruments(ImmutableSet<SoP> existingInstruments,
+                                                                         ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates)
     {
-        return null; 
+        return null;
     }
 
 
