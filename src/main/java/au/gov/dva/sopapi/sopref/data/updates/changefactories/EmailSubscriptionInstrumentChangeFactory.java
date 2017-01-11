@@ -8,6 +8,7 @@ import au.gov.dva.sopapi.interfaces.model.SoP;
 import com.google.common.collect.ImmutableSet;
 import org.apache.log4j.spi.LoggerFactory;
 
+import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -41,7 +42,8 @@ class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactor
 
     private static Optional<InstrumentChange> createInstrumentChangeFromEmailUpdate(LegislationRegisterEmailUpdate emailUpdate)
     {
-        return null;
+        URL url = emailUpdate.getRegisterLink();
+        String registerIdFromLink =
     }
 
 
