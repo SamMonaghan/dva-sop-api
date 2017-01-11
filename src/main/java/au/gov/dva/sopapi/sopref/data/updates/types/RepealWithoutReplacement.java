@@ -7,9 +7,11 @@ import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -20,6 +22,8 @@ public class RepealWithoutReplacement extends InstrumentChangeBase implements In
         super(registerId, date);
         this.repealDate = repealDate;
     }
+
+    public static final String TYPE_NAME = "repealwithoutreplacement";
 
     @Override
     public String getInstrumentId() {
@@ -43,9 +47,19 @@ public class RepealWithoutReplacement extends InstrumentChangeBase implements In
         repository.saveSop(endDated);
     }
 
+    private static final String REPEAL_DATE_LABEL = "repealDate";
 
     @Override
     public JsonNode toJson() {
-        return null;
+        ObjectNode root = getCommonNode(TYPE_NAME,getInstrumentId(),getDate());
+        root.put(REPEAL_DATE_LABEL,repealDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        return root;
+    }
+
+    public static RepealWithoutReplacement fromJson(JsonNode jsonNode)
+    {
+        String repealDateString =  jsonNode.findValue(REPEAL_DATE_LABEL).asText();
+        LocalDate repealDate = LocalDate.parse(repealDateString,DateTimeFormatter.ISO_LOCAL_DATE);
+        return new RepealWithoutReplacement(extractInstrumentId(jsonNode),extractDate(jsonNode), repealDate);
     }
 }
