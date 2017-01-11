@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.log4j.spi.LoggerFactory;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -37,6 +38,12 @@ class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactor
     {
         return null;
     }
+
+    private static Optional<InstrumentChange> createInstrumentChangeFromEmailUpdate(LegislationRegisterEmailUpdate emailUpdate)
+    {
+        return null;
+    }
+
 
 
     @Override

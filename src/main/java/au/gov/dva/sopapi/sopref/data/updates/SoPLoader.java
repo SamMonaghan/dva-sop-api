@@ -2,6 +2,7 @@ package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
+
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
@@ -120,6 +121,7 @@ public class SoPLoader {
                 throw new DvaSopApiError(String.format("Do not know how to sequence these types of instrument changes: %s, %s", o1.getClass().getName(), o2.getClass().getName()));
             }
         }
+
     }
 
     private ImmutableMap<String,SoP> toMap(Stream<SoP> sops)
@@ -174,3 +176,8 @@ public class SoPLoader {
 
 
 }
+
+
+
+
+
