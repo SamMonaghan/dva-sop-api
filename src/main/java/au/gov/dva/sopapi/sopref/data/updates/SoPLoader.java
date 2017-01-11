@@ -1,7 +1,6 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.exceptions.DvaSopApiError;
-import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
@@ -10,18 +9,16 @@ import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.Conversions;
 import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
-import au.gov.dva.sopapi.sopref.data.updates.types.RepealWithoutReplacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.Revocation;
 import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPCleanser;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -98,7 +95,7 @@ public class SoPLoader {
                 NewInstrument.class.getName(), 1,
                 Replacement.class.getName(), 2,
                 Compilation.class.getName(), 3,
-                RepealWithoutReplacement.class.getName(),4
+                Revocation.class.getName(),4
         );
 
         @Override

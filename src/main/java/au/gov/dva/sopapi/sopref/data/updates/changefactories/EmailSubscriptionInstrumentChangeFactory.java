@@ -26,8 +26,7 @@ class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactor
 
     public EmailSubscriptionInstrumentChangeFactory(LegislationRegisterEmailClient emailClient,
                                                     Supplier<OffsetDateTime> getLastUpdatedDate,
-                                                    Supplier<SoP> getExistingInstruments)
-    {
+                                                    Supplier<SoP> getExistingInstruments) {
 
         this.emailClient = emailClient;
         this.getLastUpdatedDate = getLastUpdatedDate;
@@ -35,15 +34,34 @@ class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactor
     }
 
     private static ImmutableSet<InstrumentChange> identifyNewInstruments(ImmutableSet<SoP> existingInstruments,
-                                                                         ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates)
-    {
+                                                                         ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates) {
         return null;
     }
 
-    private static Optional<InstrumentChange> createInstrumentChangeFromEmailUpdate(LegislationRegisterEmailUpdate emailUpdate)
+    private static Optional<InstrumentChange> createInstrumentChangeFromEmailUpdate(LegislationRegisterEmailUpdate emailUpdate) {
+        Optional<String> registerId = extractRegisterIdFromEmailUrl(emailUpdate.getRegisterLink());
+
+        if (!registerId.isPresent())
+            return Optional.empty();
+
+        if (emailUpdate.getUpdateDescription().contentEquals("Item was published"))
+        {
+            return null;
+        }
+
+        return null;
+    }
+
+    private static Optional<String> extractRegisterIdFromEmailUrl(URL url)
     {
-        URL url = emailUpdate.getRegisterLink();
-        String registerIdFromLink =
+        String[] pathParts = url.getPath().split("/");
+        String lastPart = pathParts[pathParts.length - 1].trim();
+        if (lastPart.matches("[A-Z0-9]+"))
+        {
+            return Optional.of(lastPart);
+        }
+        logger.error(String.format("Could not extract a Register ID from this link: %s", url.toString()));
+        return Optional.empty();
     }
 
 

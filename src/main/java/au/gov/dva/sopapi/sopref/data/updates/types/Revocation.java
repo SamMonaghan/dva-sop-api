@@ -15,15 +15,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class RepealWithoutReplacement extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
-    private final LocalDate repealDate;
+public class Revocation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
+    private final LocalDate revocationDate;
 
-    public RepealWithoutReplacement(String registerId, OffsetDateTime date, LocalDate repealDate) {
+    public Revocation(String registerId, OffsetDateTime date, LocalDate revocationDate) {
         super(registerId, date);
-        this.repealDate = repealDate;
+        this.revocationDate = revocationDate;
     }
 
-    public static final String TYPE_NAME = "repealwithoutreplacement";
+    public static final String TYPE_NAME = "revocation";
 
     @Override
     public String getInstrumentId() {
@@ -43,23 +43,23 @@ public class RepealWithoutReplacement extends InstrumentChangeBase implements In
             return;
 
         repository.archiveSoP(getInstrumentId());
-        SoP endDated = StoredSop.withEndDate(existing.get(),repealDate);
+        SoP endDated = StoredSop.withEndDate(existing.get(), revocationDate);
         repository.saveSop(endDated);
     }
 
-    private static final String REPEAL_DATE_LABEL = "repealDate";
+    private static final String REVOCATION_DATE = "revocationDate";
 
     @Override
     public JsonNode toJson() {
         ObjectNode root = getCommonNode(TYPE_NAME,getInstrumentId(),getDate());
-        root.put(REPEAL_DATE_LABEL,repealDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        root.put(REVOCATION_DATE, revocationDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
         return root;
     }
 
-    public static RepealWithoutReplacement fromJson(JsonNode jsonNode)
+    public static Revocation fromJson(JsonNode jsonNode)
     {
-        String repealDateString =  jsonNode.findValue(REPEAL_DATE_LABEL).asText();
+        String repealDateString =  jsonNode.findValue(REVOCATION_DATE).asText();
         LocalDate repealDate = LocalDate.parse(repealDateString,DateTimeFormatter.ISO_LOCAL_DATE);
-        return new RepealWithoutReplacement(extractInstrumentId(jsonNode),extractDate(jsonNode), repealDate);
+        return new Revocation(extractInstrumentId(jsonNode),extractDate(jsonNode), repealDate);
     }
 }

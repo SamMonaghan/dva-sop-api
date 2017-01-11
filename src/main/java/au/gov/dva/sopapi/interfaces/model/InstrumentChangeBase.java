@@ -3,7 +3,7 @@ package au.gov.dva.sopapi.interfaces.model;
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
-import au.gov.dva.sopapi.sopref.data.updates.types.RepealWithoutReplacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.Revocation;
 import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +51,7 @@ public class InstrumentChangeBase {
       switch (type) {
           case NewInstrument.TYPE_NAME: return NewInstrument.fromJson(jsonNode);
           case Replacement.TYPE_NAME: return Replacement.fromJson(jsonNode);
-          case RepealWithoutReplacement.TYPE_NAME: return RepealWithoutReplacement.fromJson(jsonNode);
+          case Revocation.TYPE_NAME: return Revocation.fromJson(jsonNode);
           case Compilation.TYPE_NAME: return Compilation.fromJson(jsonNode);
           default: throw new AutoUpdateError(String.format("Cannot deserialize this type of instrument change from JSON: %s", type));
       }
