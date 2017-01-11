@@ -34,8 +34,6 @@ public class InstrumentChangeBase {
    }
 
 
-
-
    protected ObjectNode getCommonNode(String typeName, String instrumentId, OffsetDateTime date)
    {
       ObjectMapper objectMapper = new ObjectMapper();
