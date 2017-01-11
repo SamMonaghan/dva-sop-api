@@ -3,7 +3,8 @@ package au.gov.dva.sopapi.sopref.data.updates;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
-import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.types.Revocation;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,9 @@ public class SoPChangeDetector {
                 .collect(Collectors.toList());
 
         try {
-            List<InstrumentChange> results = AsyncUtils.sequence(batch).get()
+            List<ReplacementResult> results = AsyncUtils.sequence(batch).get()
                     .stream()
                     .filter(r -> r.getNewRegisterId().isPresent())
-                    .map(r -> new Replacement(r.getNewRegisterId().get(),OffsetDateTime.now(),r.getOriginalRegisterId()))
                     .collect(Collectors.toList());
 
             return ImmutableSet.copyOf(results);
@@ -107,6 +107,17 @@ public class SoPChangeDetector {
 
         public String getOriginalRegisterId() {
             return originalRegisterId;
+        }
+
+        public ImmutableSet<InstrumentChange> toInstrumentChanges() {
+
+            ImmutableSet.Builder<InstrumentChange> b = new ImmutableSet.Builder<>();
+            if (newRegisterId.isPresent())
+            {
+                b.add(new NewInstrument(newRegisterId.get(),OffsetDateTime.now()));
+            }
+            // where does date come from?
+            b.add(new Revocation())
         }
     }
 
