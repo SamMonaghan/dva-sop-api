@@ -65,6 +65,6 @@ build/
 # IntelliJ
 /out/
 .idea/libraries
-
+.idea/runConfigurations
 
 
