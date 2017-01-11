@@ -8,6 +8,7 @@ import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.mail.Store;
 import java.time.LocalDate;
@@ -67,12 +68,20 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
                 "} " + super.toString();
     }
 
+    public static final String TYPE_NAME = "replacement";
+    private static final String REPLACED_LABEL = "replaced";
+
     @Override
     public JsonNode toJson() {
-        return null;
+        ObjectNode root = getCommonNode(TYPE_NAME,getInstrumentId(),getDate());
+        root.put(REPLACED_LABEL,oldInstrumentRegisterId);
+        return root;
     }
 
-    public String getOldInstrumentRegisterId() {
-        return oldInstrumentRegisterId;
+    public static Replacement fromJson(JsonNode jsonNode)
+    {
+        return new Replacement(extractInstrumentId(jsonNode),extractDate(jsonNode),
+                jsonNode.findValue(REPLACED_LABEL).asText());
     }
+
 }
