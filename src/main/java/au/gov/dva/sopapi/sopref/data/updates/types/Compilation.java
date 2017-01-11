@@ -8,6 +8,7 @@ import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -69,8 +70,19 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
         repository.saveSop(newCompilation.get());
     }
 
+private static final String REPLACED_INSTRUMENT_LABEL = "replaced";
+
     @Override
     public JsonNode toJson() {
-        return null;
+        ObjectNode root = getCommonNode(TYPE_NAME,getInstrumentId(),getDate());
+        root.put(REPLACED_INSTRUMENT_LABEL,oldRegisterId);
+        return root;
+    }
+
+    public static Compilation fromJson(JsonNode jsonNode)
+    {
+        return new Compilation(extractInstrumentId(jsonNode),
+                extractDate(jsonNode),
+               jsonNode.findValue(REPLACED_INSTRUMENT_LABEL).asText());
     }
 }
