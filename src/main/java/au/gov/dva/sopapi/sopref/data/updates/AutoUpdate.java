@@ -1,7 +1,7 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
 public class AutoUpdate {
-    public static void UpdateStorage(SoPLoader soPLoader, SoPChangeDetector soPChangeDetector)
+    public static void UpdateStorage(SoPLoader soPLoader, LegRegChangeDetector legRegChangeDetector)
     {
         // check for updates, write to storage
         // detect changes,

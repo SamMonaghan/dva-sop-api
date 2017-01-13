@@ -15,12 +15,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class SoPChangeDetector {
+public class LegRegChangeDetector {
 
     private RegisterClient registerClient;
-    private static final Logger logger = LoggerFactory.getLogger(SoPChangeDetector.class);
+    private static final Logger logger = LoggerFactory.getLogger(LegRegChangeDetector.class);
 
-    public SoPChangeDetector(RegisterClient registerClient) {
+    public LegRegChangeDetector(RegisterClient registerClient) {
         this.registerClient = registerClient;
     }
 

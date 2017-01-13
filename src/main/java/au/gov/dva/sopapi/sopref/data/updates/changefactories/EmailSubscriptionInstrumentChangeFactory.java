@@ -1,10 +1,12 @@
 package au.gov.dva.sopapi.sopref.data.updates.changefactories;
 
+import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
 import au.gov.dva.sopapi.interfaces.model.SoP;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
 import com.google.common.collect.ImmutableSet;
 import org.apache.log4j.spi.LoggerFactory;
 
@@ -16,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactory {
 
@@ -33,37 +37,44 @@ class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactor
         this.getExistingInstruments = getExistingInstruments;
     }
 
-    private static ImmutableSet<InstrumentChange> identifyNewInstruments(ImmutableSet<SoP> existingInstruments,
-                                                                         ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates) {
-        return null;
+    private static ImmutableSet<InstrumentChange> identifyNewInstruments(ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates) {
+        ImmutableSet<InstrumentChange> newInstruments = emailUpdates.stream()
+                .filter(u -> u.getUpdateDescription().contains("published"))
+                .filter(u -> u.getInstrumentTitle().matches("$Statement of Principles [Cc]oncerning"))
+                .filter(u -> !u.getInstrumentTitle().matches("[Aa]mendment"))
+                .map(u -> {
+                            try {
+                                return Optional.of(new NewInstrument(
+                                        extractRegisterIdFromEmailUrl(u.getRegisterLink())
+                                        , u.getDateReceived()));
+                            } catch (AutoUpdateError e) {
+                                logger.error("Failed to create new instrument update from email item: %s" + u);
+                                return Optional.empty();
+                            }
+                        }
+                    )
+                .filter(u -> u.isPresent())
+                .map(u -> (InstrumentChange)u.get())
+                .collect(Collectors.collectingAndThen(Collectors.toList(),ImmutableSet::copyOf));
+
+        return newInstruments;
     }
 
-    private static Optional<InstrumentChange> createInstrumentChangeFromEmailUpdate(LegislationRegisterEmailUpdate emailUpdate) {
-        Optional<String> registerId = extractRegisterIdFromEmailUrl(emailUpdate.getRegisterLink());
-
-        if (!registerId.isPresent())
-            return Optional.empty();
-
-        if (emailUpdate.getUpdateDescription().contentEquals("Item was published"))
-        {
-            return null;
-        }
-
-        return null;
-    }
-
-    private static Optional<String> extractRegisterIdFromEmailUrl(URL url)
+    private static String extractRegisterIdFromEmailUrl(URL url)
     {
         String[] pathParts = url.getPath().split("/");
-        String lastPart = pathParts[pathParts.length - 1].trim();
-        if (lastPart.matches("[A-Z0-9]+"))
-        {
-            return Optional.of(lastPart);
+        try {
+            String lastPart = pathParts[pathParts.length - 1].trim();
+            if (lastPart.matches("[A-Z0-9]+")) {
+                return lastPart.trim();
+            } else {
+                throw new AutoUpdateError(String.format("Could not extract a Register ID from link %s in email item %s", url.toString()));
+            }
         }
-        logger.error(String.format("Could not extract a Register ID from this link: %s", url.toString()));
-        return Optional.empty();
+        catch (Exception e){
+            throw new AutoUpdateError(String.format("Could not extract a Register ID from link %s in email item %s", url.toString()),e);
+        }
     }
-
 
 
     @Override
@@ -71,9 +82,9 @@ class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactor
         long timeoutSeconds = 10;
         try {
             ImmutableSet<LegislationRegisterEmailUpdate> updates = emailClient.getUpdatesFrom(getLastUpdatedDate.get()).get(timeoutSeconds, TimeUnit.SECONDS);
-            // logic to identify new instruments from legislation email updates here
+           ImmutableSet<InstrumentChange> newInstruments = identifyNewInstruments(updates);
+           return newInstruments;
 
-            return null;
         } catch (InterruptedException e) {
             logger.error("Getting updates from legislation register email subscription was interrupted.",e);
             return ImmutableSet.of();

@@ -7,7 +7,7 @@ import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislation;
 import au.gov.dva.sopapi.sopref.data.JsonUtils;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
-import au.gov.dva.sopapi.sopref.data.updates.SoPChangeDetector;
+import au.gov.dva.sopapi.sopref.data.updates.LegRegChangeDetector;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -89,7 +89,7 @@ public class AutoUpdateTests {
                 "F2010L00557"  // Statement of Principles concerning osteoarthritis No. 13 of 2010, already amended with compilation
         );
 
-        SoPChangeDetector underTest = new SoPChangeDetector(new FederalRegisterOfLegislation());
+        LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislation());
         ImmutableSet<InstrumentChange> newCompilations = underTest.detectNewCompilations(testSourceIds);
 
         for (InstrumentChange s : newCompilations)
@@ -108,7 +108,7 @@ public class AutoUpdateTests {
         );
         String expectedIdOfRepealingInstrument = "F2017L00016";
 
-        SoPChangeDetector underTest = new SoPChangeDetector(new FederalRegisterOfLegislation());
+        LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislation());
         ImmutableSet<InstrumentChange> results  = underTest.detectReplacements(testSourceIds);
         results.stream().forEach(r -> System.out.println(r));
 
@@ -123,7 +123,7 @@ public class AutoUpdateTests {
         ImmutableSet<String> testSourceIds = ImmutableSet.of(
                 "F2014L00930"
         );
-        SoPChangeDetector underTest = new SoPChangeDetector(new FederalRegisterOfLegislation());
+        LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislation());
         ImmutableSet<InstrumentChange> results = underTest.detectReplacements(testSourceIds);
         Assert.assertTrue(results.isEmpty());
     }
