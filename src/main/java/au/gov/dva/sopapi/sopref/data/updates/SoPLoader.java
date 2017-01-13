@@ -10,6 +10,7 @@ import au.gov.dva.sopapi.sopref.data.Conversions;
 import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
 import au.gov.dva.sopapi.sopref.data.updates.types.Revocation;
+import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPCleanser;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory;
 import com.google.common.collect.ImmutableMap;
@@ -92,8 +93,9 @@ public class SoPLoader {
 
         ImmutableMap<String,Integer> ordering = ImmutableMap.of(
                 NewInstrument.class.getName(), 1,
-                Compilation.class.getName(), 2,
-                Revocation.class.getName(),3
+                Replacement.class.getName(), 2,
+                Compilation.class.getName(), 3,
+                Revocation.class.getName(),4
         );
 
         @Override
