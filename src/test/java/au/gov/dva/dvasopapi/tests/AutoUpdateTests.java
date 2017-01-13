@@ -2,10 +2,14 @@ package au.gov.dva.dvasopapi.tests;
 
 import au.gov.dva.dvasopapi.tests.categories.IntegrationTest;
 import au.gov.dva.sopapi.DateTimeUtils;
+import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
+import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
+import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislation;
 import au.gov.dva.sopapi.sopref.data.JsonUtils;
+import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
 import au.gov.dva.sopapi.sopref.data.updates.LegRegChangeDetector;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,6 +31,10 @@ import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableList.*;
@@ -128,5 +136,79 @@ public class AutoUpdateTests {
         Assert.assertTrue(results.isEmpty());
     }
 
+
+    private class TestEmailUpdate implements LegislationRegisterEmailUpdate
+    {
+        private final String title;
+        private final String url;
+        private final String updateDesc;
+
+        public TestEmailUpdate(String title, String url, String updateDesc)
+        {
+            this.title = title;
+            this.url = url;
+            this.updateDesc = updateDesc;
+        }
+
+
+        @Override
+        public String getInstrumentTitle() {
+            return title;
+        }
+
+        @Override
+        public Optional<String> getInstrumentDescription() {
+            return Optional.empty();
+        }
+
+        @Override
+        public String getUpdateDescription() {
+            return updateDesc;
+        }
+
+        @Override
+        public URL getRegisterLink() {
+            try {
+                return new URL(url);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public OffsetDateTime getDateReceived() {
+            return null;
+        }
+    }
+
+
+    private class MockEmailClient implements LegislationRegisterEmailClient {
+        TestEmailUpdate amendment1 = new TestEmailUpdate("Amendment Statement of Principles concerning malignant neoplasm of the oesophagus (Reasonable Hypothesis) (No. 21 of 2017)",
+                "https://www.legislation.gov.au/Details/F2017L00018",
+                "Item was published on 4/01/2017");
+
+        TestEmailUpdate publish1 = new TestEmailUpdate("Statement of Principles concerning ascariasis (Reasonable Hypothesis) (No. 9 of 2017)",
+                "https://www.legislation.gov.au/Details/F2017L00015",
+                "Item was published on 4/01/2017");
+
+        @Override
+        public CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getUpdatesFrom(OffsetDateTime fromDate) {
+            return CompletableFuture.completedFuture(ImmutableSet.of(
+                    amendment1,
+                    publish1
+            ));
+        }
+    }
+
+    @Test
+    public void testEmailUpdateFactory()
+    {
+        LegislationRegisterEmailClient mockClient = new MockEmailClient();
+        Supplier<OffsetDateTime> fromDateSupplier = () -> OffsetDateTime.of(2017,1,1,0,0,0,0, ZoneOffset.UTC);
+        InstrumentChangeFactory underTest = new EmailSubscriptionInstrumentChangeFactory(mockClient,fromDateSupplier);
+        ImmutableSet<InstrumentChange> results = underTest.getChanges();
+        Assert.assertTrue(results.size() == 1 && results.stream().findFirst().get().getInstrumentId().contentEquals("F2017L00015"));
+    }
 
 }
