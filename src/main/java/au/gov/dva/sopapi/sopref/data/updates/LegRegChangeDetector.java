@@ -2,6 +2,8 @@ package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
+import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +15,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class SoPChangeDetector {
+public class LegRegChangeDetector {
 
     private RegisterClient registerClient;
-    private static final Logger logger = LoggerFactory.getLogger(SoPChangeDetector.class);
+    private static final Logger logger = LoggerFactory.getLogger(LegRegChangeDetector.class);
 
-    public SoPChangeDetector(RegisterClient registerClient) {
+    public LegRegChangeDetector(RegisterClient registerClient) {
         this.registerClient = registerClient;
     }
 

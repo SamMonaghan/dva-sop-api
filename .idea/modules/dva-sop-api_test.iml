@@ -39,6 +39,8 @@
     <orderEntry type="library" name="Gradle: org.imgscalr:imgscalr-lib:4.2" level="project" />
     <orderEntry type="library" name="Gradle: org.scalatest:scalatest_2.12:3.0.0" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="Gradle: org.mockito:mockito-core:2.6.1" level="project" />
+    <orderEntry type="library" name="Gradle: info.solidsoft.mockito:mockito-java8:2.0.0" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.8.5" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-server:9.3.6.v20151106" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-webapp:9.3.6.v20151106" level="project" />
@@ -84,6 +86,10 @@
     <orderEntry type="library" name="Gradle: org.scalactic:scalactic_2.12:3.0.0" level="project" />
     <orderEntry type="library" name="Gradle: org.scala-lang.modules:scala-xml_2.12:1.0.5" level="project" />
     <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.6.2" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy-agent:1.6.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.objenesis:objenesis:2.4" level="project" />
+    <orderEntry type="library" name="Gradle: net.jodah:typetools:0.4.8" level="project" />
     <orderEntry type="library" name="Gradle: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-http:9.3.6.v20151106" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-io:9.3.6.v20151106" level="project" />

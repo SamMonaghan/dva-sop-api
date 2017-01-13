@@ -62,6 +62,7 @@ public class FederalRegisterOfLegislation implements RegisterClient {
 
     @Override
     public CompletableFuture<byte[]> getLatestAuthorisedInstrumentPdf(String registerId) {
+     // todo: refactor redirects out of this - no longer need them
         URL latestDownloadPageUrl;
         latestDownloadPageUrl = BuildUrl.forLatestDownloadPage(registerId);
         CompletableFuture<byte[]> promise = getRedirectTargetUrl(latestDownloadPageUrl)
@@ -183,7 +184,6 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         return promise;
     }
 
-
     public static Optional<String> getRegisterIdOfRepealedByCeasedBy(String html) {
         Document htmlDocument = Jsoup.parse(html);
         String cssSelector = String.format("a[id*='SeriesRepealedBy']");
@@ -206,12 +206,6 @@ public class FederalRegisterOfLegislation implements RegisterClient {
 
         String registerId = matcher.group(1);
         return Optional.of(registerId);
-    }
-
-    public static String getLatestCompilation(String registerId) {
-        // eg https://www.legislation.gov.au/Series/F2014L01389/Compilations
-
-        return null;
     }
 
 

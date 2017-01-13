@@ -8,8 +8,8 @@ import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.AzureStorageRepository;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislation;
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
-import au.gov.dva.sopapi.sopref.data.updates.NewInstrument;
-import au.gov.dva.sopapi.sopref.data.updates.SoPChangeDetector;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.LegRegChangeDetector;
 import au.gov.dva.sopapi.sopref.data.updates.SoPLoader;
 import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -52,7 +52,7 @@ public class IntegrationTests {
 
 
         SoPLoader underTest = new SoPLoader(localRepository, new FederalRegisterOfLegislation(),s -> ServiceLocator.findTextCleanser(s),s -> ServiceLocator.findSoPFactory(s));
-        underTest.updateAll(10);
+        underTest.applyAll(10);
 
     }
 
@@ -73,9 +73,9 @@ public class IntegrationTests {
         RegisterClient registerClient = new FederalRegisterOfLegislation();
 
         SoPLoader underTest = new SoPLoader(localRepository, new FederalRegisterOfLegislation(),s -> ServiceLocator.findTextCleanser(s),s -> ServiceLocator.findSoPFactory(s));
-        underTest.updateAll(10);
+        underTest.applyAll(10);
 
-        SoPChangeDetector soPChangeDetector = new SoPChangeDetector(registerClient);
+        LegRegChangeDetector legRegChangeDetector = new LegRegChangeDetector(registerClient);
 
     }
 }
