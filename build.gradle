@@ -87,8 +87,6 @@ dependencies {
 
     testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: '3.0.0'
     testCompile 'junit:junit:4.12'
-    testCompile "org.mockito:mockito-core:2.+"
-    testCompile 'info.solidsoft.mockito:mockito-java8:2.0.0'
 }
 
 

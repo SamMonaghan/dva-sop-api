@@ -66,5 +66,5 @@ build/
 /out/
 .idea/libraries
 .idea/runConfigurations
-
+.idea/
 
