@@ -5,6 +5,7 @@ import au.gov.dva.sopapi.interfaces.model.ServiceDetermination;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import com.google.common.collect.ImmutableSet;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 public interface Repository {
@@ -17,5 +18,7 @@ public interface Repository {
      void addInstrumentChange(InstrumentChange instrumentChange);
      void addServiceDetermination(ServiceDetermination serviceDetermination);
      ImmutableSet<ServiceDetermination> getServiceDeterminations();
+     Optional<OffsetDateTime> getLastUpdateDate();
+     void setLastUpdateDate(OffsetDateTime lastUpdateDate);
 
 }

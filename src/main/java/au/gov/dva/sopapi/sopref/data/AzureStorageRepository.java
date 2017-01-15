@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,7 @@ public class AzureStorageRepository implements Repository {
     private static final String SERVICE_DETERMINATIONS_CONTAINER_NAME = "servicedeterminations";
     private static final String INSTRUMENT_CHANGES_CONTAINER_NAME = "instrumentchanges";
     private static final String ARCHIVED_SOPS_CONTAINER_NAME = "archivedsops";
+    private static final String LAST_UPDATED_BLOB_NAME = "lastupdated.txt";
 
     private CloudStorageAccount _cloudStorageAccount = null;
     private CloudBlobClient _cloudBlobClient = null;
@@ -291,6 +293,22 @@ public class AzureStorageRepository implements Repository {
             throw new RepositoryError(e);
         } catch (Exception e) {
             throw new RepositoryError(e);
+        }
+    }
+
+    @Override
+    public Optional<OffsetDateTime> getLastUpdateDate() {
+        return null;
+    }
+
+    @Override
+    public void setLastUpdateDate(OffsetDateTime lastUpdateDate) {
+        try {
+            Optional<CloudBlob> lastUpdated =  getBlobByName(SOP_CONTAINER_NAME, LAST_UPDATED_BLOB_NAME);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (StorageException e) {
+            e.printStackTrace();
         }
     }
 
