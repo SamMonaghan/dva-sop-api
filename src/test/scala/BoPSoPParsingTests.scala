@@ -9,12 +9,13 @@ import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
 import scala.collection.mutable
+import scala.util.Properties
 
 @RunWith(classOf[JUnitRunner])
 class BoPSoPParsingTests extends FunSuite {
 
-  ignore("Parse all BoP SoPs") {
-    val rhIds = ParserTestUtils.resourceToString("bopSopRegisterIds.txt").split("\n");
+  test("Parse all BoP SoPs") {
+    val rhIds = ParserTestUtils.resourceToString("bopSopRegisterIds.txt").split(Properties.lineSeparator);
 
     val errorMap = mutable.HashMap.empty[String, Throwable];
     val passedList = mutable.MutableList.empty[String];
@@ -32,7 +33,6 @@ class BoPSoPParsingTests extends FunSuite {
       } catch {
         case e: Throwable => errorMap += (rhId -> e)
       }
-
     }
 
     val pw = new PrintWriter("bopParseResults.txt")

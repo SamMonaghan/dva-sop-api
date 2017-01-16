@@ -4,6 +4,7 @@ import java.io.PrintWriter
 
 import au.gov.dva.dvasopapi.tests.TestUtils
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop
+import net.engio.mbassy.bus.config.IBusConfiguration.Properties
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -13,8 +14,8 @@ import scala.collection.mutable
 @RunWith(classOf[JUnitRunner])
 class RHSoPParsingTests extends FunSuite {
 
-  ignore("Parse all RH SoPs") {
-    val rhIds = ParserTestUtils.resourceToString("rhSopRegisterIds.txt").split("\n");
+  test("Parse all RH SoPs") {
+    val rhIds = ParserTestUtils.resourceToString("rhSopRegisterIds.txt").split(scala.util.Properties.lineSeparator);
 
     val errorMap = mutable.HashMap.empty[String, Throwable];
     val passedList = mutable.MutableList.empty[String];
