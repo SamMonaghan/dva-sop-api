@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
 
 public class MockLumbarSpondylosisSopRH implements SoP {
 
@@ -51,6 +52,11 @@ public class MockLumbarSpondylosisSopRH implements SoP {
                                     }
 
                                     @Override
+                                    public List<SubFactor> getSubFactors() {
+                                        return null;
+                                    }
+
+                                    @Override
                                     public ImmutableSet<DefinedTerm> getDefinedTerms() {
                                         return ImmutableSet.of();
                                     }
@@ -64,6 +70,11 @@ public class MockLumbarSpondylosisSopRH implements SoP {
                     @Override
                     public String getText() {
                         return "having inflammatory joint disease in the lumbar spine before the clinical worsening of lumbar spondylosis";
+                    }
+
+                    @Override
+                    public List<SubFactor> getSubFactors() {
+                        return null;
                     }
 
                     @Override
