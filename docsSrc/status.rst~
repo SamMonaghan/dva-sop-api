@@ -1,0 +1,57 @@
+#############
+Status
+#############
+
+.. list-table:: Functional Requirements
+:widths: 15 10 30
+:header-rows: 1
+
+* - Requirement
+  - Requirement Reference
+  - Satisfied
+  - Details
+
+
+
+.. list-table:: Techincal Requirements
+
+* - Requirement
+  - Requirements Reference
+  - Satisfied
+  - Details
+
+
+* - Platform: Java Standard Edition 8
+  - 4.3.1
+  - \u2713
+  - java version "1.8.0_111"
+    Java(TM) SE Runtime Environment (build 1.8.0_111-b14)
+    Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)
+ 
+* - Application Server: Jetty
+  - 4.3.2
+  - \u2713  
+  - Runs on Jetty Distribution 9.3.14
+
+* - Form of requests and responses
+  - 4.3.3  
+  - \u2713
+  - See methods handling HTTP requests in https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java.  Java's OffsetDateTime class with standard formatters for ISO date times.  Date strings ending in 'Z' with no time information are assumed to be 12am midnight UTC. (eg '2017-01-01Z').
+ 
+* - Validates configuration on application start and logs errors
+  - 4.3.4(a)
+  - \u2713
+  - Logging throughout application using SL4J.    
+ 
+* - Configurable Throttling based on the number of requests from an IP address
+  - 4.3.4(b)
+  - \u2713
+  - Configurable but not configured. To configure, add the Jetty Denial of Service filter as described here: http://www.eclipse.org/jetty/documentation/current/dos-filter.html
+
+* - Security - secured against JSON and REGEX DOS attacks
+  - 4.3.5(a)
+  -   
+
+   
+   
+
