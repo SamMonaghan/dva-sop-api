@@ -128,111 +128,67 @@
             
   <div class="section" id="status">
 <h1>Status<a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h1>
-<table border="1" class="docutils" id="id1">
-<caption><span class="caption-text">Frozen Delights!</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<table border="1" class="docutils">
 <colgroup>
-<col width="27%" />
-<col width="18%" />
-<col width="55%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Treat</th>
-<th class="head">Quantity</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>Albatross</td>
-<td>2.99</td>
-<td>On a stick!</td>
-</tr>
-<tr class="row-odd"><td>Crunchy Frog</td>
-<td>1.49</td>
-<td>If we took the bones out, it wouldn&#8217;t be
-crunchy, now would it?</td>
-</tr>
-<tr class="row-even"><td>Gannet Ripple</td>
-<td>1.99</td>
-<td>On a stick!</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils" id="id2">
-<caption><span class="caption-text">Functional Requirements</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
-<colgroup>
-<col width="18%" />
-<col width="12%" />
-<col width="35%" />
-<col width="35%" />
+<col width="54%" />
+<col width="13%" />
+<col width="33%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Requirement</th>
-<th class="head">Requirement Reference</th>
-<th class="head">Satisfied</th>
-<th class="head">Details</th>
+<th class="head">Ref</th>
+<th class="head">Satisfied?</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>stuff</td>
-<td>stuff</td>
-<td>stuff</td>
-<td>stuff</td>
+<tr class="row-even"><td>Platform: Java
+Standard Edition 8</td>
+<td>4.3.1</td>
+<td>✓ <a class="footnote-reference" href="#f1" id="id1">[1]</a></td>
+</tr>
+<tr class="row-odd"><td>Application Server: Jetty</td>
+<td>4.3.2</td>
+<td>✓ <a class="footnote-reference" href="#f2" id="id2">[2]</a></td>
+</tr>
+<tr class="row-even"><td>Form of requests and
+responses</td>
+<td>4.3.3</td>
+<td>✓ <a class="footnote-reference" href="#f3" id="id3">[3]</a></td>
+</tr>
+<tr class="row-odd"><td>Validates configuration
+on application start and
+logs errors</td>
+<td>4.3.4</td>
+<td>✓ <a class="footnote-reference" href="#f4" id="id4">[4]</a></td>
 </tr>
 </tbody>
 </table>
-<table border="1" class="docutils" id="id3">
-<caption><span class="caption-text">Technical Requirements</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
-<colgroup>
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Requirement</th>
-<th class="head">Requirements Reference</th>
-<th class="head">Satisfied</th>
-<th class="head">Details</th>
-</tr>
-</thead>
+<p class="rubric">Notes</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr class="row-even"><td>Security - secured against JSON and REGEX DOS attacks</td>
-<td>4.3.5(a)</td>
-<td>stuff</td>
-<td>stuff</td>
-</tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Java version &#8220;1.8.0_111&#8221; Java(TM)&lt;br&gt;SE Runtime Environment (build 1.8.0_111-b14)&lt;br&gt;Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)</td></tr>
 </tbody>
 </table>
-<table style="text-align: left">
-<tr>
-<th>Requirement</th>
-<th>Ref</th>
-<th>Satisfied</th>
-<th>Details</th>
-</tr>
-
-<tr>
-        <td>Platform: Java Standard Edition 8</td>
-        <td>4.3.1</td>
-        <td>&#x2713</td>
-        <td>Java version "1.8.0_111" Java(TM)<br>SE Runtime Environment (build 1.8.0_111-b14)<br>Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)</td>
-</tr>
-
-<tr>
-     <td>Application Server: Jetty</td>
-     <td>4.3.2</td>
-     <td>&#x2713
-     <td>Runs on Jetty Distribution 9.3.14</td>
-</tr>
-
-<tr>
-     <td>Form of requests and responses</td>
-     <td>4.3.3</td>
-     <td>&#x2713</td>
-     <td><p>See methods handling HTTP requests in https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java.</p>
-    <p> Java's OffsetDateTime class with standard formatters for ISO date times.  Date strings ending in 'Z' with no time information are assumed to be 12am midnight UTC. (eg '2017-01-01Z').</p></td>
-</tr>
-
+<table class="docutils footnote" frame="void" id="f2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Runs on Jetty Distribution 9.3.14.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>See methods handling HTTP requests in <a class="reference external" href="https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java">https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java</a>.
+Java&#8217;s OffsetDateTime class with standard formatters for ISO date times.  Date strings ending in &#8216;Z&#8217; with no time information are assumed to be 12am midnight UTC. (eg &#8216;2017-01-01Z&#8217;)</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Logging throughout application using SL4J.</td></tr>
+</tbody>
+</table>
 <tr>
     <td>Validates configuration on application start and logs errors</td>
     <td>4.3.4(a)</td>
@@ -245,6 +201,50 @@ crunchy, now would it?</td>
     <td>4.3.4(b)</td>
     <td>&#x2713</td>
     <td>Configurable but not configured. To configure, add the Jetty Denial of Service filter as described here: http://www.eclipse.org/jetty/documentation/current/dos-filter.html</td>
+</tr>
+
+<tr>
+     <td>Security - secured against JSON and REGEX DOS attacks</td>
+     <td>4.3.5(a)</td>
+     <td>&#x2713</td>
+     <td>Parsing of API routes primarily uses Java's equality operator, not REGEX: see https://github.com/perwendel/spark/blob/master/src/main/java/spark/route/RouteEntry.java.  A regex is used for matching query parameters, however it does not have any groups with repetition: see https://github.com/perwendel/spark/blob/master/src/main/java/spark/QueryParamsMap.java.<br>
+       The API uses the Jackson library to parse JSON in requests.  By default, this includes protection against JSON DOS attacks: see FAIL_ON_SYMBOL_HASH_OVERFLOW(true) in https://github.com/FasterXML/jackson-core/blob/master/src/main/java/com/fasterxml/jackson/core/JsonFactory.java
+     </td>
+</tr>
+
+<tr>
+     <td>Security - configured for TLS 1.2 exclusively</td>
+     <td>4.3.5(c)</td>
+     <td>&#x2713</td>
+     <td>Jetty uses this configuration by default: see http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html</td>
+</tr>
+
+<tr>
+     <td>Security - validates incoming Content-Types and Response-Types</td>
+     <td>4.3.5(d)</td>
+     <td>&#x2713</td>
+     <td>The API returns HTTP status code 406 if Content-Type is not 'application/json'.  See: https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java</td>
+</tr>
+
+<tr>
+     <td>Security - responses include header: X-Content-Type-Options: nosniff.</td>
+     <td>4.3.5(e)</td>
+     <td>&#x2713</td>
+     <td>The API sets this header on all responses.  See:  https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java</td>
+</tr>
+
+<tr>
+     <td>Server Configuration - CORS enabled</td>
+     <td>4.3.6(a)</td>
+     <td>&#x2713</td>
+     <td>Enabled via Windows Azure management portal.  Could also be enabled via web.xml: see http://www.eclipse.org/jetty/documentation/current/cross-origin-filter.html</td>
+</tr>
+
+<tr>
+     <td>Server Configuration - Gzip compression enabled</td>
+     <td>4.3.6(b)</td>
+     <td>&#x2713</td>
+     <td>Jetty applies Gzip compression for all GET methods by default: see /etc/jetty-gzip.xml.</td>
 </tr>
 
 <table></div>
