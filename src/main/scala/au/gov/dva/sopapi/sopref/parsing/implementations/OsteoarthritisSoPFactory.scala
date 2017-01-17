@@ -9,7 +9,7 @@ import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory
 
 object OsteoarthritisSoPFactory extends SoPFactory {
 
-  override def create(registerId : String, cleansedText: String): SoP = {
+  override def create(registerId : String, rawText : String, cleansedText: String): SoP = {
     val extractor = new LsExtractor();
     val citation = OsteoarthritisParser.parseCitation(extractor.extractCitation(cleansedText));
     val instrumentNumber = OsteoarthritisParser.parseInstrumentNumber(citation);

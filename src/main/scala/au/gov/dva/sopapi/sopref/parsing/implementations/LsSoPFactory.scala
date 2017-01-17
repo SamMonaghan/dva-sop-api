@@ -7,7 +7,7 @@ import au.gov.dva.sopapi.dtos.StandardOfProof
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory
 
 object LsSoPFactory extends SoPFactory{
-  override def create(registerId : String, cleansedText: String): SoP = {
+  override def create(registerId : String, rawText : String, cleansedText: String): SoP = {
     val extractor = new LsExtractor();
     val citation = LsParser.parseCitation(extractor.extractCitation(cleansedText));
     val instrumentNumber = LsParser.parseInstrumentNumber(citation);

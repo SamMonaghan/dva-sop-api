@@ -7,7 +7,7 @@ import au.gov.dva.sopapi.interfaces.model.{DefinedTerm, ICDCode, SoP}
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory
 
 object CartilageTearSoPFactory extends SoPFactory{
-  override def create(registerId : String, cleansedText: String): SoP = {
+  override def create(registerId : String, rawText : String, cleansedText: String): SoP = {
     val extractor = new CartilageTearExtractor();
     val citation = CartilageTearParser.parseCitation(extractor.extractCitation(cleansedText));
     val instrumentNumber = CartilageTearParser.parseInstrumentNumber(citation);

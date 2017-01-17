@@ -126,8 +126,9 @@ class SopParserTests extends FunSuite {
   }
 
   test("Parse entire LS SoP") {
-      val testInput = ParserTestUtils.resourceToString("lscleansedText.txt")
-      val result: SoP = LsSoPFactory.create("F2014L00933",testInput)
+      val cleansedText = ParserTestUtils.resourceToString("lscleansedText.txt")
+      val rawText = ParserTestUtils.resourceToString("LS-RH-Raw-Text.txt")
+      val result: SoP = LsSoPFactory.create("F2014L00933", rawText, cleansedText)
       val asJson = StoredSop.toJson(result)
       System.out.print(TestUtils.prettyPrint(asJson))
       assert(result != null)
@@ -170,8 +171,9 @@ class SopParserTests extends FunSuite {
   }
 
   test("Parse entire RH LS SoP") {
-    val testInput = ParserTestUtils.resourceToString("lscleansedText.txt")
-    val result: SoP = LsSoPFactory.create("F2014L00933",testInput)
+    val cleansedText = ParserTestUtils.resourceToString("lscleansedText.txt")
+    val rawText = ParserTestUtils.resourceToString("LS-RH-Raw-Text.txt")
+    val result: SoP = LsSoPFactory.create("F2014L00933", rawText, cleansedText)
     val asJson = StoredSop.toJson(result)
     System.out.print(TestUtils.prettyPrint(asJson))
     assert(result != null)
