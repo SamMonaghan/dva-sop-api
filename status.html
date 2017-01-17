@@ -128,21 +128,21 @@
             
   <div class="section" id="status">
 <h1>Status<a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h1>
-<table border="1" class="docutils">
+<table border="1" class="docutils" id="id13">
+<caption><span class="caption-text">Technical Requirements</span><a class="headerlink" href="#id13" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col width="54%" />
-<col width="13%" />
-<col width="33%" />
+<col width="27%" />
+<col width="18%" />
+<col width="55%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Requirement</th>
 <th class="head">Ref</th>
-<th class="head">Satisfied?</th>
+<th class="head">Satsified?</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>Platform: Java
-Standard Edition 8</td>
+<tr class="row-even"><td>Platform: Java Standard Edition 8</td>
 <td>4.3.1</td>
 <td>✓ <a class="footnote-reference" href="#f1" id="id1">[1]</a></td>
 </tr>
@@ -150,16 +150,45 @@ Standard Edition 8</td>
 <td>4.3.2</td>
 <td>✓ <a class="footnote-reference" href="#f2" id="id2">[2]</a></td>
 </tr>
-<tr class="row-even"><td>Form of requests and
-responses</td>
+<tr class="row-even"><td>Form of requests and  responses (JSON,REST,GET only, error codes, date formats)</td>
 <td>4.3.3</td>
 <td>✓ <a class="footnote-reference" href="#f3" id="id3">[3]</a></td>
 </tr>
-<tr class="row-odd"><td>Validates configuration
-on application start and
-logs errors</td>
+<tr class="row-odd"><td>Validates configuration on application start and logs errors</td>
 <td>4.3.4</td>
 <td>✓ <a class="footnote-reference" href="#f4" id="id4">[4]</a></td>
+</tr>
+<tr class="row-even"><td>Configurable Throttling based on the number of requests from an IP address</td>
+<td>4.3.4(b)</td>
+<td>✓ <a class="footnote-reference" href="#f5" id="id5">[5]</a></td>
+</tr>
+<tr class="row-odd"><td>Security - secured aganist JSON and REGEX DOS attacks</td>
+<td>4.3.5(a)</td>
+<td>✓ <a class="footnote-reference" href="#f6" id="id6">[6]</a></td>
+</tr>
+<tr class="row-even"><td>Security - Securured against CSRF attacks</td>
+<td>4.3.5(b)</td>
+<td>✓ <a class="footnote-reference" href="#f11" id="id7">[11]</a></td>
+</tr>
+<tr class="row-odd"><td>Security - configured for TLS 1.2 exclusively</td>
+<td>4.3.5(c)</td>
+<td>✓ <a class="footnote-reference" href="#f7" id="id8">[7]</a></td>
+</tr>
+<tr class="row-even"><td>Security - validates incoming Content-Types and Response-Types</td>
+<td>4.3.5(d)</td>
+<td>✓ <a class="footnote-reference" href="#f7" id="id9">[7]</a></td>
+</tr>
+<tr class="row-odd"><td>Security - responses include header: X-Content-Type-Options: nosniff.</td>
+<td>4.3.5(e)</td>
+<td>✓ <a class="footnote-reference" href="#f8" id="id10">[8]</a></td>
+</tr>
+<tr class="row-even"><td>Server Configuration - CORS enabled</td>
+<td>4.3.6(a)</td>
+<td>✓ <a class="footnote-reference" href="#f9" id="id11">[9]</a></td>
+</tr>
+<tr class="row-odd"><td>Server Configuration - Gzip compression enabled</td>
+<td>4.3.6(b)</td>
+<td>✓ <a class="footnote-reference" href="#f10" id="id12">[10]</a></td>
 </tr>
 </tbody>
 </table>
@@ -189,65 +218,51 @@ Java&#8217;s OffsetDateTime class with standard formatters for ISO date times.  
 <tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Logging throughout application using SL4J.</td></tr>
 </tbody>
 </table>
-<tr>
-    <td>Validates configuration on application start and logs errors</td>
-    <td>4.3.4(a)</td>
-    <td>&#x2713</td>
-    <td>Logging throughout application using SL4J.</td>
-</tr>
-
-<tr>
-    <td>Configurable Throttling based on the number of requests from an IP address</td>
-    <td>4.3.4(b)</td>
-    <td>&#x2713</td>
-    <td>Configurable but not configured. To configure, add the Jetty Denial of Service filter as described here: http://www.eclipse.org/jetty/documentation/current/dos-filter.html</td>
-</tr>
-
-<tr>
-     <td>Security - secured against JSON and REGEX DOS attacks</td>
-     <td>4.3.5(a)</td>
-     <td>&#x2713</td>
-     <td>Parsing of API routes primarily uses Java's equality operator, not REGEX: see https://github.com/perwendel/spark/blob/master/src/main/java/spark/route/RouteEntry.java.  A regex is used for matching query parameters, however it does not have any groups with repetition: see https://github.com/perwendel/spark/blob/master/src/main/java/spark/QueryParamsMap.java.<br>
-       The API uses the Jackson library to parse JSON in requests.  By default, this includes protection against JSON DOS attacks: see FAIL_ON_SYMBOL_HASH_OVERFLOW(true) in https://github.com/FasterXML/jackson-core/blob/master/src/main/java/com/fasterxml/jackson/core/JsonFactory.java
-     </td>
-</tr>
-
-<tr>
-     <td>Security - configured for TLS 1.2 exclusively</td>
-     <td>4.3.5(c)</td>
-     <td>&#x2713</td>
-     <td>Jetty uses this configuration by default: see http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html</td>
-</tr>
-
-<tr>
-     <td>Security - validates incoming Content-Types and Response-Types</td>
-     <td>4.3.5(d)</td>
-     <td>&#x2713</td>
-     <td>The API returns HTTP status code 406 if Content-Type is not 'application/json'.  See: https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java</td>
-</tr>
-
-<tr>
-     <td>Security - responses include header: X-Content-Type-Options: nosniff.</td>
-     <td>4.3.5(e)</td>
-     <td>&#x2713</td>
-     <td>The API sets this header on all responses.  See:  https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java</td>
-</tr>
-
-<tr>
-     <td>Server Configuration - CORS enabled</td>
-     <td>4.3.6(a)</td>
-     <td>&#x2713</td>
-     <td>Enabled via Windows Azure management portal.  Could also be enabled via web.xml: see http://www.eclipse.org/jetty/documentation/current/cross-origin-filter.html</td>
-</tr>
-
-<tr>
-     <td>Server Configuration - Gzip compression enabled</td>
-     <td>4.3.6(b)</td>
-     <td>&#x2713</td>
-     <td>Jetty applies Gzip compression for all GET methods by default: see /etc/jetty-gzip.xml.</td>
-</tr>
-
-<table></div>
+<table class="docutils footnote" frame="void" id="f5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>Configurable but not configured. To configure, add the Jetty Denial of Service filter as described here: <a class="reference external" href="http://www.eclipse.org/jetty/documentation/current/dos-filter.html">http://www.eclipse.org/jetty/documentation/current/dos-filter.html</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[6]</a></td><td><p class="first">Parsing of API routes primarily uses Java&#8217;s equality operator, not REGEX: see <a class="reference external" href="https://github.com/perwendel/spark/blob/master/src/main/java/spark/route/RouteEntry.java">https://github.com/perwendel/spark/blob/master/src/main/java/spark/route/RouteEntry.java</a>.  A regex is used for matching query parameters, however it does not have any groups with repetition: see <a class="reference external" href="https://github.com/perwendel/spark/blob/master/src/main/java/spark/QueryParamsMap.java">https://github.com/perwendel/spark/blob/master/src/main/java/spark/QueryParamsMap.java</a>.</p>
+<p class="last">The API uses the Jackson library to parse JSON in requests.  By default, this includes protection against JSON DOS attacks: see FAIL_ON_SYMBOL_HASH_OVERFLOW(true) in <a class="reference external" href="https://github.com/FasterXML/jackson-core/blob/master/src/main/java/com/fasterxml/jackson/core/JsonFactory.java">https://github.com/FasterXML/jackson-core/blob/master/src/main/java/com/fasterxml/jackson/core/JsonFactory.java</a></p>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[7]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id9">2</a>)</em> Jetty uses this configuration by default: see <a class="reference external" href="http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html">http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[8]</a></td><td>The API returns HTTP status code 406 if Content-Type is not &#8216;application/json&#8217;.  See: <a class="reference external" href="https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java">https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[9]</a></td><td>Enabled via Windows Azure management portal.  Could also be enabled via web.xml: see <a class="reference external" href="http://www.eclipse.org/jetty/documentation/current/cross-origin-filter.html">http://www.eclipse.org/jetty/documentation/current/cross-origin-filter.html</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id12">[10]</a></td><td>Jetty applies Gzip compression for all GET methods by default: see /etc/jetty-gzip.xml.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f11" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[11]</a></td><td>The API is secured against this by design as it is stateless.</td></tr>
+</tbody>
+</table>
+</div>
 
 
            </div>
