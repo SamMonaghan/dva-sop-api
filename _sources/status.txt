@@ -4,6 +4,100 @@ Status
 
 
 .. |check| unicode:: 10003 .. checkmark
+.. |cross| unicode:: U+2717 .. cross
+
+
+.. list-table:: Functional Requirements - SoP Reference Service
+   :widths: 15 10 30
+   :header-rows: 1
+
+   * - Requirement
+     - Specs Ref
+     - Status
+   * - Handles expected inputs
+     - 4.4.1
+     - |check| (also includes rank)
+   * - Logic to determine applicable SoP factors
+     - 4.1.2
+     - |check|
+   * - Logic to determine satisfied SoP factors
+     - 4.1.2
+     - |check|
+   * - Logic to determine progress towards threshold
+     - 4.1.2
+     - |cross|     
+
+     
+
+
+.. list-table:: Processing Logic
+   :widths: 15 10 30
+   :header-rows: 1
+
+   * - Requirement
+     - Specs Ref 
+     - Status
+   * - Acute conditions - exact date
+     - 4.1.2
+     - (not yet started)
+   * - Acute conditions - date range
+     - 4.1.2
+     - (not yet started)
+   * - Wear and tear - exact date and date range
+     - 4.1.2
+     - |check| 
+   * - Wear and tear - aggravation/worsening
+     - 4.1.2
+     - (would need further specs)
+    
+ 
+.. list-table:: Outputs
+   :widths: 15 10 30
+   :header-rows: 1
+
+   * - Requirement
+     - Specs Ref 
+     - Status
+   * - Machine-readable output
+     - 4.1.3.1
+     - |check|
+   * - Human-readable output
+     - 4.1.3.2
+     - (still needs pie chart and API endpoint)
+
+.. list-table:: SoP Reference Service
+   :widths: 15 10 30
+   :header-rows: 1
+
+   * - Requirement
+     - Specs Ref
+     - Status
+   * - Get SoP factors query
+     - 4.2
+     - |check|
+   * - Get Operations query
+     - 4.2
+     - |check| [#f16]_
+   * - Declared operations update automatically
+     - 4.2
+     - (not yet started)
+   * - New SoPs are automatically detected and exposed
+     - 4.2
+     - (almost) 
+   * - New SoP compilations are detected and exposed
+     - 4.2 
+     - (almost)
+   * - Revoked SoPs are removed
+     - 4.2
+     - (almost)
+   * - SoPs revoked and replaced are swapped
+     - 4.2
+     - (almost)
+    
+    
+
+
+
 
 
 
@@ -14,7 +108,7 @@ Status
    :header-rows: 1
    
    * - Requirement
-     - Ref
+     - Specs Ref
      - Satsified?
    * - Platform: Java Standard Edition 8
      - 4.3.1
@@ -36,27 +130,33 @@ Status
      - |check| [#f6]_
    * - Security - Securured against CSRF attacks
      - 4.3.5(b)
-     - |check| [#f11]_
+     - |check| [#f7]_
    * - Security - configured for TLS 1.2 exclusively
      - 4.3.5(c)
-     - |check| [#f7]_ 
+     - |check| [#f8]_ 
    * - Security - validates incoming Content-Types and Response-Types
      - 4.3.5(d)
-     - |check| [#f7]_ 
+     - |check| [#f9]_ 
    * - Security - responses include header: X-Content-Type-Options: nosniff.
      - 4.3.5(e)
-     - |check| [#f8]_
+     - |check| [#f10]_
    * - Server Configuration - CORS enabled
      - 4.3.6(a)
-     - |check| [#f9]_ 
+     - |check| [#f11]_ 
    * - Server Configuration - Gzip compression enabled
      - 4.3.6(b)
-     - |check| [#f10]_
+     - |check| [#f12]_
+   * - Code Quality Metric: FindBugs 2.0
+     - 4.3.7
+     - |check| (substantially) [#f13]_
+   * - Performance: average TTFB of less than 500ms
+     - 4.3.8
+     - |check| [#f14]_
+   * - Deployment: UNCLASSIFIED (DLM) certified cloud PaaS
+     - 4.3.9
+     - |check| [#f15]_
 
-      
-   
 
-     
 
 
 .. rubric:: Notes
@@ -75,16 +175,24 @@ Status
 
           The API uses the Jackson library to parse JSON in requests.  By default, this includes protection against JSON DOS attacks: see FAIL_ON_SYMBOL_HASH_OVERFLOW(true) in https://github.com/FasterXML/jackson-core/blob/master/src/main/java/com/fasterxml/jackson/core/JsonFactory.java
 
-.. [#f7] Jetty uses this configuration by default: see http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html
+.. [#f7] The API is secured against this by design as it is stateless.
+.. [#f8] Jetty uses this configuration by default: see http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html
 
-.. [#f8] The API returns HTTP status code 406 if Content-Type is not 'application/json'.  See: https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java
+.. [#f9] The API returns HTTP status code 406 if Content-Type is not 'application/json'.  See: https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java
 
-.. [#f9] Enabled via Windows Azure management portal.  Could also be enabled via web.xml: see http://www.eclipse.org/jetty/documentation/current/cross-origin-filter.html.
+.. [#f10] See: https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java.
 
-.. [#f10] Jetty applies Gzip compression for all GET methods by default: see /etc/jetty-gzip.xml.
+.. [#f11] Enabled via Windows Azure management portal.  Could also be enabled via web.xml: see http://www.eclipse.org/jetty/documentation/current/cross-origin-filter.html.
 
-.. [#f11] The API is secured against this by design as it is stateless.
+.. [#f12] Jetty applies Gzip compression for all GET methods by default: see /etc/jetty-gzip.xml.
 
 
+.. [#f13] FindBugs runs on the devtest branch continuously via Travis CI.  This is configured in the build.gradle file.  It fails the build if any bugs are found.  FindBugs is set to the maximum level of scrupulousness.  So if the build is passing, it means FindBugs has found no bugs.  This applies to all FindBugs categories, not just Security and Malicious code vulnerability.  FindBugs is excluded from running on Scala code because it is not designed for Scala code and throws too many false negatives.  The Scala code is concerned with parsing SoPs.
+
+.. [#f14] Adhoc tests show TTFB of less than 150ms.
+
+.. [#f15] Deployed to Microsoft Azure, Sydney or Melbourne data center.  Details of ASD compliance are at https://www.microsoft.com/en-us/TrustCenter/Compliance/CCSL under 'letters of compliance and certification'.
+
+.. [#f16] The Get Operations query does not take a query date as on reflection in didn't add any functionality and just added complexity.  The query simply returns the latest declared operations at the time of the query.
 
 
