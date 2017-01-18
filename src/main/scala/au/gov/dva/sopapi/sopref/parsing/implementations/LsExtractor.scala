@@ -35,7 +35,7 @@ class LsExtractor extends SoPExtractor {
   override def extractICDCodes(plainTextSop: String): List[ICDCode] = {
     val icdCodeStatementRegex = """attracts ICD-10-AM code((\s|[0-9]|\.|[A-Z]|,|[\r\n]+|or|and)+(?!\.[\r\n]+))""".r
     val allCodes = icdCodeStatementRegex.findFirstMatchIn(plainTextSop).get.group(1)
-    val individualCodeRegex = """[A-Z]+[0-9]+\.[0-9]+""".r
+    val individualCodeRegex = """[A-Z]+[0-9]+(\.[0-9]+)?""".r
     val individualsCodes = individualCodeRegex.findAllMatchIn(allCodes)
             .map(regexMatch => new BasicICDCode("ICD-10-AM",regexMatch.matched.trim));
     individualsCodes.toList
