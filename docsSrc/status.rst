@@ -6,78 +6,82 @@ Status
 .. |check| unicode:: 10003 .. checkmark
 .. |cross| unicode:: U+2717 .. cross
 
-.. list-table:: Functional Requirements - SoP Reference Service
+
+
+
+.. list-table:: SoP Reference Service - Service Determinations
    :widths: 15 10 30
    :header-rows: 1
-
-   * - Requirement
-     - Specs Ref
-     - Status
-   * - Handles expected inputs
-     - 4.4.1
-     - |check| (also includes rank)
-   * - Logic to determine applicable SoP factors
-     - 4.1.2
-     - |check|
-   * - Logic to determine satisfied SoP factors
-     - 4.1.2
-     - |check|
-   * - Logic to determine progress towards threshold
-     - 4.1.2
-     - |cross|     
-    
-
-.. list-table:: Processing Logic
-   :widths: 15 10 30
-   :header-rows: 1
-
-   * - Requirement
-     - Specs Ref 
-     - Status
-   * - Acute conditions - exact date
-     - 4.1.2
-     - (not yet started)
-   * - Acute conditions - date range
-     - 4.1.2
-     - (not yet started)
-   * - Wear and tear - exact date and date range
-     - 4.1.2
-     - |check| 
-   * - Wear and tear - aggravation/worsening
-     - 4.1.2
-     - (would need further specs)
-    
  
-.. list-table:: Outputs
-   :widths: 15 10 30
-   :header-rows: 1
-
-   * - Requirement
-     - Specs Ref 
-     - Status
-   * - Machine-readable output
-     - 4.1.3.1
-     - |check|
-   * - Human-readable output
-     - 4.1.3.2
-     - (still needs pie chart and API endpoint)
-
-.. list-table:: SoP Reference Service
-   :widths: 15 10 30
-   :header-rows: 1
-
-   * - Requirement
-     - Specs Ref
-     - Status
-   * - Get SoP factors query
-     - 4.2
-     - |check|
-   * - Get Operations query
+   * - Get Operations query - API endpoint, error msgs, validation
      - 4.2
      - |check| [#f16]_
+   * - Download Service Determinations from Legislation Register
+     - 4.2
+     - |check|
+   * - Extract operation dates and names from tables on Legislation Register
+     - 4.2
+     - |check|
+   * - Convert operations to JSON and store/retrieve
+     - 4.2
+     - |check|
+   * - Order operations by start date
+     - 4.2
+     - |check|
+   * - Handle operations without end date
+     - 4.2
+     - |check|
+   * - Handle operations without title
+     - 4.2
+     - |check|
    * - Declared operations update automatically
      - 4.2
      - (not yet started)
+     
+
+.. list-table:: SoP Reference Service - SoPs
+   :widths: 15 10 30
+   :header-rows: 1
+
+   * - Requirement
+     - Specs Ref
+     - Status
+   * - Get SoP factors query - validate input and error messages
+     - 4.2
+     - |check|
+   * - Retrieve authorised PDFs from Legislation Register
+     - 4.2
+     - |check|
+   * - Convert authorised SoP PDF to plain text
+     - 4.2
+     - |check|
+   * - Cleanse SoP plain text to remove footnotes, compress spaces etc.
+     - 4.2
+     - |check|
+   * - Extract register ID from SoP text
+     - 4.2
+     - |check|
+   * - Extract instrument number from SoP text
+     - 4.2
+     - |check|
+   * - Extract factors from SoP text
+     - 4.2
+     - |check|
+   * - Extract definitions from SoP text
+     - 4.2
+     - |check|
+   * - Link definitions to factor text
+     - 4.2
+     - |check|     
+   * - Extract ICD codes from SoP text
+     - 4.2
+     - |check|
+   * - Storage and retrieval of SoPs from database
+     - 4.2
+     - |check|
+   * - Handle dates without time zone info
+     - 4.2
+     - |check|
    * - New SoPs are automatically detected and exposed
      - 4.2
      - (almost) 
@@ -91,7 +95,53 @@ Status
      - 4.2
      - (almost)
     
-    
+.. list-table:: SoP Support Service
+   :widths: 15 10 30
+   :header-rows: 1
+
+   * - Requirement
+     - Specs Ref
+     - Status
+   * - Handles expected inputs
+     - 4.1.1
+     - |check| (also includes rank)
+   * - Count days of operational service
+     - 4.1.2
+     - |check|
+   * - Determine whether RH or BoP SoP applies
+     - 4.1.2
+     - |check|
+   * - Determine satisfied factors
+     - 4.1.2
+     - |check|
+   * - Handle service in multiple service branches
+     - 4.1.2
+     - |check|
+   * - Logic to determine satisfied SoP factors
+     - 4.1.2
+     - |check|
+   * - Logic to determine progress towards threshold
+     - 4.1.2
+     - |cross|
+   * - Acute conditions - exact date
+     - 4.1.2
+     - (not yet started)
+   * - Acute conditions - date range
+     - 4.1.2
+     - (not yet started)
+   * - Logic for wear and tear with exact date or date range
+     - 4.1.2
+     - |check| 
+   * - Logic for wear and tear for aggravation/worsening
+     - 4.1.2
+     - (would need further specs)
+   * - Machine-readable output
+     - 4.1.3.1
+     - |check|
+   * - Human-readable output
+     - 4.1.3.2
+     - (still needs pie chart and API endpoint)
+
 .. list-table:: SoP Coverage
    :widths: 15 10 
    :header-rows: 1
@@ -155,7 +205,19 @@ Status
      - |check| [#f15]_
 
 
+.. list-table:: Bonuses
+   :widths: 15 10 30
+   :header-rows: 1
 
+   * - Bonus!
+     - Benefit
+     - Status
+   * - Java client
+     - Easier for DVA to use API
+     - |check|
+   * - Plain text configuration of rules
+     - Easier for DVA to change rules
+     - idea
 
 .. rubric:: Notes
 
