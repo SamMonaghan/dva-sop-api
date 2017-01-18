@@ -5,22 +5,21 @@ Automatic SoP Update
 There are four cases where SoP changes are handled automatically:
 
 1. A new SoP instrument, which not not repeal any existing instruments (e.g.: for a previously unrecognised condition).
-1. An amendment to an existing SoP instrument.
-1. A new SoP instrument which repeals one or more existing instruments.
-1. Revocation of an existing SoP without any replacement.
+2. An amendment to an existing SoP instrument.
+3. A new SoP instrument which repeals one or more existing instruments.
+4. Revocation of an existing SoP without any replacement.
 
 **************************************
 New SoP instruments for new conditions
 **************************************
 
-For first case, notification of the new SoP comes from the email updates services of the Legislation Register.  An example notification is:
+For first case, notification of the new SoP comes from the email updates services of the Legislation Register.  An example notification is::
 
-```
-Amendment Statement of Principles concerning anxiety disorder No. 100 of 2016
-Amendment Statement of Principles concerning anxiety disorder.
-Item was published on 1/11/2016
-https://www.legislation.gov.au/Details/F2016L01698
-```
+   Amendment Statement of Principles concerning anxiety disorder No. 100 of 2016
+   Amendment Statement of Principles concerning anxiety disorder.
+   Item was published on 1/11/2016
+   https://www.legislation.gov.au/Details/F2016L01698
+
 
 Following notification, the API retrieves the SoP from the Legislation Register and adds it to its database.
 
