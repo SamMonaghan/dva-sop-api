@@ -1,2 +1,6 @@
 *~
 *.swp
+gradle/
+.idea/
+.gradle/
+gradlew*
