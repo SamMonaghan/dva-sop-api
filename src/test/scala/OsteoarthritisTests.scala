@@ -16,7 +16,7 @@ class OsteoarthritisTests extends FunSuite {
     assert(result != null)
   }
 
-  ignore("Parse entire BoP LS SoP")
+  test("Parse entire BoP LS SoP")
   {
     val result = ParserTestUtils.executeWholeParsingPipeline("F2011C00492", "sops_bop/F2011C00492.pdf")
     System.out.println(TestUtils.prettyPrint(StoredSop.toJson(result)))

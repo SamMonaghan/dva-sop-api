@@ -16,7 +16,10 @@ object OsteoarthritisSoPFactory extends SoPFactory {
 
     val definedTermsList: List[DefinedTerm] = OsteoarthritisParser.parseDefinitions(extractor.extractDefinitionsSection(cleansedText))
 
-    val factorsSection: (Int, String) = extractor.extractFactorSection(cleansedText)
+    // Keep extra white space in the raw text to make it easier to capture sub-paras
+    val rawWithoutAuthorisedFooter = GenericClenser.removeAuthorisedFootnote(rawText)
+    val rawWithoutPageNumberFooter = GenericClenser.removePageNumberFootNote(rawWithoutAuthorisedFooter)
+    val factorsSection: (Int, String) = extractor.extractFactorSection(rawWithoutPageNumberFooter)
     val factors: (StandardOfProof, List[(String, String)]) = OsteoarthritisParser.parseFactors(factorsSection._2)
 
     val factorObjects = this.buildFactorObjects(factors._2,factorsSection._1,definedTermsList)

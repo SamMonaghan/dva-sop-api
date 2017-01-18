@@ -1,6 +1,5 @@
 package au.gov.dva.sopapi.sopref.parsing.implementations
 
-import java.text.ParseException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -11,94 +10,42 @@ import au.gov.dva.sopapi.sopref.parsing.traits.SoPParser
 
 import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
-import com.frequal.romannumerals.Converter
 
 object OsteoarthritisParser extends SoPParser with RegexParsers {
+  def paraLetterParser : Parser[String] = """\([a-z]+\)""".r
+  def bodyTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r
 
+  // Cater for ';' not followed by 'or' and ';' followed by 'or' but with only one space
+  def factorTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])|;(?!\s+or)|;(?=\s+or\s(?=\())))+""".r
 
-  def orTerminator: Parser[String] = """;\s+or""".r
+  def orTerminator : Parser[String] = """;\s+or""".r
+  def periodTerminator : Parser[String] = """\.""".r
 
-  def andTerminator: Parser[String] = """;\s+and""".r
+  // At least two spaces following 'or' indicates end of factor
+  def factorTerminator : Parser[String] = """;\s+or(\s){2,}""".r
 
-  def periodTerminator: Parser[String] = """\.$""".r
+  def headParser : Parser[String] = bodyTextParser <~ ":"
 
-  def semicolonTerminator: Parser[String] = """;""".r
-
-  def factorTerminatorParser: Parser[String] = orTerminator | periodTerminator
-
-  def subParaBodyTextParser: Parser[String] = """[A-Za-z0-9\-'’,\s]+[A-Za-z0-9]""".r
-  def subParaLetterParser: Parser[String] = """\([a-z]+\)""".r
-  def paraHeadParser: Parser[String] = """[A-Za-z0-9\-'’,\s]+,\s""".r
-
-  def subParaSeparatorParser: Parser[String] = andTerminator | orTerminator
-
-  def finalSubParaParser: Parser[(String, String)] = subParaLetterParser ~ subParaBodyTextParser ^? {
-    case subParaLetter ~ subParaBody if (verifySubparagraphLabel(subParaLetter)) => { currentSubparagraphNumber+=1; (subParaLetter, subParaBody) }
+  def paraAndTextParser : Parser[(String,String)] = paraLetterParser ~ factorTextParser ^^  {
+    case para ~ text => System.out.println(para + " " + text);(para, text)
   }
 
-  def subParaParser: Parser[(String, String)] = subParaLetterParser ~ subParaBodyTextParser ~ subParaSeparatorParser ^? {
-    case subParaLetter ~ subParaBody ~ subParaSeparator if (verifySubparagraphLabel(subParaLetter)) => { currentSubparagraphNumber+=1; (subParaLetter, subParaBody + subParaSeparator) }
-  }
-
-  def listSubParasParser: Parser[List[(String, String)]] = rep1(subParaParser) ~ finalSubParaParser ^^ {
-    case listOfSubFactors ~ finalSubPara => listOfSubFactors :+ finalSubPara
-  }
-
-  def paraFooterParser: Parser[String] = semicolonTerminator ~> paraFooterTextParser
-
-  def paraFooterTextParser: Parser[String] = """[A-Za-z0-9\-'’,\s]+[A-Za-z0-9]""".r
-
-
-  def factorBodyTextParser: Parser[(String, List[(String, String)], String)] = """(([A-Za-z0-9\-'’,\)\(\s](?!\(i\))|\.(?=[A-Za-z0-9])(?!\(i\))))+""".r ^^ {
-    case factorBody => (factorBody, null, null)
-  }
-
-
-  def paraWithSubParasParser: Parser[(String, List[(String, String)], String)] = paraHeadParser ~ listSubParasParser ~ paraFooterParser.? ^^ {
-    case head ~ subFactorList ~ footer => currentSubparagraphNumber=0; (head, subFactorList, footer.orNull)
-  }
-
-  var currentSubparagraphNumber : Int = 0
-
-  def verifySubparagraphLabel(label : String) : Boolean = {
-    def strippedLabel = label.replace("(", "").replace(")", "").toUpperCase()
-    try {
-        var number = new Converter().toNumber(strippedLabel)
-        return number == currentSubparagraphNumber + 1
-    } catch {
-      case ex: ParseException => false
-    }
-  }
-
-  def paraBodyParser: Parser[(String, List[(String, String)], String)] = paraWithSubParasParser | factorBodyTextParser
-
-  def paraLetterParser: Parser[String] = """\([a-z]+\)""".r
-
-  def paraAndTextParser: Parser[(String, String, List[(String, String)], String)] = paraLetterParser ~ paraBodyParser <~ factorTerminatorParser ^^ {
-    case para ~ factorComponents => (para, factorComponents._1, factorComponents._2, factorComponents._3)
-  }
-
-  def separatedFactorListParser: Parser[List[(String, String, List[(String, String)], String)]] = rep1(paraAndTextParser) ^^ {
+  def separatedFactorListParser : Parser[List[(String,String)]] = repsep(paraAndTextParser, factorTerminator)  ^^ {
     case listOfFactors: Seq[(String, String)] => listOfFactors
   }
 
-  def bodyTextParser: Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r
-
-  def headParser: Parser[String] = bodyTextParser <~ ":"
-
-
-  def completeFactorSectionParser: Parser[(String, List[(String, String, List[(String, String)], String)])] = headParser ~ separatedFactorListParser <~ periodTerminator ^^ {
-    case head ~ factorList => (head, factorList)
+  def completeFactorSectionParser : Parser[(String,List[(String,String)])] = headParser ~ separatedFactorListParser <~ periodTerminator  ^^ {
+    case head ~ factorList => (head,factorList)
   }
 
-  override def parseFactors(factorsSection: String): (StandardOfProof, List[(String, String)]) = {
-    val result = this.parseAll(this.completeFactorSectionParser, factorsSection);
+  override def parseFactors(factorsSection: String): (StandardOfProof,List[(String, String)]) =
+  {
+    val result = this.parseAll(this.completeFactorSectionParser,factorsSection);
     if (!result.successful)
       throw new SopParserError(result.toString)
     else {
       val standardOfProof = extractStandardOfProofFromHeader(result.get._1)
-      //(standardOfProof, result.get._2)
-      (standardOfProof, null)
+      (standardOfProof, result.get._2)
     }
   }
 
@@ -111,6 +58,7 @@ object OsteoarthritisParser extends SoPParser with RegexParsers {
       throw new SopParserError("Cannot determine standard of proof from text: " + headerText)
     }
   }
+
 
 
   override def parseInstrumentNumber(citationSection: String): InstrumentNumber = {
