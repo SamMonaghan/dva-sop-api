@@ -8,7 +8,7 @@ import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory
 
 object LsSoPFactory extends SoPFactory{
   override def create(registerId : String, rawText : String, cleansedText: String): SoP = {
-    val extractor = new LsExtractor();
+    val extractor = new PreAugust2015Extractor();
     val citation = LsParser.parseCitation(extractor.extractCitation(cleansedText));
     val instrumentNumber = LsParser.parseInstrumentNumber(citation);
 

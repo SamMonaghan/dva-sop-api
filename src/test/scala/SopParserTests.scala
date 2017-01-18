@@ -30,7 +30,7 @@ class SopParserTests extends FunSuite {
 
   test("Extract Lumbar Spondylosis factors section from cleansed text") {
     val testInput = ParserTestUtils.resourceToString("lscleansedText.txt")
-    val underTest = new LsExtractor()
+    val underTest = new PreAugust2015Extractor()
     val result = underTest.extractFactorSection(testInput)
     System.out.print(result);
     assert(result._1 == 6)
@@ -38,7 +38,7 @@ class SopParserTests extends FunSuite {
 
   test("Extract definition section for Lumbar Spondylosis") {
     val testInput = ParserTestUtils.resourceToString("lscleansedText.txt")
-    val underTest = new LsExtractor()
+    val underTest = new PreAugust2015Extractor()
     val result = underTest.extractDefinitionsSection(testInput);
     assert(result.startsWith("For the purpose") && result.endsWith("surgery to the lumbar spine."))
     System.out.print(result)
@@ -46,14 +46,14 @@ class SopParserTests extends FunSuite {
 
   test("Extract date of effect for Lumbar Spondylosis") {
     val testInput = ParserTestUtils.resourceToString("lscleansedText.txt")
-    val underTest = new LsExtractor()
+    val underTest = new PreAugust2015Extractor()
     val result = underTest.extractDateOfEffectSection(testInput);
     assert(result == "This Instrument takes effect from 2 July 2014.");
   }
 
   test("Extract citation for Lumbar Spondylosis") {
     val testInput = ParserTestUtils.resourceToString("lscleansedText.txt")
-    val underTest = new LsExtractor()
+    val underTest = new PreAugust2015Extractor()
     val result = underTest.extractCitation(testInput);
     assert(result == "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014.");
   }
@@ -61,7 +61,7 @@ class SopParserTests extends FunSuite {
 
   test("Extract ICD codes for Lumbar Spondylosis") {
     val testInput = ParserTestUtils.resourceToString("lscleansedText.txt")
-    val underTest = new LsExtractor()
+    val underTest = new PreAugust2015Extractor()
     val result = underTest.extractICDCodes(testInput);
     result.foreach(c => System.out.print(c))
     assert(result.size == 9)
@@ -138,7 +138,7 @@ class SopParserTests extends FunSuite {
   {
 
     val testInput = ParserTestUtils.resourceToString("lscleansedText.txt")
-    val undertest = new LsExtractor
+    val undertest = new PreAugust2015Extractor()
     val result =undertest.extractAggravationSection(testInput)
     assert(result == "Paragraphs 6(q) to 6(ff) applies only to material contribution to, or aggravation of, lumbar spondylosis where the person’s lumbar spondylosis was suffered or contracted before or during (but not arising out of) the person’s relevant service.")
   }
