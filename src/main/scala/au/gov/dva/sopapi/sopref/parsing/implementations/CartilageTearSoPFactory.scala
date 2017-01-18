@@ -38,7 +38,7 @@ object CartilageTearSoPFactory extends SoPFactory{
 
     val icdCodes: List[ICDCode] = extractor.extractICDCodes(cleansedText)
 
-    val conditionName = LsParser.parseConditionNameFromCitation(citation);
+    val conditionName = CartilageTearParser.parseConditionNameFromCitation(citation);
 
     new ParsedSop(registerId,instrumentNumber,citation,aggravationFactors, onsetFactors, effectiveFromDate,standardOfProof,icdCodes,conditionName)
   }

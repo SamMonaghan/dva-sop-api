@@ -69,7 +69,7 @@ class SopParserTests extends FunSuite {
 
   test("Parse single factor") {
     val testInput = "(a) being a prisoner of war before the clinical onset of lumbar spondylosis; or ";
-    val undertest = LsParser
+    val undertest = PreAugust2015Parser
     val result = undertest.parseAll(undertest.singleParaParser, testInput)
     System.out.print(result)
   }
@@ -77,7 +77,7 @@ class SopParserTests extends FunSuite {
 
   test("Parse all factors from Lumbar Spondylosis"){
     val testInput = ParserTestUtils.resourceToString("lsExtractedFactorsText.txt")
-    val underTest = LsParser;
+    val underTest = PreAugust2015Parser;
     val result = underTest.parseAll(underTest.completeFactorSectionParser,testInput)
     System.out.print(result)
     assert(result.successful)
@@ -87,7 +87,7 @@ class SopParserTests extends FunSuite {
   test("Ls parser implements interface correctly") {
 
     val testInput = ParserTestUtils.resourceToString("lsExtractedFactorsText.txt")
-    val underTest = LsParser;
+    val underTest = PreAugust2015Parser;
     val result = underTest.parseFactors(testInput)
     assert(result._1 == StandardOfProof.ReasonableHypothesis)
     assert(result._2.size == 32)
@@ -95,7 +95,7 @@ class SopParserTests extends FunSuite {
 
   test("Parse instrument number") {
     val testInput = "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014."
-    val result = LsParser.parseInstrumentNumber(testInput)
+    val result = PreAugust2015Parser.parseInstrumentNumber(testInput)
     assert(result.getNumber == 62 && result.getYear == 2014)
 
   }
@@ -115,13 +115,13 @@ class SopParserTests extends FunSuite {
 
   test("Parse LS definitions section") {
     val testInput = ParserTestUtils.resourceToString("lsExtractedDefinitionsSection.txt")
-    val result = LsParser.parseDefinitions(testInput)
+    val result = PreAugust2015Parser.parseDefinitions(testInput)
     assert(result.size == 17)
   }
 
   test("Parse date of effect") {
     val dateOfEffectSection = "This Instrument takes effect from 2 July 2014."
-    val result = LsParser.parseDateOfEffect(dateOfEffectSection)
+    val result = PreAugust2015Parser.parseDateOfEffect(dateOfEffectSection)
     assert(result.getYear == 2014)
   }
 
@@ -147,7 +147,7 @@ class SopParserTests extends FunSuite {
   test("Parse start and end of aggravation paras for LS") {
     val testInput = "Paragraphs 6(q) to 6(ff) applies only to material contribution to, or aggravation of, lumbar spondylosis where the person’s lumbar spondylosis was suffered or contracted before or during (but not arising out of) the person’s relevant service."
 
-    val result = LsParser.parseStartAndEndAggravationParas(testInput)
+    val result = PreAugust2015Parser.parseStartAndEndAggravationParas(testInput)
     assert(result._1 == "(q)" && result._2 == "(ff)")
   }
 
@@ -159,14 +159,14 @@ class SopParserTests extends FunSuite {
 
   test("Get citation from citation section") {
     val input = "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014."
-    val result = LsParser.parseCitation(input)
+    val result = PreAugust2015Parser.parseCitation(input)
     assert(result == "Statement of Principles concerning lumbar spondylosis No. 62 of 2014" )
   }
 
   test("Get condition name from citation")
   {
     val input =  "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014."
-    val result = LsParser.parseConditionNameFromCitation(input);
+    val result = PreAugust2015Parser.parseConditionNameFromCitation(input);
     assert(result == "lumbar spondylosis")
   }
 
