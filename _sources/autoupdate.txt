@@ -1,5 +1,5 @@
 #############################
-Notes on Automatic SoP Update
+Automatic SoP Update
 #############################
 
 There are four cases where SoP changes are handled automatically:

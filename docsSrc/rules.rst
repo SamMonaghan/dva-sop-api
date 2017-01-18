@@ -1,5 +1,5 @@
 #########################
-Notes on Processing Rules
+Processing Rules
 #########################
 
 * Where a veteran has a service historyincluding multiple service branches (eg, Army and RAN), the standard of proof (Reasonable Hypothesis or Balance of Probabilities) is determined taking into account:
