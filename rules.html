@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to DVA SoP API’s documentation! &mdash; DVA SoP API 0.1 documentation</title>
+  <title>Notes on Processing Rules &mdash; DVA SoP API 0.1 documentation</title>
   
 
   
@@ -30,8 +30,9 @@
   
 
   
-    <link rel="top" title="DVA SoP API 0.1 documentation" href="#"/>
-        <link rel="next" title="Specifications" href="specs.html"/> 
+    <link rel="top" title="DVA SoP API 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Notes on Automatic SoP Update" href="autoupdate.html"/>
+        <link rel="prev" title="Specifications" href="specs.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -49,7 +50,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> DVA SoP API
+            <a href="index.html" class="icon icon-home"> DVA SoP API
           
 
           
@@ -80,9 +81,9 @@
           
             
             
-                <ul>
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="specs.html">Specifications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rules.html">Notes on Processing Rules</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Notes on Processing Rules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="autoupdate.html">Notes on Automatic SoP Update</a></li>
 <li class="toctree-l1"><a class="reference internal" href="status.html">Status</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
@@ -100,7 +101,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">DVA SoP API</a>
+        <a href="index.html">DVA SoP API</a>
       </nav>
 
 
@@ -115,13 +116,13 @@
 
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="#">Docs</a> &raquo;</li>
+    <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Welcome to DVA SoP API&#8217;s documentation!</li>
+    <li>Notes on Processing Rules</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/rules.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -131,35 +132,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="welcome-to-dva-sop-api-s-documentation">
-<h1>Welcome to DVA SoP API&#8217;s documentation!<a class="headerlink" href="#welcome-to-dva-sop-api-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
-<div class="toctree-wrapper compound">
+  <div class="section" id="notes-on-processing-rules">
+<h1>Notes on Processing Rules<a class="headerlink" href="#notes-on-processing-rules" title="Permalink to this headline">¶</a></h1>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="specs.html">Specifications</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="specs.html#notes-of-variations-from-spec">Notes of Variations from Spec</a></li>
+<li><dl class="first docutils">
+<dt>Where a veteran has a service historyincluding multiple service branches (eg, Army and RAN), the standard of proof (Reasonable Hypothesis or Balance of Probabilities) is determined taking into account:</dt>
+<dd><ul class="first last simple">
+<li>the entire service history, including multiple branches;</li>
+<li>the rank they held in the last service branch in which they started before the condition started.</li>
 </ul>
+</dd>
+</dl>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="rules.html">Notes on Processing Rules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="autoupdate.html">Notes on Automatic SoP Update</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="autoupdate.html#new-sop-instruments-for-new-conditions">New SoP instruments for new conditions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoupdate.html#amended-sop-instruments">Amended SoP instruments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoupdate.html#new-sop-instrument-repealing-existing-instrument">New SoP instrument repealing existing instrument</a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoupdate.html#cease-repeal-without-replacement">Cease/Repeal without Replacement</a></li>
-</ul>
+<li><p class="first">The number of days of operational service in a given interval is the number of whole elapsed 24 hour periods, rounded up to the nearest day.  This takes account of time zones, daylight saving and leap seconds etc.</p>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="status.html">Status</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="config.html#azure-app-service-application-settings">Azure App Service Application Settings</a></li>
-</ul>
+<li><p class="first">Dates of operations in Service Declarations are assumed to be in the &#8220;Australia/ACT&#8221; IANA TZDB time zone.  The start time is assumed to be 12 AM on the date specified in the Declaration.  End dates of operations are assumed to be inclusive: the end time is assumed to be 12 midnight PM on the date specified.</p>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment Instructions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="deployment.html#ftp-deploy">FTP Deploy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deployment.html#source-control-deploy">Source Control Deploy</a></li>
-</ul>
+<li><p class="first">Commencement dates and dates of effect are assumed to be in the &#8220;Australia/ACT&#8221; IANA TZDB time zone, at 12AM.</p>
 </li>
 </ul>
-</div>
 </div>
 
 
@@ -169,8 +160,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="specs.html" class="btn btn-neutral float-right" title="Specifications" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="autoupdate.html" class="btn btn-neutral float-right" title="Notes on Automatic SoP Update" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="specs.html" class="btn btn-neutral" title="Specifications" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

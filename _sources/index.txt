@@ -12,16 +12,11 @@ Contents:
    :maxdepth: 2
 
    specs
+   rules
+   autoupdate
    status
+   config
+   deployment
 
 
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 

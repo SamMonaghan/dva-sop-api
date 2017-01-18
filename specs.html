@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="DVA SoP API 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Status" href="status.html"/>
+        <link rel="next" title="Notes on Processing Rules" href="rules.html"/>
         <link rel="prev" title="Welcome to DVA SoP API’s documentation!" href="index.html"/> 
 
   
@@ -82,8 +82,15 @@
             
             
                 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Specifications</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Specifications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#notes-of-variations-from-spec">Notes of Variations from Spec</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rules.html">Notes on Processing Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoupdate.html">Notes on Automatic SoP Update</a></li>
 <li class="toctree-l1"><a class="reference internal" href="status.html">Status</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment Instructions</a></li>
 </ul>
 
             
@@ -132,6 +139,13 @@
 <h1>Specifications<a class="headerlink" href="#specifications" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference external" href="https://github.com/govlawtech/dva-sop-api/raw/devtest/docs/Gov%20Law%20Tech%20Proposal%20for%20Straight%20Through%20and%20Streamlined%20Processing%20-%201%20Nov%202016.pdf">Specification Document</a></p>
 <p><a class="reference external" href="https://github.com/govlawtech/dva-sop-api/blob/autoupdate/docs/sops.csv">SoP list</a></p>
+<div class="section" id="notes-of-variations-from-spec">
+<h2>Notes of Variations from Spec<a class="headerlink" href="#notes-of-variations-from-spec" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The array label for the array of legislative instrument ID&#8217;s in the example response to the Get Operations query is <code class="docutils literal"><span class="pre">`registerIDs`</span></code> rather than <code class="docutils literal"><span class="pre">`legislativeInstrumentIds`</span></code>, to be consistent with the terminology on Legislation.gov.au and elsewhere.</li>
+<li>The label shown as <code class="docutils literal"><span class="pre">`registeredId`</span></code> in the example response for the Get Sop Factors query is actually <code class="docutils literal"><span class="pre">`registerId`</span></code>.</li>
+</ul>
+</div>
 </div>
 
 
@@ -141,7 +155,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="status.html" class="btn btn-neutral float-right" title="Status" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="rules.html" class="btn btn-neutral float-right" title="Notes on Processing Rules" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Welcome to DVA SoP API’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
