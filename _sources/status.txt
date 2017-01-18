@@ -12,7 +12,10 @@ Status
 .. list-table:: SoP Reference Service - Service Determinations
    :widths: 15 10 30
    :header-rows: 1
- 
+
+   * - Requirement
+     - Specs Ref
+     - Status
    * - Get Operations query - API endpoint, error msgs, validation
      - 4.2
      - |check| [#f16]_
@@ -36,7 +39,7 @@ Status
      - |check|
    * - Declared operations update automatically
      - 4.2
-     - (not yet started)
+     - |cross|
      
 
 .. list-table:: SoP Reference Service - SoPs
@@ -82,18 +85,23 @@ Status
    * - Handle dates without time zone info
      - 4.2
      - |check|
-   * - New SoPs are automatically detected and exposed
+   * - New SoPs are automatically detected
      - 4.2
-     - (almost) 
-   * - New SoP compilations are detected and exposed
+     - (almost!) 
+   * - New SoP compilations are detected
      - 4.2 
-     - (almost)
+     - |check|
    * - Revoked SoPs are removed
      - 4.2
-     - (almost)
+     - |check|
    * - SoPs revoked and replaced are swapped
      - 4.2
-     - (almost)
+     - |check|
+   * - Batch job to run updates nightly
+     - 4.2
+     - (almost!)
+     
+
     
 .. list-table:: SoP Support Service
    :widths: 15 10 30
@@ -125,10 +133,10 @@ Status
      - |cross|
    * - Acute conditions - exact date
      - 4.1.2
-     - (not yet started)
+     - |cross|
    * - Acute conditions - date range
      - 4.1.2
-     - (not yet started)
+     - |cross|
    * - Logic for wear and tear with exact date or date range
      - 4.1.2
      - |check| 
