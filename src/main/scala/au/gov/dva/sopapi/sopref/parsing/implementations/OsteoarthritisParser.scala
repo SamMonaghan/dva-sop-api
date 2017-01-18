@@ -27,7 +27,7 @@ object OsteoarthritisParser extends SoPParser with RegexParsers {
   def headParser : Parser[String] = bodyTextParser <~ ":"
 
   def paraAndTextParser : Parser[(String,String)] = paraLetterParser ~ factorTextParser ^^  {
-    case para ~ text => System.out.println(para + " " + text);(para, text)
+    case para ~ text => (para, text)
   }
 
   def separatedFactorListParser : Parser[List[(String,String)]] = repsep(paraAndTextParser, factorTerminator)  ^^ {
