@@ -6,7 +6,6 @@ Status
 .. |check| unicode:: 10003 .. checkmark
 .. |cross| unicode:: U+2717 .. cross
 
-
 .. list-table:: Functional Requirements - SoP Reference Service
    :widths: 15 10 30
    :header-rows: 1
@@ -26,9 +25,7 @@ Status
    * - Logic to determine progress towards threshold
      - 4.1.2
      - |cross|     
-
-     
-
+    
 
 .. list-table:: Processing Logic
    :widths: 15 10 30
@@ -95,13 +92,14 @@ Status
      - (almost)
     
     
+.. list-table:: SoP Coverage
+   :widths: 15 10 
+   :header-rows: 1
 
-
-
-
-
-
-
+   * - SoP Refererence Service
+     - SoP Support Service
+   * - 12
+     - 1     
 
 .. list-table:: Technical Requirements
    :widths: 15 10 30
