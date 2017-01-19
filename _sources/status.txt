@@ -87,7 +87,7 @@ Status
      - |check|
    * - New SoPs are automatically detected
      - 4.2
-     - (almost!) 
+     - |check|
    * - New SoP compilations are detected
      - 4.2 
      - |check|
@@ -150,14 +150,33 @@ Status
      - 4.1.3.2
      - (still needs pie chart and API endpoint)
 
+
+.. list-table:: SoPs with business rules
+   :widths: 15 10 10
+   :header-rows 1
+
+   * - SoP
+     - Parsed
+     - Business Rules Encoded
+   * - Lumbar Spondylosis
+     - |check|
+     - |check|
+   * - Thoraic Spondylosis
+     - |check|
+     - |cross|
+   * - Osteoarthritis
+     - |check|
+     - |cross|
+
+
 .. list-table:: SoP Coverage
    :widths: 15 10 
    :header-rows: 1
 
    * - SoP Refererence Service
      - SoP Support Service
-   * - 12
-     - 1     
+   * - 13
+     - 2     
 
 .. list-table:: Technical Requirements
    :widths: 15 10 30
