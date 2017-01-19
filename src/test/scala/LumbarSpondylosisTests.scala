@@ -1,6 +1,8 @@
 
 package au.gov.dva.sopapi.tests.parsers;
 
+import java.time.LocalDate
+
 import au.gov.dva.dvasopapi.tests.TestUtils
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop
 import org.junit.runner.RunWith
@@ -41,6 +43,10 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(rhFixture.result.getConditionName === "lumbar spondylosis")
   }
 
+  test("Parse RH effective from date") {
+    assert(rhFixture.result.getEffectiveFromDate === LocalDate.of(2014, 7, 2))
+  }
+
   test("Parse entire BoP LS SoP")
   {
     System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
@@ -63,6 +69,10 @@ class LumbarSpondylosisTests extends FunSuite {
 
   test("Parse BoP condition name") {
     assert(bopFixture.result.getConditionName === "lumbar spondylosis")
+  }
+
+  test("Parse BoP effective from date") {
+    assert(bopFixture.result.getEffectiveFromDate === LocalDate.of(2014, 7, 2))
   }
 
 }
