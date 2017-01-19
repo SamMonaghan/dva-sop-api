@@ -23,10 +23,18 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(rhFixture.result != null)
   }
 
+  test("Parse RH register ID") {
+    assert(rhFixture.result.getRegisterId === "F2014L00933")
+  }
+
   test("Parse entire BoP LS SoP")
   {
     System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
     assert(bopFixture.result != null)
+  }
+
+  test("Parse BoP register ID") {
+    assert(bopFixture.result.getRegisterId === "F2014L00930")
   }
 
 }
