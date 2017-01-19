@@ -32,6 +32,11 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(rhFixture.result.getInstrumentNumber.getYear === 2014)
   }
 
+  test("Parse RH citation") {
+    assert(rhFixture.result.getCitation === "Statement of Principles concerning " +
+      "lumbar spondylosis No. 62 of 2014")
+  }
+
   test("Parse entire BoP LS SoP")
   {
     System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
@@ -45,6 +50,11 @@ class LumbarSpondylosisTests extends FunSuite {
   test("Parse BoP instrument number") {
     assert(bopFixture.result.getInstrumentNumber.getNumber === 63)
     assert(bopFixture.result.getInstrumentNumber.getYear === 2014)
+  }
+
+  test("Parse BoP citation") {
+    assert(bopFixture.result.getCitation === "Statement of Principles concerning " +
+      "lumbar spondylosis No. 63 of 2014")
   }
 
 }
