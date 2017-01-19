@@ -19,9 +19,9 @@ class LumbarSpondylosisTests extends FunSuite {
   }
 
   test("Parse entire RH LS SoP") {
-      val result = rhFixture.result
-      System.out.print(TestUtils.prettyPrint(StoredSop.toJson(result)))
-      assert(result != null)
+    val result = rhFixture.result
+    System.out.print(TestUtils.prettyPrint(StoredSop.toJson(result)))
+    assert(result != null)
   }
 
   test("Parse entire BoP LS SoP")
