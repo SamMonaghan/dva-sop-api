@@ -82,8 +82,8 @@
             
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="specs.html">Specifications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rules.html">Notes on Processing Rules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="autoupdate.html">Notes on Automatic SoP Update</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rules.html">Processing Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoupdate.html">Automatic SoP Update</a></li>
 <li class="toctree-l1"><a class="reference internal" href="status.html">Status</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Deployment Instructions</a><ul>
@@ -145,20 +145,28 @@
 </ul>
 <div class="section" id="ftp-deploy">
 <h2>FTP Deploy<a class="headerlink" href="#ftp-deploy" title="Permalink to this headline">¶</a></h2>
-<p>1. Build .war using Gradle &#8216;war&#8217; task.
-1. Rename the .war to &#8216;ROOT.war&#8217;.
-1. FTP the war to &#8216;/site/wwwroot/webapps&#8217; folder for the relevant Azure Deployment Slot.</p>
-<blockquote>
-<div><ul class="simple">
+<ol class="arabic">
+<li><p class="first">Build .war using Gradle &#8216;war&#8217; task.</p>
+</li>
+<li><p class="first">Rename the .war to &#8216;ROOT.war&#8217;.</p>
+</li>
+<li><dl class="first docutils">
+<dt>FTP the war to &#8216;/site/wwwroot/webapps&#8217; folder for the relevant Azure Deployment Slot.</dt>
+<dd><ul class="first last simple">
 <li>Configure the FTP user name and password via the Azure management interface.</li>
 <li>The user name is prefaced with the deployment slot name. For example, &#8216;dvasopapi_devtestyourusername&#8217;.  The password is set &#8216;Deployment Credentials&#8217; in the Azure management interface.</li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
+</li>
+</ol>
 </div>
 <div class="section" id="source-control-deploy">
 <h2>Source Control Deploy<a class="headerlink" href="#source-control-deploy" title="Permalink to this headline">¶</a></h2>
-<p>1. Build the .war using the Gradle &#8216;copyWar&#8217; task.  This builds the war and copies it to the &#8216;webapps&#8217; directory.
-1. Git commit and push.</p>
+<ol class="arabic simple">
+<li>Build the .war using the Gradle &#8216;copyWar&#8217; task.  This builds the war and copies it to the &#8216;webapps&#8217; directory.</li>
+<li>Git commit and push.</li>
+</ol>
 </div>
 </div>
 
