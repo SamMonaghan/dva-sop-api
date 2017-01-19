@@ -4,6 +4,7 @@ package au.gov.dva.sopapi.tests.parsers;
 import java.time.LocalDate
 
 import au.gov.dva.dvasopapi.tests.TestUtils
+import au.gov.dva.sopapi.dtos.StandardOfProof
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
@@ -47,6 +48,10 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(rhFixture.result.getEffectiveFromDate === LocalDate.of(2014, 7, 2))
   }
 
+  test("Parse RH standard of proof") {
+    assert(rhFixture.result.getStandardOfProof === StandardOfProof.ReasonableHypothesis)
+  }
+
   test("Parse entire BoP LS SoP")
   {
     System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
@@ -73,6 +78,10 @@ class LumbarSpondylosisTests extends FunSuite {
 
   test("Parse BoP effective from date") {
     assert(bopFixture.result.getEffectiveFromDate === LocalDate.of(2014, 7, 2))
+  }
+
+  test("Parse BoP standard of proof") {
+    assert(bopFixture.result.getStandardOfProof === StandardOfProof.BalanceOfProbabilities)
   }
 
 }
