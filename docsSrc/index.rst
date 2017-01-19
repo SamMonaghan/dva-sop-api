@@ -13,6 +13,7 @@ Contents:
 
    specs
    rules
+   operations
    autoupdate
    status
    config
