@@ -27,6 +27,11 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(rhFixture.result.getRegisterId === "F2014L00933")
   }
 
+  test("Parse RH instrument number") {
+    assert(rhFixture.result.getInstrumentNumber.getNumber === 62)
+    assert(rhFixture.result.getInstrumentNumber.getYear === 2014)
+  }
+
   test("Parse entire BoP LS SoP")
   {
     System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
@@ -35,6 +40,11 @@ class LumbarSpondylosisTests extends FunSuite {
 
   test("Parse BoP register ID") {
     assert(bopFixture.result.getRegisterId === "F2014L00930")
+  }
+
+  test("Parse BoP instrument number") {
+    assert(bopFixture.result.getInstrumentNumber.getNumber === 63)
+    assert(bopFixture.result.getInstrumentNumber.getYear === 2014)
   }
 
 }
