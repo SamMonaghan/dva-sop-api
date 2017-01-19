@@ -4,3 +4,7 @@ gradle/
 .idea/
 .gradle/
 gradlew*
+build/
+client/
+dtos/
+out/
