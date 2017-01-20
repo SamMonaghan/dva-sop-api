@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 import au.gov.dva.dvasopapi.tests.TestUtils
 import au.gov.dva.sopapi.dtos.StandardOfProof
-import au.gov.dva.sopapi.sopref.data.sops.StoredSop
+import au.gov.dva.sopapi.sopref.data.sops.{BasicICDCode, StoredSop}
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -52,6 +52,19 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(rhFixture.result.getStandardOfProof === StandardOfProof.ReasonableHypothesis)
   }
 
+  // ICD codes
+  test("Parse RH ICD codes") {
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.27")))
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.86")))
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.87")))
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.96")))
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.97")))
+    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M51.3")))
+  }
+
   test("Parse entire BoP LS SoP")
   {
     System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
@@ -82,6 +95,18 @@ class LumbarSpondylosisTests extends FunSuite {
 
   test("Parse BoP standard of proof") {
     assert(bopFixture.result.getStandardOfProof === StandardOfProof.BalanceOfProbabilities)
+  }
+
+  test("Parse BoP ICD codes") {
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.27")))
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.86")))
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.87")))
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.96")))
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.97")))
+    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M51.3")))
   }
 
 }
