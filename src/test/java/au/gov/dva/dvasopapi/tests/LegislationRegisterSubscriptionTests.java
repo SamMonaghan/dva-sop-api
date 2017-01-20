@@ -10,16 +10,15 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.concurrent.ExecutionException;
 
 public class LegislationRegisterSubscriptionTests {
     @Test
     @Category(IntegrationTest.class)
     public void retrieve() throws ExecutionException, InterruptedException {
-        // todo: you'll need to send some emails to the devtest account to test
+        // todo: you'LegislationRegisterEmailUpdates.class.getSimpleName()ll need to send some emails to the devtest account to test
         ImmutableSet<LegislationRegisterEmailUpdate> results = LegislationRegisterEmailUpdates
-                .getLatestAfter(DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,11))).get();
+                .getLatestAfter(DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,11)), "blah@blah.com").get();
 
         Assert.assertTrue(!results.isEmpty());
     }
