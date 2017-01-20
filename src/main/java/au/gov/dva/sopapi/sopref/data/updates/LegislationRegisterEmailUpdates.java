@@ -1,8 +1,11 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.AppSettings;
+import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
 import com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
@@ -18,9 +21,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LegislationRegisterEmailUpdates {
 
+    Logger logger = LoggerFactory.getLogger(LegislationRegisterEmailUpdate.class);
+    
     public static CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getLatestAfter(OffsetDateTime afterDate, String senderAddress) {
 
         CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> future = CompletableFuture.supplyAsync(new Supplier<ImmutableSet<LegislationRegisterEmailUpdate>>() {
@@ -32,6 +39,8 @@ public class LegislationRegisterEmailUpdates {
 
         return future;
     }
+
+
 
     private static Set<LegislationRegisterEmailUpdate> getUpdatesFromLatestAfter(OffsetDateTime afterDate, String senderAddress) {
         String emailAddress = AppSettings.LegislationRegisterEmailSubscription.getUserId();
@@ -49,43 +58,46 @@ public class LegislationRegisterEmailUpdates {
             Folder inbox = store.getFolder("inbox");
             inbox.open(Folder.READ_ONLY);
 
-            Message latestMessage = null;
-            OffsetDateTime latestSentDate = null;
-
-            Message[] messages = inbox.getMessages();
-            for (Message msg : messages) {
-                if (msg instanceof MimeMessage) {
-                    Address sender = ((MimeMessage) msg).getSender();
-                    if (sender.toString().contains(senderAddress)) {
-                        OffsetDateTime sentDate = OffsetDateTime.ofInstant(msg.getSentDate().toInstant(), ZoneId.systemDefault());
-                        if (latestMessage == null) {
-                            if (sentDate.isAfter(afterDate)) {
-                                latestMessage = msg;
-                                latestSentDate = sentDate;
-                            }
-                        } else {
-                            if (sentDate.isAfter(afterDate) && sentDate.isAfter(latestSentDate)) {
-                                latestMessage = msg;
-                                latestSentDate = sentDate;
-                            }
+            Stream<LegislationRegisterEmailUpdate> updates = Arrays.stream(inbox.getMessages())
+                    .filter(m -> m instanceof MimeMessage)
+                    .filter(m ->  {
+                        try {
+                            Address sender = ((MimeMessage)m).getSender();
+                            return sender.toString().contains(senderAddress);
+                        } catch (MessagingException e) {
+                            throw new AutoUpdateError(e);
                         }
+                    })
+                    .filter(m -> {
+                        try {
+                            return emailDateToOdt(m.getSentDate()).isAfter(afterDate);
+                        } catch (MessagingException e) {
+                            throw new AutoUpdateError(e);
+                        }
+                    })
+                    .flatMap(m -> {
+                            try {
+                                    return parseMessage(m, emailDateToOdt(m.getSentDate())).stream();
+                                } catch (IOException e) {
+                                    throw new AutoUpdateError(e);
+                                } catch (MessagingException e) {
+                                    throw new AutoUpdateError(e);
+                                }
+                            });
 
-                    }
-                }
-            }
-
-            if (latestMessage != null) {
-                Set<LegislationRegisterEmailUpdate> updates = parseMessage(latestMessage, latestSentDate);
-                return updates;
-            }
+            return updates.collect(Collectors.toSet());
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            throw new AutoUpdateError(ex);
         } catch (MessagingException ex) {
-            ex.printStackTrace();
+            throw new AutoUpdateError(ex);
         }
 
-        return Collections.EMPTY_SET;
+    }
+
+    private static OffsetDateTime emailDateToOdt(Date date)
+    {
+        return OffsetDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 
     private static Set<LegislationRegisterEmailUpdate> parseMessage(Message msg, OffsetDateTime sentDate) throws IOException, MessagingException {

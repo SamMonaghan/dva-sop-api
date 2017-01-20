@@ -5,10 +5,8 @@ import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
-import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
 import com.google.common.collect.ImmutableSet;
-import org.apache.log4j.spi.LoggerFactory;
 
 import java.net.URL;
 import java.time.OffsetDateTime;
@@ -17,15 +15,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChangeFactory {
 
     private final LegislationRegisterEmailClient emailClient;
     private final Supplier<OffsetDateTime> getLastUpdatedDate;
+    private String senderEmail;
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(EmailSubscriptionInstrumentChangeFactory.class);
 
     public EmailSubscriptionInstrumentChangeFactory(LegislationRegisterEmailClient emailClient,
@@ -34,6 +31,7 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
         this.emailClient = emailClient;
         this.getLastUpdatedDate = getLastUpdatedDate;
 
+        this.senderEmail = senderEmail;
     }
 
     private static ImmutableSet<InstrumentChange> identifyNewInstruments(ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates) {
@@ -86,7 +84,6 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
             ImmutableSet<LegislationRegisterEmailUpdate> updates = emailClient.getUpdatesFrom(getLastUpdatedDate.get()).get(timeoutSeconds, TimeUnit.SECONDS);
             ImmutableSet<InstrumentChange> newInstruments = identifyNewInstruments(updates);
             return newInstruments;
-
         } catch (InterruptedException e) {
             logger.error("Getting updates from legislation register email subscription was interrupted.", e);
             return ImmutableSet.of();

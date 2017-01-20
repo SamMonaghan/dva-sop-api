@@ -8,8 +8,17 @@ import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
 
 public class LegislationRegisterEmailClientImpl implements LegislationRegisterEmailClient {
+
+    private String senderEmail;
+
+    public LegislationRegisterEmailClientImpl(String senderEmail)
+    {
+
+        this.senderEmail = senderEmail;
+    }
+    
     @Override
     public CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getUpdatesFrom(OffsetDateTime fromDate) {
-        return LegislationRegisterEmailUpdates.getLatestAfter(fromDate);
+        return LegislationRegisterEmailUpdates.getLatestAfter(fromDate,senderEmail);
     }
 }
