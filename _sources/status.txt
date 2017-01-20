@@ -7,13 +7,13 @@ Status
 .. |cross| unicode:: U+2717 .. cross
 
 .. list-table:: SoP Coverage
-  :widths 15 10 10
-  :header-rows 1
+  :widths: 5 5 5 5
+  :header-rows: 1
   
   * - SoP
-    - Autoupdating factors
-    - Wear and Tear Straight-Through/Streamlined
-    - Acute Straight-Through/Streamlined
+    - Auto-updating factors
+    - Wear and Tear Processing
+    - Acute Processing
   * - Lumbar Spondylosis
     - |check|
     - |check|
