@@ -76,39 +76,6 @@ Status
     - |cross|
 
 
-
-
-
-
-.. list-table:: SoPs with Processing Rules
-   :widths: 15 10 10
-   :header-rows: 1
-
-   * - SoP
-     - Parsed
-     - Business Rules Encoded
-   * - Lumbar Spondylosis
-     - |check|
-     - |check|
-   * - Thoraic Spondylosis
-     - |check|
-     - |cross|
-   * - Osteoarthritis
-     - |check|
-     - |cross|
-
-
-.. list-table:: SoP Coverage
-   :widths: 15 10 
-   :header-rows: 1
-
-   * - Factors
-     - Processing rules
-   * - 13
-     - 2     
-
-
-
 .. list-table:: SoP Reference Service - Service Determinations
    :widths: 15 10 30
    :header-rows: 1
