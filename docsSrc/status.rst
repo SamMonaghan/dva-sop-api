@@ -6,6 +6,106 @@ Status
 .. |check| unicode:: 10003 .. checkmark
 .. |cross| unicode:: U+2717 .. cross
 
+.. list-table:: SoP Coverage
+  :widths 15 10 10
+  :header-rows 1
+  
+  * - SoP
+    - Autoupdating factors
+    - Wear and Tear Straight-Through/Streamlined
+    - Acute Straight-Through/Streamlined
+  * - Lumbar Spondylosis
+    - |check|
+    - |check|
+    - |cross|
+  * - Osteoarthritis
+    - |check|
+    - |cross|
+    - |cross|
+  * - Thoraic Spondylosis
+    - |check|
+    - |cross|
+    - |cross|
+  * - Cervical spondylosis
+    - |check|
+    - |cross|
+    - |cross|
+  * - Chondromalacia patella
+    - |check|
+    - |cross|
+    - |cross|
+  * - Epicondylitis
+    - |check|
+    - |cross|
+    - |cross|
+  * - Haemorrhoids
+    - |check|
+    - |cross|
+    - |cross|
+  * - Iliotibial Band Syndrome
+    - |check|
+    - |cross|
+    - |cross|
+  * - Inguinal hernia
+    - |check|
+    - |cross|
+    - |cross|
+  * - Internal derangement of the knee
+    - |check|
+    - |cross|
+    - |cross|
+  * - Irritable bowel syndrome
+    - |check|
+    - |cross|
+    - |cross|
+  * - Joint Instability
+    - |check|
+    - |cross|
+    - |cross|
+  * - Posttraumatic stress disorder
+    - |check|
+    - |cross|
+    - |cross|
+  * - Sleep apnoea
+    - |check|
+    - |cross|
+    - |cross|
+  * - Pes planus
+    - |check|
+    - |cross|
+    - |cross|
+
+
+
+
+
+
+.. list-table:: SoPs with Processing Rules
+   :widths: 15 10 10
+   :header-rows: 1
+
+   * - SoP
+     - Parsed
+     - Business Rules Encoded
+   * - Lumbar Spondylosis
+     - |check|
+     - |check|
+   * - Thoraic Spondylosis
+     - |check|
+     - |cross|
+   * - Osteoarthritis
+     - |check|
+     - |cross|
+
+
+.. list-table:: SoP Coverage
+   :widths: 15 10 
+   :header-rows: 1
+
+   * - Factors
+     - Processing rules
+   * - 13
+     - 2     
 
 
 
@@ -151,32 +251,8 @@ Status
      - (still needs pie chart and API endpoint)
 
 
-.. list-table:: SoPs with business rules
-   :widths: 15 10 10
-   :header-rows 1
-
-   * - SoP
-     - Parsed
-     - Business Rules Encoded
-   * - Lumbar Spondylosis
-     - |check|
-     - |check|
-   * - Thoraic Spondylosis
-     - |check|
-     - |cross|
-   * - Osteoarthritis
-     - |check|
-     - |cross|
 
 
-.. list-table:: SoP Coverage
-   :widths: 15 10 
-   :header-rows: 1
-
-   * - SoP Refererence Service
-     - SoP Support Service
-   * - 13
-     - 2     
 
 .. list-table:: Technical Requirements
    :widths: 15 10 30
