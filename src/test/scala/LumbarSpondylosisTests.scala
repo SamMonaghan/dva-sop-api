@@ -27,34 +27,34 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(rhFixture.result != null)
   }
 
-  test("Parse RH register ID") {
+  test("Parse RH lumbar spondylosis register ID") {
     assert(rhFixture.result.getRegisterId === "F2014L00933")
   }
 
-  test("Parse RH instrument number") {
+  test("Parse RH lumbar spondylosis instrument number") {
     assert(rhFixture.result.getInstrumentNumber.getNumber === 62)
     assert(rhFixture.result.getInstrumentNumber.getYear === 2014)
   }
 
-  test("Parse RH citation") {
+  test("Parse RH lumbar spondylosis citation") {
     assert(rhFixture.result.getCitation === "Statement of Principles concerning " +
       "lumbar spondylosis No. 62 of 2014")
   }
 
-  test("Parse RH condition name") {
+  test("Parse RH lumbar spondylosis condition name") {
     assert(rhFixture.result.getConditionName === "lumbar spondylosis")
   }
 
-  test("Parse RH effective from date") {
+  test("Parse RH lumbar spondylosis effective from date") {
     assert(rhFixture.result.getEffectiveFromDate === LocalDate.of(2014, 7, 2))
   }
 
-  test("Parse RH standard of proof") {
+  test("Parse RH lumbar spondylosis standard of proof") {
     assert(rhFixture.result.getStandardOfProof === StandardOfProof.ReasonableHypothesis)
   }
 
   // ICD codes
-  test("Parse RH ICD codes") {
+  test("Parse RH lumbar spondylosis ICD codes") {
     assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
     assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
     assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
@@ -67,7 +67,7 @@ class LumbarSpondylosisTests extends FunSuite {
   }
 
   // Onset factors
-  test("Parse RH onset factors") {
+  test("Parse RH lumbar spondylosis onset factors") {
     val a = new ParsedFactor("6(a)",
       "being a prisoner of war before the clinical onset of lumbar spondylosis",
       Nil.toList, Nil.toSet)
@@ -165,7 +165,7 @@ class LumbarSpondylosisTests extends FunSuite {
   }
 
   // Aggravation factors
-  test("Parse RH aggravation factors") {
+  test("Parse RH lumbar spondylosis aggravation factors") {
     val q = new ParsedFactor("6(q)",
       "having inflammatory joint disease in the lumbar spine before the clinical " +
         "worsening of lumbar spondylosis",
@@ -270,34 +270,34 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(bopFixture.result != null)
   }
 
-  test("Parse BoP register ID") {
+  test("Parse BoP lumbar spondylosis register ID") {
     assert(bopFixture.result.getRegisterId === "F2014L00930")
   }
 
-  test("Parse BoP instrument number") {
+  test("Parse BoP lumbar spondylosis instrument number") {
     assert(bopFixture.result.getInstrumentNumber.getNumber === 63)
     assert(bopFixture.result.getInstrumentNumber.getYear === 2014)
   }
 
-  test("Parse BoP citation") {
+  test("Parse BoP lumbar spondylosis citation") {
     assert(bopFixture.result.getCitation === "Statement of Principles concerning " +
       "lumbar spondylosis No. 63 of 2014")
   }
 
-  test("Parse BoP condition name") {
+  test("Parse BoP lumbar spondylosis condition name") {
     assert(bopFixture.result.getConditionName === "lumbar spondylosis")
   }
 
-  test("Parse BoP effective from date") {
+  test("Parse BoP lumbar spondylosis effective from date") {
     assert(bopFixture.result.getEffectiveFromDate === LocalDate.of(2014, 7, 2))
   }
 
-  test("Parse BoP standard of proof") {
+  test("Parse BoP lumbar spondylosis standard of proof") {
     assert(bopFixture.result.getStandardOfProof === StandardOfProof.BalanceOfProbabilities)
   }
 
   // ICD codes
-  test("Parse BoP ICD codes") {
+  test("Parse BoP lumbar spondylosis ICD codes") {
     assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
     assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
     assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
@@ -310,7 +310,7 @@ class LumbarSpondylosisTests extends FunSuite {
   }
 
   // Onset factors
-  test("Parse BoP onset factors") {
+  test("Parse BoP lumbar spondylosis onset factors") {
     val a = new ParsedFactor("6(a)",
       "having inflammatory joint disease in the lumbar spine before the clinical " +
         "onset of lumbar spondylosis",
@@ -408,7 +408,7 @@ class LumbarSpondylosisTests extends FunSuite {
   }
 
   // Aggravation factors
-  test("Parse BoP aggravation factors") {
+  test("Parse BoP lumbar spondylosis aggravation factors") {
     val p = new ParsedFactor("6(p)",
       "having inflammatory joint disease in the lumbar spine before the clinical " +
         "worsening of lumbar spondylosis",
