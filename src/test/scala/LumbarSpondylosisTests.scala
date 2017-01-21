@@ -164,6 +164,106 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(rhFixture.result.getOnsetFactors.contains(p))
   }
 
+  // Aggravation factors
+  test("Parse RH aggravation factors") {
+    val q = new ParsedFactor("6(q)",
+      "having inflammatory joint disease in the lumbar spine before the clinical " +
+        "worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val r = new ParsedFactor("6(r)",
+      "having an infection of the affected joint as specified at least one " +
+        "year before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val s = new ParsedFactor("6(s)",
+      "having an intra-articular fracture of the lumbar spine at least one " +
+        "year before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val t = new ParsedFactor("6(t)",
+      "having a specified spinal condition affecting the lumbar spine for at " +
+        "least the one year before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val u = new ParsedFactor("6(u)",
+      "having leg length inequality for at least the two years before the " +
+        "clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val v = new ParsedFactor("6(v)",
+      "having a depositional joint disease in the lumbar spine before the " +
+        "clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val w = new ParsedFactor("6(w)",
+      "having trauma to the lumbar spine at least one year before the clinical " +
+        "worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val x = new ParsedFactor("6(x)",
+      "having a lumbar intervertebral disc prolapse before the clinical worsening " +
+        "of lumbar spondylosis at the level of the intervertebral disc prolapse",
+      Nil.toList, Nil.toSet)
+
+    val y = new ParsedFactor("6(y)",
+      "lifting loads of at least 25 kilograms while bearing weight through the " +
+        "lumbar spine to a cumulative total of at least 120 000 kilograms within " +
+        "any ten year period before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val z = new ParsedFactor("6(z)",
+      "carrying loads of at least 25 kilograms while bearing weight through the " +
+        "lumbar spine to a cumulative total of at least 3 800 hours within any ten " +
+        "year period before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val aa = new ParsedFactor("6(aa)",
+      "being obese for at least ten years before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val bb = new ParsedFactor("6(bb)",
+      "flying in a powered aircraft as operational aircrew, for a cumulative total of at " +
+        "least 1 000 hours within the 25 years before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val cc = new ParsedFactor("6(cc)",
+      "extreme forward flexion of the lumbar spine for a cumulative total of at least " +
+        "1 500 hours before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val dd = new ParsedFactor("6(dd)",
+      "having acromegaly involving the lumbar spine before the clinical worsening of " +
+        "lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val ee = new ParsedFactor("6(ee)",
+      "having Paget's disease of bone involving the lumbar spine before the clinical " +
+        "worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val ff = new ParsedFactor("6(ff)",
+      "inability to obtain appropriate clinical management for lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    assert(rhFixture.result.getAggravationFactors.contains(q))
+    assert(rhFixture.result.getAggravationFactors.contains(r))
+    assert(rhFixture.result.getAggravationFactors.contains(s))
+    assert(rhFixture.result.getAggravationFactors.contains(t))
+    assert(rhFixture.result.getAggravationFactors.contains(u))
+    assert(rhFixture.result.getAggravationFactors.contains(v))
+    assert(rhFixture.result.getAggravationFactors.contains(w))
+    assert(rhFixture.result.getAggravationFactors.contains(x))
+    assert(rhFixture.result.getAggravationFactors.contains(y))
+    assert(rhFixture.result.getAggravationFactors.contains(z))
+    assert(rhFixture.result.getAggravationFactors.contains(aa))
+    assert(rhFixture.result.getAggravationFactors.contains(bb))
+    assert(rhFixture.result.getAggravationFactors.contains(cc))
+    assert(rhFixture.result.getAggravationFactors.contains(dd))
+    assert(rhFixture.result.getAggravationFactors.contains(ee))
+    assert(rhFixture.result.getAggravationFactors.contains(ff))
+  }
+
   test("Parse entire BoP LS SoP")
   {
     System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
@@ -305,6 +405,109 @@ class LumbarSpondylosisTests extends FunSuite {
     assert(bopFixture.result.getOnsetFactors.contains(m))
     assert(bopFixture.result.getOnsetFactors.contains(n))
     assert(bopFixture.result.getOnsetFactors.contains(o))
+  }
+
+  // Aggravation factors
+  test("Parse BoP aggravation factors") {
+    val p = new ParsedFactor("6(p)",
+      "having inflammatory joint disease in the lumbar spine before the clinical " +
+        "worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val q = new ParsedFactor("6(q)",
+      "having an infection of the affected joint as specified at least one year " +
+        "before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val r = new ParsedFactor("6(r)",
+      "having an intra-articular fracture of the lumbar spine at least one year before " +
+        "the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val s = new ParsedFactor("6(s)",
+      "having a specified spinal condition affecting the lumbar spine for at least " +
+        "the one year before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val t = new ParsedFactor("6(t)",
+      "having leg length inequality for at least the five years before the clinical " +
+        "worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val u = new ParsedFactor("6(u)",
+      "having a depositional joint disease in the lumbar spine before the clinical " +
+        "worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val v = new ParsedFactor("6(v)",
+      "having trauma to the lumbar spine at least one year before the clinical " +
+        "worsening of lumbar spondylosis, and where the trauma to the lumbar spine " +
+        "occurred within the 25 years before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val w = new ParsedFactor("6(w)",
+      "having a lumbar intervertebral disc prolapse before the clinical worsening of lumbar " +
+        "spondylosis at the level of the intervertebral disc prolapse",
+      Nil.toList, Nil.toSet)
+
+    val x = new ParsedFactor("6(x)",
+      "lifting loads of at least 35 kilograms while bearing weight through the lumbar " +
+        "spine to a cumulative total of at least 168 000 kilograms within any ten year " +
+        "period before the clinical worsening of lumbar spondylosis, and where the clinical " +
+        "worsening of lumbar spondylosis occurs within the 25 years following that period",
+      Nil.toList, Nil.toSet)
+
+    val y = new ParsedFactor("6(y)",
+      "carrying loads of at least 35 kilograms while bearing weight through the lumbar " +
+        "spine to a cumulative total of at least 3 800 hours within any ten year period " +
+        "before the clinical worsening of lumbar spondylosis, and where the clinical " +
+        "worsening of lumbar spondylosis occurs within the 25 years following that period",
+      Nil.toList, Nil.toSet)
+
+    val z = new ParsedFactor("6(z)",
+      "being obese for at least ten years within the 25 years before the clinical " +
+        "worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val aa = new ParsedFactor("6(aa)",
+      "flying in a powered aircraft as operational aircrew, for a cumulative total of at least " +
+        "2 000 hours within the 25 years before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val bb = new ParsedFactor("6(bb)",
+      "extreme forward flexion of the lumbar spine for a cumulative total of at least 1 500 " +
+        "hours before the clinical worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val cc = new ParsedFactor("6(cc)",
+      "having acromegaly involving the lumbar spine before the clinical worsening of " +
+        "lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val dd = new ParsedFactor("6(dd)",
+      "having Paget's disease of bone involving the lumbar spine before the clinical " +
+        "worsening of lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    val ee = new ParsedFactor("6(ee)",
+      "inability to obtain appropriate clinical management for lumbar spondylosis",
+      Nil.toList, Nil.toSet)
+
+    assert(bopFixture.result.getAggravationFactors.contains(q))
+    assert(bopFixture.result.getAggravationFactors.contains(r))
+    assert(bopFixture.result.getAggravationFactors.contains(s))
+    assert(bopFixture.result.getAggravationFactors.contains(t))
+    assert(bopFixture.result.getAggravationFactors.contains(u))
+    assert(bopFixture.result.getAggravationFactors.contains(v))
+    assert(bopFixture.result.getAggravationFactors.contains(w))
+    assert(bopFixture.result.getAggravationFactors.contains(x))
+    assert(bopFixture.result.getAggravationFactors.contains(y))
+    assert(bopFixture.result.getAggravationFactors.contains(z))
+    assert(bopFixture.result.getAggravationFactors.contains(aa))
+    assert(bopFixture.result.getAggravationFactors.contains(bb))
+    assert(bopFixture.result.getAggravationFactors.contains(cc))
+    assert(bopFixture.result.getAggravationFactors.contains(dd))
+    assert(bopFixture.result.getAggravationFactors.contains(ee))
   }
 
 }
