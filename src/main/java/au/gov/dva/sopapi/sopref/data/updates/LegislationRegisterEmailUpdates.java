@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 
 public class LegislationRegisterEmailUpdates {
 
-    Logger logger = LoggerFactory.getLogger(LegislationRegisterEmailUpdate.class);
-    
+    static Logger logger = LoggerFactory.getLogger(LegislationRegisterEmailUpdate.class);
+
     public static CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getLatestAfter(OffsetDateTime afterDate, String senderAddress) {
 
         CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> future = CompletableFuture.supplyAsync(new Supplier<ImmutableSet<LegislationRegisterEmailUpdate>>() {
@@ -95,6 +95,8 @@ public class LegislationRegisterEmailUpdates {
 
     }
 
+
+
     private static OffsetDateTime emailDateToOdt(Date date)
     {
         return OffsetDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
@@ -148,11 +150,12 @@ public class LegislationRegisterEmailUpdates {
             }
         }
 
-        return null;
+        logger.error(String.format("Message not MIME multipart, cannot parse: %s.", msg));
+
+        return ImmutableSet.of();
     }
 
-    private static List<LegislationRegisterEmailUpdate> processLegislativeInstruments(String legislativeInstrumentsSection, OffsetDateTime sentDate) {
-        String[] lines = legislativeInstrumentsSection.split("<br>");
+    private static List<LegislationRegisterEmailUpdate> processLegislativeInstruments(String legislativeInstrumentsSection, OffsetDateTime sentDate) {String[] lines = legislativeInstrumentsSection.split("<br>");
         // discard the header lines
         lines = Arrays.copyOfRange(lines, 2, lines.length);
 
@@ -184,19 +187,18 @@ public class LegislationRegisterEmailUpdates {
                     currentUpdate.setInstrumentDescription(line);
                 } else if (currentUpdateLineNumber == 3) {
                     currentUpdate.setUpdateDescription(line);
-                } else if (currentUpdateLineNumber == 4) {
-                    Matcher urlMatcher = urlMatchPattern.matcher(line);
+                } else if (currentUpdateLineNumber == 4) {Matcher urlMatcher = urlMatchPattern.matcher(line);
                     if (urlMatcher.find()) {
                         String strUrl = urlMatcher.group(1);
 
                         try {
                             currentUpdate.setRegisterLink(new URL(strUrl));
                         } catch (MalformedURLException ex ) {
-                            ex.printStackTrace();
+                            logger.error(strUrl,ex);
                         }
                     }
                 } else {
-                    throw new IllegalStateException("Invalid number of lines for instrument update");
+                    logger.error(String.format("Invalid number of lines for instrument update: %s.", legislativeInstrumentsSection));
                 }
             }
         }
@@ -243,11 +245,11 @@ public class LegislationRegisterEmailUpdates {
                         try {
                             currentUpdate.setRegisterLink(new URL(strUrl));
                         } catch (MalformedURLException ex ) {
-                            ex.printStackTrace();
+                            logger.error(strUrl,ex);
                         }
                     }
                 } else {
-                    throw new IllegalStateException("Invalid number of lines for instrument compilation update");
+                    logger.error(String.format("Invalid number of lines for instrument update: %s.", legislativeInstrumentCompilationsSection));
                 }
             }
         }
