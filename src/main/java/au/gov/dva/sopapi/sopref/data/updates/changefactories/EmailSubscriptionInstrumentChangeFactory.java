@@ -81,7 +81,7 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
     public ImmutableSet<InstrumentChange> getChanges() {
         long timeoutSeconds = 10;
         try {
-            ImmutableSet<LegislationRegisterEmailUpdate> updates = emailClient.getUpdatesFrom(getLastUpdatedDate.get()).get(timeoutSeconds, TimeUnit.SECONDS);
+            ImmutableSet<LegislationRegisterEmailUpdate> updates = emailClient.getUpdatesBetween(getLastUpdatedDate.get(),OffsetDateTime.now()).get(timeoutSeconds, TimeUnit.SECONDS);
             ImmutableSet<InstrumentChange> newInstruments = identifyNewInstruments(updates);
             return newInstruments;
         } catch (InterruptedException e) {

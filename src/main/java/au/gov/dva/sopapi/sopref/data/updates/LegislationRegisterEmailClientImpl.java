@@ -18,7 +18,7 @@ public class LegislationRegisterEmailClientImpl implements LegislationRegisterEm
     }
 
     @Override
-    public CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getUpdatesFrom(OffsetDateTime fromDate) {
-        return LegislationRegisterEmailUpdates.getLatestAfter(fromDate,senderEmail);
+    public CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getUpdatesBetween(OffsetDateTime startDateExclusive, OffsetDateTime endDateExclusive) {
+        return LegislationRegisterEmailUpdates.getEmailsReceivedBetween(startDateExclusive,endDateExclusive,senderEmail);
     }
 }

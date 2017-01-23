@@ -28,12 +28,12 @@ public class LegislationRegisterEmailUpdates {
 
     static Logger logger = LoggerFactory.getLogger(LegislationRegisterEmailUpdate.class);
 
-    public static CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getLatestAfter(OffsetDateTime afterDate, String senderAddress) {
+    public static CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getEmailsReceivedBetween(OffsetDateTime startDateExclusive, OffsetDateTime endDateExclusive, String senderAddress) {
 
         CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> future = CompletableFuture.supplyAsync(new Supplier<ImmutableSet<LegislationRegisterEmailUpdate>>() {
             @Override
             public ImmutableSet<LegislationRegisterEmailUpdate> get() {
-                return ImmutableSet.copyOf(getUpdatesFromLatestAfter(afterDate, senderAddress));
+                return ImmutableSet.copyOf(getUpdatesBetween(startDateExclusive, endDateExclusive, senderAddress));
             }
         });
 
@@ -42,7 +42,9 @@ public class LegislationRegisterEmailUpdates {
 
 
 
-    private static Set<LegislationRegisterEmailUpdate> getUpdatesFromLatestAfter(OffsetDateTime afterDate, String senderAddress) {
+    private static Set<LegislationRegisterEmailUpdate> getUpdatesBetween(OffsetDateTime startDateExclusive,
+                                                                         OffsetDateTime endDateExclusive,
+                                                                         String senderAddress) {
         String emailAddress = AppSettings.LegislationRegisterEmailSubscription.getUserId();
         String emailPassword = AppSettings.LegislationRegisterEmailSubscription.getPassword();
 
@@ -70,7 +72,8 @@ public class LegislationRegisterEmailUpdates {
                     })
                     .filter(m -> {
                         try {
-                            return emailDateToOdt(m.getSentDate()).isAfter(afterDate);
+                            OffsetDateTime sentDate = emailDateToOdt(m.getSentDate());
+                            return sentDate.isAfter(startDateExclusive) && sentDate.isBefore(endDateExclusive);
                         } catch (MessagingException e) {
                             throw new AutoUpdateError(e);
                         }
