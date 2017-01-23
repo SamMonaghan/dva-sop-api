@@ -36,11 +36,20 @@ public class EmailUpdateTests {
         // send emails from that sender
 
         String emailSender = "nick.miller@govlawtech.com.au";
-        OffsetDateTime oneMinuteAgo = OffsetDateTime.now().minusDays(100);
-        CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> result =
-            LegislationRegisterEmailUpdates.getLatestAfter(oneMinuteAgo,emailSender);
-        Assert.assertTrue(result.get().size() > 0);
-        result.get().stream().forEach(r -> System.out.println(r));
+        OffsetDateTime aLongTimeAgo = OffsetDateTime.now().minusDays(100);
+        CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> resultFromEmailsForwardedByNm =
+            LegislationRegisterEmailUpdates.getLatestAfter(aLongTimeAgo,emailSender);
+        Assert.assertTrue(resultFromEmailsForwardedByNm.get().size() > 0);
+        resultFromEmailsForwardedByNm.get().stream().forEach(r -> System.out.println(r));
+
+        emailSender = "chrisflemming@gmail.com";
+        CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> resultFromEmailsForwardedByCf =
+                LegislationRegisterEmailUpdates.getLatestAfter(aLongTimeAgo,emailSender);
+
+        Assert.assertTrue(resultFromEmailsForwardedByNm.get().size() > 0);
+        resultFromEmailsForwardedByNm.get().stream().forEach(r -> System.out.println(r));
+
+
 
     }
 

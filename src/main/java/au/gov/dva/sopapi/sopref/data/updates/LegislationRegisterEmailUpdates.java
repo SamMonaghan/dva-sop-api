@@ -268,21 +268,25 @@ public class LegislationRegisterEmailUpdates {
 
         @Override
         public String getInstrumentTitle() {
+            assert(instrumentTitle != null);
             return instrumentTitle;
         }
 
         @Override
         public String getUpdateDescription() {
+            assert(updateDescription != null);
             return updateDescription;
         }
 
         @Override
         public URL getRegisterLink() {
+            assert(updateDescription != null);
             return registerLink;
         }
 
         @Override
         public OffsetDateTime getDateReceived() {
+            assert(dateReceived != null);
             return dateReceived;
         }
 
