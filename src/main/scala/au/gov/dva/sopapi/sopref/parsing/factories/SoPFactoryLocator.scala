@@ -16,6 +16,8 @@ object SoPFactoryLocator {
         case "F2010L01667" => CartilageTearSoPFactory
         case "F2010L02850" => CartilageTearSoPFactory
         case "F2010L02851" => CartilageTearSoPFactory
+        case "F2012L01789" => CartilageTearSoPFactory
+        case "F2012L01790" => CartilageTearSoPFactory
         case _ => LsSoPFactory // todo: generic factory for unknown sops
       }
     }
