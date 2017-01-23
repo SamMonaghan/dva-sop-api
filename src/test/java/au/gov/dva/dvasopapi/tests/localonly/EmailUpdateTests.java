@@ -34,12 +34,9 @@ public class EmailUpdateTests {
         // set "LRS_USERID" and "LRS_PASSWORD" environment variables or jvm args
         // set sender below
         // send emails from that sender
-        // within one minute:
-        // run with properties:
-
 
         String emailSender = "nick.miller@govlawtech.com.au";
-        OffsetDateTime oneMinuteAgo = OffsetDateTime.now().minusDays(20);
+        OffsetDateTime oneMinuteAgo = OffsetDateTime.now().minusDays(100);
         CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> result =
             LegislationRegisterEmailUpdates.getLatestAfter(oneMinuteAgo,emailSender);
         Assert.assertTrue(result.get().size() > 0);

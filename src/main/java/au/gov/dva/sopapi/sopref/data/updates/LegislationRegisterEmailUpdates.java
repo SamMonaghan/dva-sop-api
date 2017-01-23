@@ -183,7 +183,11 @@ public class LegislationRegisterEmailUpdates {
 
                 if (currentUpdateLineNumber == 1) {
                     currentUpdate.setInstrumentTitle(line);
-                } else if (currentUpdateLineNumber == 3) {
+                }
+                else if (currentUpdateLineNumber == 2)  {
+                    // discard
+                }
+                else if (currentUpdateLineNumber == 3) {
                     currentUpdate.setUpdateDescription(line);
                 } else if (currentUpdateLineNumber == 4) {Matcher urlMatcher = urlMatchPattern.matcher(line);
                     if (urlMatcher.find()) {
@@ -234,7 +238,7 @@ public class LegislationRegisterEmailUpdates {
                 if (currentUpdateLineNumber == 1) {
                     currentUpdate.setInstrumentTitle(line);
                 } else if (currentUpdateLineNumber == 2) {
-                    currentUpdate.setUpdateDescription(line);
+                        // discard
                 } else if (currentUpdateLineNumber == 3) {
                     Matcher urlMatcher = urlMatchPattern.matcher(line);
                     if (urlMatcher.find()) {
