@@ -183,8 +183,6 @@ public class LegislationRegisterEmailUpdates {
 
                 if (currentUpdateLineNumber == 1) {
                     currentUpdate.setInstrumentTitle(line);
-                } else if (currentUpdateLineNumber == 2) {
-                    currentUpdate.setInstrumentDescription(line);
                 } else if (currentUpdateLineNumber == 3) {
                     currentUpdate.setUpdateDescription(line);
                 } else if (currentUpdateLineNumber == 4) {Matcher urlMatcher = urlMatchPattern.matcher(line);
@@ -260,7 +258,6 @@ public class LegislationRegisterEmailUpdates {
     public static class LegislationRegisterEmailUpdateImpl implements LegislationRegisterEmailUpdate {
 
         private String instrumentTitle;
-        private String instrumentDescription;
         private String updateDescription;
         private URL registerLink;
         private OffsetDateTime dateReceived;
@@ -268,11 +265,6 @@ public class LegislationRegisterEmailUpdates {
         @Override
         public String getInstrumentTitle() {
             return instrumentTitle;
-        }
-
-        @Override
-        public Optional<String> getInstrumentDescription() {
-            return Optional.ofNullable(instrumentDescription);
         }
 
         @Override
@@ -294,9 +286,6 @@ public class LegislationRegisterEmailUpdates {
             this.instrumentTitle = instrumentTitle;
         }
 
-        public void setInstrumentDescription(String instrumentDescription) {
-            this.instrumentDescription = instrumentDescription;
-        }
 
         public void setUpdateDescription(String updateDescription) {
             this.updateDescription = updateDescription;
@@ -308,6 +297,16 @@ public class LegislationRegisterEmailUpdates {
 
         public void setDateReceived(OffsetDateTime dateReceived) {
             this.dateReceived = dateReceived;
+        }
+
+        @Override
+        public String toString() {
+            return "LegislationRegisterEmailUpdateImpl{" +
+                    "instrumentTitle='" + instrumentTitle + '\'' +
+                    ", updateDescription='" + updateDescription + '\'' +
+                    ", registerLink=" + registerLink +
+                    ", dateReceived=" + dateReceived +
+                    '}';
         }
     }
 }

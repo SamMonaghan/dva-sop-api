@@ -156,10 +156,6 @@ public class AutoUpdateTests {
             return title;
         }
 
-        @Override
-        public Optional<String> getInstrumentDescription() {
-            return Optional.empty();
-        }
 
         @Override
         public String getUpdateDescription() {
@@ -210,5 +206,7 @@ public class AutoUpdateTests {
         ImmutableSet<InstrumentChange> results = underTest.getChanges();
         Assert.assertTrue(results.size() == 1 && results.stream().findFirst().get().getInstrumentId().contentEquals("F2017L00015"));
     }
+
+
 
 }

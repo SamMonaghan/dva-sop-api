@@ -16,7 +16,7 @@ public class LegislationRegisterEmailClientImpl implements LegislationRegisterEm
 
         this.senderEmail = senderEmail;
     }
-    
+
     @Override
     public CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> getUpdatesFrom(OffsetDateTime fromDate) {
         return LegislationRegisterEmailUpdates.getLatestAfter(fromDate,senderEmail);
