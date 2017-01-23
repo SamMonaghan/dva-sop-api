@@ -8,7 +8,7 @@ import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory
 
 object CartilageTearSoPFactory extends SoPFactory{
   override def create(registerId : String, rawText : String, cleansedText: String): SoP = {
-    val extractor = new CartilageTearExtractor();
+    val extractor = new PreAugust2015Extractor();
     val citation = PreAugust2015Parser.parseCitation(extractor.extractCitation(cleansedText));
     val instrumentNumber = PreAugust2015Parser.parseInstrumentNumber(citation);
 
