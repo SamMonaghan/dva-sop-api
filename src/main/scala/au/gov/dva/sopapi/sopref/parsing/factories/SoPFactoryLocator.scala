@@ -14,6 +14,8 @@ object SoPFactoryLocator {
         case "F2011C00492" => OsteoarthritisSoPFactory
         case "F2010L01666" => CartilageTearSoPFactory
         case "F2010L01667" => CartilageTearSoPFactory
+        case "F2010L01668" => CartilageTearSoPFactory
+        case "F2010L01669" => CartilageTearSoPFactory
         case "F2010L02850" => CartilageTearSoPFactory
         case "F2010L02851" => CartilageTearSoPFactory
         case "F2012L01789" => CartilageTearSoPFactory
