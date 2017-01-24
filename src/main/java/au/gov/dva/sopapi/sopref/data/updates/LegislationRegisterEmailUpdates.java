@@ -286,7 +286,7 @@ public class LegislationRegisterEmailUpdates {
 
         @Override
         public URL getRegisterLink() {
-            assert(updateDescription != null);
+            assert(registerLink != null);
             return registerLink;
         }
 
