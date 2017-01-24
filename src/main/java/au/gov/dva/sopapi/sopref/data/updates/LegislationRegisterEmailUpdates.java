@@ -3,7 +3,6 @@ package au.gov.dva.sopapi.sopref.data.updates;
 import au.gov.dva.sopapi.AppSettings;
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
-import com.google.common.base.*;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
@@ -43,10 +42,10 @@ public class LegislationRegisterEmailUpdates {
     }
 
 
-
     private static Set<LegislationRegisterEmailUpdate> getUpdatesBetween(OffsetDateTime startDateExclusive,
                                                                          OffsetDateTime endDateExclusive,
                                                                          String senderAddress) {
+
         String emailAddress = AppSettings.LegislationRegisterEmailSubscription.getUserId();
         String emailPassword = AppSettings.LegislationRegisterEmailSubscription.getPassword();
 
@@ -64,9 +63,9 @@ public class LegislationRegisterEmailUpdates {
 
             Stream<LegislationRegisterEmailUpdate> updates = Arrays.stream(inbox.getMessages())
                     .filter(m -> m instanceof MimeMessage)
-                    .filter(m ->  {
+                    .filter(m -> {
                         try {
-                            Address sender = ((MimeMessage)m).getSender();
+                            Address sender = ((MimeMessage) m).getSender();
                             return sender.toString().contains(senderAddress);
                         } catch (MessagingException e) {
                             throw new AutoUpdateError(e);
@@ -81,14 +80,14 @@ public class LegislationRegisterEmailUpdates {
                         }
                     })
                     .flatMap(m -> {
-                            try {
-                                    return parseMessage(m, emailDateToOdt(m.getSentDate())).stream();
-                                } catch (IOException e) {
-                                    throw new AutoUpdateError(e);
-                                } catch (MessagingException e) {
-                                    throw new AutoUpdateError(e);
-                                }
-                            })
+                        try {
+                            return parseMessage(m, emailDateToOdt(m.getSentDate())).stream();
+                        } catch (IOException e) {
+                            throw new AutoUpdateError(e);
+                        } catch (MessagingException e) {
+                            throw new AutoUpdateError(e);
+                        }
+                    })
                     .distinct();
 
             return updates.collect(Collectors.toSet());
@@ -102,9 +101,7 @@ public class LegislationRegisterEmailUpdates {
     }
 
 
-
-    private static OffsetDateTime emailDateToOdt(Date date)
-    {
+    private static OffsetDateTime emailDateToOdt(Date date) {
         return OffsetDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 
@@ -161,7 +158,8 @@ public class LegislationRegisterEmailUpdates {
         return ImmutableSet.of();
     }
 
-    private static List<LegislationRegisterEmailUpdate> processLegislativeInstruments(String legislativeInstrumentsSection, OffsetDateTime sentDate) {String[] lines = legislativeInstrumentsSection.split("<br>");
+    private static List<LegislationRegisterEmailUpdate> processLegislativeInstruments(String legislativeInstrumentsSection, OffsetDateTime sentDate) {
+        String[] lines = legislativeInstrumentsSection.split("<br>");
         // discard the header lines
         lines = Arrays.copyOfRange(lines, 2, lines.length);
 
@@ -171,7 +169,7 @@ public class LegislationRegisterEmailUpdates {
         Pattern urlMatchPattern = Pattern.compile("a href=\"([^\"]+)\"");
 
         LegislationRegisterEmailUpdateImpl currentUpdate = null;
-        for (String line: lines) {
+        for (String line : lines) {
             if (line.equals("")) {
                 if (currentUpdate != null) {
                     currentUpdate = null;
@@ -189,20 +187,19 @@ public class LegislationRegisterEmailUpdates {
 
                 if (currentUpdateLineNumber == 1) {
                     currentUpdate.setInstrumentTitle(line);
-                }
-                else if (currentUpdateLineNumber == 2)  {
+                } else if (currentUpdateLineNumber == 2) {
                     // discard
-                }
-                else if (currentUpdateLineNumber == 3) {
+                } else if (currentUpdateLineNumber == 3) {
                     currentUpdate.setUpdateDescription(line);
-                } else if (currentUpdateLineNumber == 4) {Matcher urlMatcher = urlMatchPattern.matcher(line);
+                } else if (currentUpdateLineNumber == 4) {
+                    Matcher urlMatcher = urlMatchPattern.matcher(line);
                     if (urlMatcher.find()) {
                         String strUrl = urlMatcher.group(1);
 
                         try {
                             currentUpdate.setRegisterLink(new URL(strUrl));
-                        } catch (MalformedURLException ex ) {
-                            logger.error(strUrl,ex);
+                        } catch (MalformedURLException ex) {
+                            logger.error(strUrl, ex);
                         }
                     }
                 } else {
@@ -225,7 +222,7 @@ public class LegislationRegisterEmailUpdates {
         Pattern urlMatchPattern = Pattern.compile("a href=\"([^\"]+)\"");
 
         LegislationRegisterEmailUpdateImpl currentUpdate = null;
-        for (String line: lines) {
+        for (String line : lines) {
             if (line.equals("")) {
                 if (currentUpdate != null) {
                     currentUpdate = null;
@@ -244,7 +241,7 @@ public class LegislationRegisterEmailUpdates {
                 if (currentUpdateLineNumber == 1) {
                     currentUpdate.setInstrumentTitle(line);
                 } else if (currentUpdateLineNumber == 2) {
-                        // discard
+                    currentUpdate.setUpdateDescription(line);
                 } else if (currentUpdateLineNumber == 3) {
                     Matcher urlMatcher = urlMatchPattern.matcher(line);
                     if (urlMatcher.find()) {
@@ -252,8 +249,8 @@ public class LegislationRegisterEmailUpdates {
 
                         try {
                             currentUpdate.setRegisterLink(new URL(strUrl));
-                        } catch (MalformedURLException ex ) {
-                            logger.error(strUrl,ex);
+                        } catch (MalformedURLException ex) {
+                            logger.error(strUrl, ex);
                         }
                     }
                 } else {
@@ -274,25 +271,25 @@ public class LegislationRegisterEmailUpdates {
 
         @Override
         public String getInstrumentTitle() {
-            assert(instrumentTitle != null);
+            assert (instrumentTitle != null);
             return instrumentTitle;
         }
 
         @Override
         public String getUpdateDescription() {
-            assert(updateDescription != null);
+            assert (updateDescription != null);
             return updateDescription;
         }
 
         @Override
         public URL getRegisterLink() {
-            assert(registerLink != null);
+            assert (registerLink != null);
             return registerLink;
         }
 
         @Override
         public OffsetDateTime getDateReceived() {
-            assert(dateReceived != null);
+            assert (dateReceived != null);
             return dateReceived;
         }
 
