@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -17,25 +18,20 @@ public class EmailUpdateTests {
     @Test
     @Category(IntegrationTest.class)
     public void testEmailClient() throws ExecutionException, InterruptedException {
-        // manual setup:
-        // set "LRS_USERID" and "LRS_PASSWORD" environment variables or jvm args
-        // set sender below
-        // send emails from that sender
+        // The devtest email box already has two emails sent to it in the time bracket below
+        // To run this test, you need to set the secrets  "LRS_USERID" and "LRS_PASSWORD" as environment variables or jvm args.
 
         String emailSender = "nick.miller@govlawtech.com.au";
-        OffsetDateTime aLongTimeAgo = OffsetDateTime.now().minusDays(100);
+        OffsetDateTime dateBeforeTestEmailSent = OffsetDateTime.of(2017,1,23,0,0,0,0, ZoneOffset.ofHours(10));
+        OffsetDateTime dateAfterTestEmailSent = OffsetDateTime.of(2017,1,24,23,0,0,0, ZoneOffset.ofHours(10));
         CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> resultFromEmailsForwardedByNm =
-            LegislationRegisterEmailUpdates.getEmailsReceivedBetween(aLongTimeAgo, OffsetDateTime.now(),emailSender);
-        Assert.assertTrue(resultFromEmailsForwardedByNm.get().size() > 0);
-        resultFromEmailsForwardedByNm.get().stream().forEach(r -> System.out.println(r));
+            LegislationRegisterEmailUpdates.getEmailsReceivedBetween(dateBeforeTestEmailSent, dateAfterTestEmailSent, emailSender);
 
-        emailSender = "chrisflemming@gmail.com";
-        CompletableFuture<ImmutableSet<LegislationRegisterEmailUpdate>> resultFromEmailsForwardedByCf =
-                LegislationRegisterEmailUpdates.getEmailsReceivedBetween(aLongTimeAgo,OffsetDateTime.now(), emailSender);
+        ImmutableSet<LegislationRegisterEmailUpdate> results = resultFromEmailsForwardedByNm.get();
+        Assert.assertTrue(results.size() == 25);
+        Assert.assertTrue(results.stream().filter(r -> r.getUpdateDescription().contains("Compilation")).count() == 1);
 
-        Assert.assertTrue(resultFromEmailsForwardedByNm.get().size() > 0);
-        resultFromEmailsForwardedByNm.get().stream().forEach(r -> System.out.println(r));
-
+        results.stream().forEach(r -> System.out.println(r));
 
 
     }

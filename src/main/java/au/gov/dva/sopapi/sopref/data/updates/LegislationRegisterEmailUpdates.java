@@ -3,6 +3,8 @@ package au.gov.dva.sopapi.sopref.data.updates;
 import au.gov.dva.sopapi.AppSettings;
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
+import com.google.common.base.*;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +88,8 @@ public class LegislationRegisterEmailUpdates {
                                 } catch (MessagingException e) {
                                     throw new AutoUpdateError(e);
                                 }
-                            });
+                            })
+                    .distinct();
 
             return updates.collect(Collectors.toSet());
 
@@ -318,6 +321,22 @@ public class LegislationRegisterEmailUpdates {
                     ", registerLink=" + registerLink +
                     ", dateReceived=" + dateReceived +
                     '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            LegislationRegisterEmailUpdateImpl that = (LegislationRegisterEmailUpdateImpl) o;
+            return com.google.common.base.Objects.equal(getInstrumentTitle(), that.getInstrumentTitle()) &&
+                    Objects.equal(getUpdateDescription(), that.getUpdateDescription()) &&
+                    Objects.equal(getRegisterLink(), that.getRegisterLink()) &&
+                    Objects.equal(getDateReceived(), that.getDateReceived());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(getInstrumentTitle(), getUpdateDescription(), getRegisterLink(), getDateReceived());
         }
     }
 }
