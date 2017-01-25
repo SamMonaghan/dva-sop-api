@@ -3,6 +3,7 @@ package au.gov.dva.sopapi.sopref.data.updates;
 import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
+import au.gov.dva.sopapi.interfaces.SoPLoader;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.Conversions;
@@ -22,15 +23,15 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class SoPLoader {
+public class SoPLoaderImpl implements SoPLoader {
 
     private final Repository repository;
     private final RegisterClient registerClient;
     private final Function<String, SoPCleanser> sopCleanserProvider;
     private final Function<String, SoPFactory> sopFactoryProvider;
-    private final Logger logger = LoggerFactory.getLogger(SoPLoader.class);
+    private final Logger logger = LoggerFactory.getLogger(SoPLoaderImpl.class);
 
-    public SoPLoader(Repository repository, RegisterClient registerClient, Function<String, SoPCleanser> sopCleanserProvider, Function<String, SoPFactory> sopFactoryProvider) {
+    public SoPLoaderImpl(Repository repository, RegisterClient registerClient, Function<String, SoPCleanser> sopCleanserProvider, Function<String, SoPFactory> sopFactoryProvider) {
         this.repository = repository;
         this.registerClient = registerClient;
         this.sopCleanserProvider = sopCleanserProvider;
@@ -66,6 +67,7 @@ public class SoPLoader {
         }
     };
 
+    @Override
     public void applyAll(long timeOutSeconds) {
         Stream<InstrumentChange> sequencedInstrumentChanges = repository.getInstrumentChanges()
                 .stream()

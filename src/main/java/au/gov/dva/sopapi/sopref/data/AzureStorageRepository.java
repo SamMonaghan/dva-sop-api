@@ -266,20 +266,38 @@ public class AzureStorageRepository implements Repository {
     }
 
     @Override
-    public void addInstrumentChange(InstrumentChange instrumentChange) {
+    public void addInstrumentChanges(ImmutableSet<InstrumentChange> instrumentChanges) {
         try {
             CloudBlobContainer container = getOrCreateContainer(INSTRUMENT_CHANGES_CONTAINER_NAME);
-            String newBlobName = String.format("%s_%s.json", instrumentChange.getTargetInstrumentId(), UUID.randomUUID());
+
+            String newBlobName = createBlobNameForInstrumentChangeBatch(instrumentChanges);
             CloudBlockBlob blob = container.getBlockBlobReference(newBlobName);
             ObjectMapper objectMapper = new ObjectMapper();
             ArrayNode root = objectMapper.createArrayNode();
-            root.add(instrumentChange.toJson());
+            instrumentChanges.stream().forEach(ic -> root.add(ic.toJson()));
             blob.uploadText(Conversions.toString(root));
         } catch (RuntimeException e) {
             throw new RepositoryError(e);
         } catch (Exception e) {
             throw new RepositoryError(e);
         }
+    }
+
+    private static String createBlobNameForInstrumentChangeBatch(ImmutableSet<InstrumentChange> instrumentChanges)
+    {
+//        A blob name must conforming to the following naming rules:
+//        A blob name can contain any combination of characters.
+//            A blob name must be at least one character long and cannot be more than 1,024 characters long.
+//            Blob names are case-sensitive.
+//            Reserved URL characters must be properly escaped.
+//        The number of path segments comprising the blob name cannot exceed 254. A path segment is the string between consecutive delimiter characters (e.g., the forward slash '/') that corresponds to the name of a virtual directory.
+
+        int numberOfChanges = instrumentChanges.size();
+        String timeForBlobName =  OffsetDateTime.now().format(DateTimeFormatter.ISO_INSTANT).replace(':','-');
+        String uuid = UUID.randomUUID().toString();
+        String blobName = String.format("%s_%d_changes_%s.json", timeForBlobName, numberOfChanges,uuid);
+        return blobName;
+
     }
 
     @Override

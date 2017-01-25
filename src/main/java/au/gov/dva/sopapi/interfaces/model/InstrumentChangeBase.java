@@ -30,6 +30,25 @@ public class InstrumentChangeBase  {
    protected static final String TYPE_LABEL = "type";
    protected static final String DATE_LABEL = "date";
    protected static final String SOURCE_INSTRUMENT_ID_LABEL = "sourceRegisterId";
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      InstrumentChangeBase that = (InstrumentChangeBase) o;
+
+      if (!sourceRegisterId.equals(that.sourceRegisterId)) return false;
+      return targetRegisterId.equals(that.targetRegisterId);
+   }
+
+   @Override
+   public int hashCode() {
+      int result = sourceRegisterId.hashCode();
+      result = 31 * result + targetRegisterId.hashCode();
+      return result;
+   }
+
    protected static final String TARGET_INSTRUMENT_ID_LABEL = "targetRegisterId";
 
    private final OffsetDateTime date;

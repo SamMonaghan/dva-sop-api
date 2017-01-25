@@ -1,33 +1,40 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
+import au.gov.dva.sopapi.interfaces.Repository;
+import au.gov.dva.sopapi.interfaces.SoPLoader;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
-import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
-import com.google.common.collect.ImmutableList;
-
-import java.time.OffsetDateTime;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 public class AutoUpdate {
-    public static void updateStorage(SoPLoader soPLoader, LegRegChangeDetector legRegChangeDetector)
-    {
-        // check for updates, write to storage
-        // detect changes,
-        // create changes
-        // save to DB if do not exist already
-
-
-        // load latest
+    public static void patchChanges(SoPLoader soPLoader) {
         soPLoader.applyAll(30);
     }
 
-    public static ImmutableList<InstrumentChange> getOrderedChangesSince(OffsetDateTime fromDate)
-    {
-//        InstrumentChangeFactory freshlyPublished = new EmailSubscriptionInstrumentChangeFactory(
-//                new LegislationRegisterEmailClientImpl()
-//
-//
-//        )
 
-        return null;
+    public static void updateChangeList(Repository repository, InstrumentChangeFactory newInstrumentFactory, InstrumentChangeFactory updatedInstrumentFactory)
+    {
+        // get current changes from repo
+        // get new changes
+        // find changes new yet in repo
+        // add to repo
+
+        ImmutableSet<InstrumentChange> newInstruments = newInstrumentFactory.getChanges();
+        ImmutableSet<InstrumentChange> updatedInstruments = updatedInstrumentFactory.getChanges();
+        ImmutableSet<InstrumentChange> allNewChanges = new ImmutableSet.Builder<InstrumentChange>()
+                .addAll(newInstruments)
+                .addAll(updatedInstruments)
+                .build();
+
+        ImmutableSet<InstrumentChange> existingChanges = repository.getInstrumentChanges();
+
+        ImmutableSet<InstrumentChange> newChangesNotInRepository = Sets.difference(allNewChanges, existingChanges).immutableCopy();
+
+        repository.addInstrumentChanges(newChangesNotInRepository);
+
     }
+
+
+
 }

@@ -15,7 +15,7 @@ public interface Repository {
      ImmutableSet<SoP> getAllSops();
      void archiveSoP(String registerId);
      ImmutableSet<InstrumentChange> getInstrumentChanges();
-     void addInstrumentChange(InstrumentChange instrumentChange);
+     void addInstrumentChanges(ImmutableSet<InstrumentChange> instrumentChanges);
      void addServiceDetermination(ServiceDetermination serviceDetermination);
      ImmutableSet<ServiceDetermination> getServiceDeterminations();
      Optional<OffsetDateTime> getLastUpdated();
