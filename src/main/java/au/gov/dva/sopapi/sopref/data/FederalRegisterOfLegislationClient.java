@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 import static org.asynchttpclient.Dsl.asyncHttpClient;
 
-public class FederalRegisterOfLegislation implements RegisterClient {
+public class FederalRegisterOfLegislationClient implements RegisterClient {
 
     private static final String BASE_URL = "https://www.legislation.gov.au";
 
@@ -43,7 +43,7 @@ public class FederalRegisterOfLegislation implements RegisterClient {
         }
     }
 
-    final static Logger logger = LoggerFactory.getLogger(FederalRegisterOfLegislation.class);
+    final static Logger logger = LoggerFactory.getLogger(FederalRegisterOfLegislationClient.class);
 
 
 

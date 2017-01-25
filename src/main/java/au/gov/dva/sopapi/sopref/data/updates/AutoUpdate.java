@@ -15,10 +15,6 @@ public class AutoUpdate {
 
     public static void updateChangeList(Repository repository, InstrumentChangeFactory newInstrumentFactory, InstrumentChangeFactory updatedInstrumentFactory)
     {
-        // get current changes from repo
-        // get new changes
-        // find changes new yet in repo
-        // add to repo
 
         ImmutableSet<InstrumentChange> newInstruments = newInstrumentFactory.getChanges();
         ImmutableSet<InstrumentChange> updatedInstruments = updatedInstrumentFactory.getChanges();
