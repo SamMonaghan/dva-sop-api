@@ -12,7 +12,6 @@ import au.gov.dva.sopapi.sopref.data.AzureStorageRepository;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
 import au.gov.dva.sopapi.sopref.data.updates.AutoUpdate;
-import au.gov.dva.sopapi.sopref.data.updates.LegRegChangeDetector;
 import au.gov.dva.sopapi.sopref.data.updates.LegislationRegisterEmailClientImpl;
 import au.gov.dva.sopapi.sopref.data.updates.SoPLoaderImpl;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
@@ -78,24 +77,19 @@ public class IntegrationTests {
 
     @Test
     @Category(IntegrationTests.class)
-    public void sopLoaderReplacedInstrument()
-    {
+    public void sopLoaderReplacedInstrument() throws StorageException {
         //   "F2008L03179" is repealed by "F2017L00016";
 
         String originalRegisterId = "F2008L03179";
         String repealingRegisterId = "F2017L00016";
-        Repository localRepository = new AzureStorageRepository("UseDevelopmentStorage=true");
+        AzureStorageRepository localRepository = new AzureStorageRepository("UseDevelopmentStorage=true");
 
         // setup
-        localRepository.deleteSoPIfExists(originalRegisterId);
-        localRepository.deleteSoPIfExists(repealingRegisterId);
-
-        RegisterClient registerClient = new FederalRegisterOfLegislationClient();
+        localRepository.purge();
 
         SoPLoader underTest = new SoPLoaderImpl(localRepository, new FederalRegisterOfLegislationClient(), s -> ServiceLocator.findTextCleanser(s), s -> ServiceLocator.findSoPFactory(s));
         underTest.applyAll(10);
 
-        LegRegChangeDetector legRegChangeDetector = new LegRegChangeDetector(registerClient);
 
     }
 
