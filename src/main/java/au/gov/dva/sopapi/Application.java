@@ -64,18 +64,27 @@ public class Application implements spark.servlet.SparkApplication {
 
     public Application() {
         _repository = new AzureStorageRepository(au.gov.dva.sopapi.AppSettings.AzureStorage.getConnectionString());
+        // todo: remove this caching
         _allSops = _repository.getAllSops();
         _sopPairs = SoPs.groupSopsToPairs(_allSops);
         _allServiceDeterminations = _repository.getServiceDeterminations();
+
+
         ServiceDeterminationPair latestServiceDeterminations = Operations.getLatestDeterminationPair(_allServiceDeterminations);
         _isOperational = ProcessingRuleFunctions.getIsOperationalPredicate(latestServiceDeterminations);
+        update();
+    }
+
+    private void update() {
+        detectSoPChanges();
+        startScheduledPollingForSoPChanges(LocalTime.of(15,30));
+
     }
 
     @Override
     public void init() {
 
-        startScheduledPollingForSoPChanges(LocalTime.of(15,30));
-        
+
 
         get("/hello", (req, res) -> {
             return "Hello";
@@ -235,9 +244,19 @@ public class Application implements spark.servlet.SparkApplication {
     }
 
     private void startScheduledPollingForSoPChanges(LocalTime runTime) {
+       startDailyExecutor(runTime,detectSoPChanges());
+    }
+
+
+    private void startScheduledLoadingOfSops(LocalTime runTime) {
+        // todo: provide antecedent sop register ID also
+        startDailyExecutor(runTime,() -> AutoUpdate.patchChanges(_repository));
+
+    }
+
+    private void startDailyExecutor(LocalTime runTime, Runnable runnable)
+    {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        // Email updates tend to come in between 2:45 and 3am.
-        // Hence we schedule at 3:30am to get tha latest updates as soon as possible.
         OffsetDateTime nowCanberraTime = OffsetDateTime.now(ZoneId.of(DateTimeUtils.TZDB_REGION_CODE));
         OffsetDateTime threeThirtyAmTodayCanberraTime = OffsetDateTime.from(
                 ZonedDateTime.of(nowCanberraTime.toLocalDate(),
@@ -245,10 +264,11 @@ public class Application implements spark.servlet.SparkApplication {
                         ZoneId.of(DateTimeUtils.TZDB_REGION_CODE)));
         OffsetDateTime nextScheduledTime = threeThirtyAmTodayCanberraTime.isAfter(nowCanberraTime) ? threeThirtyAmTodayCanberraTime : threeThirtyAmTodayCanberraTime.plusDays(1);
         long minutesToNextScheduledTime = Duration.between(nowCanberraTime, nextScheduledTime).toMinutes();
-        scheduledExecutorService.scheduleAtFixedRate(detectSoPChanges(),
+        scheduledExecutorService.scheduleAtFixedRate(runnable,
                 minutesToNextScheduledTime,
                 Duration.ofDays(1).toMinutes(),
                 TimeUnit.MINUTES);
+
     }
 
     //todo: scheduled task to refresh cache of SoPs from Repository

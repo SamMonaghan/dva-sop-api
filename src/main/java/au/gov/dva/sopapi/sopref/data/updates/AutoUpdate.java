@@ -4,6 +4,8 @@ import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.SoPLoader;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
+import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
@@ -13,8 +15,14 @@ public class AutoUpdate {
 
     private static Logger logger = LoggerFactory.getLogger(AutoUpdate.class);
 
-    public static void patchChanges(SoPLoader soPLoader) {
+    public static void patchChanges(Repository repository) {
 
+        SoPLoader soPLoader = new SoPLoaderImpl(
+                repository,
+                new FederalRegisterOfLegislationClient(),
+                s -> ServiceLocator.findTextCleanser(s),
+                s -> ServiceLocator.findSoPFactory(s)
+        );
         soPLoader.applyAll(30);
     }
 
