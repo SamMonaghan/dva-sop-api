@@ -17,8 +17,13 @@ import au.gov.dva.sopapi.sopref.DtoTransformations;
 import au.gov.dva.sopapi.sopref.Operations;
 import au.gov.dva.sopapi.sopref.SoPs;
 import au.gov.dva.sopapi.sopref.data.AzureStorageRepository;
+import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
 import au.gov.dva.sopapi.sopref.data.servicedeterminations.ServiceDeterminationPair;
 import au.gov.dva.sopapi.sopref.data.sops.BasicICDCode;
+import au.gov.dva.sopapi.sopref.data.updates.AutoUpdate;
+import au.gov.dva.sopapi.sopref.data.updates.LegislationRegisterEmailClientImpl;
+import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
+import au.gov.dva.sopapi.sopref.data.updates.changefactories.LegislationRegisterSiteChangeFactory;
 import au.gov.dva.sopapi.sopsupport.SopSupport;
 import au.gov.dva.sopapi.sopsupport.processingrules.ProcessingRuleFunctions;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,16 +39,22 @@ import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static spark.Spark.get;
 
 public class Application implements spark.servlet.SparkApplication {
 
+    private final Repository _repository;
     private ImmutableSet<SoP> _allSops;
     private ImmutableSet<SoPPair> _sopPairs;
     private ImmutableSet<ServiceDetermination> _allServiceDeterminations;
@@ -52,16 +63,20 @@ public class Application implements spark.servlet.SparkApplication {
     private static Logger logger = LoggerFactory.getLogger(Application.class);
 
     public Application() {
-        Repository repository = new AzureStorageRepository(au.gov.dva.sopapi.AppSettings.AzureStorage.getConnectionString());
-        _allSops = repository.getAllSops();
+        _repository = new AzureStorageRepository(au.gov.dva.sopapi.AppSettings.AzureStorage.getConnectionString());
+        _allSops = _repository.getAllSops();
         _sopPairs = SoPs.groupSopsToPairs(_allSops);
-        _allServiceDeterminations = repository.getServiceDeterminations();
+        _allServiceDeterminations = _repository.getServiceDeterminations();
         ServiceDeterminationPair latestServiceDeterminations = Operations.getLatestDeterminationPair(_allServiceDeterminations);
         _isOperational = ProcessingRuleFunctions.getIsOperationalPredicate(latestServiceDeterminations);
     }
 
     @Override
-    public void init(){
+    public void init() {
+
+        startScheduledPollingForSoPChanges(LocalTime.of(15,30));
+        
+
         get("/hello", (req, res) -> {
             return "Hello";
         })
@@ -130,17 +145,15 @@ public class Application implements spark.servlet.SparkApplication {
             try {
                 SopSupportRequestDto sopSupportRequestDto = SopSupportRequestDto.fromJsonString(req.body());
 
-                SopSupportResponseDto sopSupportResponseDto = SopSupport.applyRules(sopSupportRequestDto,_sopPairs,_isOperational);
-                setResponseHeaders(res,true,200);
+                SopSupportResponseDto sopSupportResponseDto = SopSupport.applyRules(sopSupportRequestDto, _sopPairs, _isOperational);
+                setResponseHeaders(res, true, 200);
                 return SopSupportResponseDto.toJsonString(sopSupportResponseDto);
-            }
-            catch (DvaSopApiDtoError e) {
-                setResponseHeaders(res,false,400);
+            } catch (DvaSopApiDtoError e) {
+                setResponseHeaders(res, false, 400);
                 Optional<String> schema = generateSchemaForSopSupportRequestDto();
                 StringBuilder sb = new StringBuilder();
                 sb.append(String.format("%s\n", e.getMessage()));
-                if (schema.isPresent())
-                {
+                if (schema.isPresent()) {
                     sb.append("Request body does not conform to expected schema:\n");
                     sb.append(schema);
                 }
@@ -207,8 +220,38 @@ public class Application implements spark.servlet.SparkApplication {
 
     }
 
+
+    private Runnable detectSoPChanges() {
+        return () -> AutoUpdate.updateChangeList(
+                _repository,
+                new EmailSubscriptionInstrumentChangeFactory(
+                        new LegislationRegisterEmailClientImpl("noreply@legislation.gov.au"),
+                        () -> _repository.getLastUpdated().orElse(OffsetDateTime.now().minusDays(1))),
+                new LegislationRegisterSiteChangeFactory(
+                        new FederalRegisterOfLegislationClient(),
+                        () -> _repository.getAllSops().stream().map(
+                                s -> s.getRegisterId())
+                                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf))));
+    }
+
+    private void startScheduledPollingForSoPChanges(LocalTime runTime) {
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        // Email updates tend to come in between 2:45 and 3am.
+        // Hence we schedule at 3:30am to get tha latest updates as soon as possible.
+        OffsetDateTime nowCanberraTime = OffsetDateTime.now(ZoneId.of(DateTimeUtils.TZDB_REGION_CODE));
+        OffsetDateTime threeThirtyAmTodayCanberraTime = OffsetDateTime.from(
+                ZonedDateTime.of(nowCanberraTime.toLocalDate(),
+                        runTime,
+                        ZoneId.of(DateTimeUtils.TZDB_REGION_CODE)));
+        OffsetDateTime nextScheduledTime = threeThirtyAmTodayCanberraTime.isAfter(nowCanberraTime) ? threeThirtyAmTodayCanberraTime : threeThirtyAmTodayCanberraTime.plusDays(1);
+        long minutesToNextScheduledTime = Duration.between(nowCanberraTime, nextScheduledTime).toMinutes();
+        scheduledExecutorService.scheduleAtFixedRate(detectSoPChanges(),
+                minutesToNextScheduledTime,
+                Duration.ofDays(1).toMinutes(),
+                TimeUnit.MINUTES);
+    }
+
     //todo: scheduled task to refresh cache of SoPs from Repository
-    // todo: scheduled task to update Repository from Legislation Register
 
     private static void setResponseHeaders(Response response, Boolean isJson, Integer statusCode) {
         response.status(statusCode);
@@ -233,20 +276,20 @@ public class Application implements spark.servlet.SparkApplication {
 
     private static Optional<String> generateSchemaForSopSupportRequestDto() {
 
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING,true);
-            JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
-            try {
-                JsonSchema schema = schemaGen.generateSchema(SopSupportRequestDto.class);
-                String schemaString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema);
-                return Optional.of(schemaString);
-            } catch (JsonMappingException e) {
-                logger.error("Failed to generate schema for request DTO for SoP Support Service.");
-                return Optional.empty();
-            } catch (JsonProcessingException e) {
-                logger.error("Failed to generate schema for request DTO for SoP Support Service.");
-                return Optional.empty();
-            }
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
+        try {
+            JsonSchema schema = schemaGen.generateSchema(SopSupportRequestDto.class);
+            String schemaString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema);
+            return Optional.of(schemaString);
+        } catch (JsonMappingException e) {
+            logger.error("Failed to generate schema for request DTO for SoP Support Service.");
+            return Optional.empty();
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to generate schema for request DTO for SoP Support Service.");
+            return Optional.empty();
+        }
     }
 
     private static String buildAcceptableContentTypesError() {

@@ -6,9 +6,15 @@ import au.gov.dva.sopapi.interfaces.SoPLoader;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AutoUpdate {
+
+    private static Logger logger = LoggerFactory.getLogger(AutoUpdate.class);
+
     public static void patchChanges(SoPLoader soPLoader) {
+
         soPLoader.applyAll(30);
     }
 
