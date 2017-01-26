@@ -11,6 +11,8 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.OffsetDateTime;
+
 public class AutoUpdate {
 
     private static Logger logger = LoggerFactory.getLogger(AutoUpdate.class);
@@ -23,9 +25,8 @@ public class AutoUpdate {
                 s -> ServiceLocator.findTextCleanser(s),
                 s -> ServiceLocator.findSoPFactory(s)
         );
-        soPLoader.applyAll(30);
+        soPLoader.applyAll(60);
     }
-
 
     public static void updateChangeList(Repository repository, InstrumentChangeFactory newInstrumentFactory, InstrumentChangeFactory updatedInstrumentFactory)
     {
@@ -42,6 +43,7 @@ public class AutoUpdate {
         ImmutableSet<InstrumentChange> newChangesNotInRepository = Sets.difference(allNewChanges, existingChanges).immutableCopy();
 
         repository.addInstrumentChanges(newChangesNotInRepository);
+        repository.setLastUpdated(OffsetDateTime.now());
 
     }
 
