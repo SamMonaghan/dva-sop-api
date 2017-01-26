@@ -37,7 +37,7 @@ public class Application implements spark.servlet.SparkApplication {
         }
         catch (DvaSopApiError e)
         {
-            logger.error("Error occured during update.",e);
+            logger.error("Error occurred during update.",e);
         }
     }
 
@@ -60,7 +60,7 @@ public class Application implements spark.servlet.SparkApplication {
 
 
     private Runnable detectSoPChanges() {
-        return () -> AutoUpdate.updateChangeList(
+        return () ->  AutoUpdate.updateChangeList(
                 _repository,
                 new EmailSubscriptionInstrumentChangeFactory(
                         new LegislationRegisterEmailClientImpl("noreply@legislation.gov.au"),
@@ -102,8 +102,5 @@ public class Application implements spark.servlet.SparkApplication {
                 TimeUnit.MINUTES);
 
     }
-
-    //todo: scheduled task to refresh cache of SoPs from Repository
-
 
 }

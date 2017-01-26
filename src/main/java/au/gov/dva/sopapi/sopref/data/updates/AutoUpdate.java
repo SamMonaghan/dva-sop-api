@@ -1,5 +1,6 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
+import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.SoPLoader;
@@ -19,34 +20,45 @@ public class AutoUpdate {
 
     public static void patchChanges(Repository repository) {
 
-        SoPLoader soPLoader = new SoPLoaderImpl(
-                repository,
-                new FederalRegisterOfLegislationClient(),
-                s -> ServiceLocator.findTextCleanser(s),
-                s -> ServiceLocator.findSoPFactory(s)
-        );
-        soPLoader.applyAll(60);
+        try {
+            SoPLoader soPLoader = new SoPLoaderImpl(
+                    repository,
+                    new FederalRegisterOfLegislationClient(),
+                    s -> ServiceLocator.findTextCleanser(s),
+                    s -> ServiceLocator.findSoPFactory(s)
+            );
+            soPLoader.applyAll(60);
+        }
+        catch (DvaSopApiError e)
+        {
+            logger.error("Error occurred when patching repository.", e);
+        }
     }
 
-    public static void updateChangeList(Repository repository, InstrumentChangeFactory newInstrumentFactory, InstrumentChangeFactory updatedInstrumentFactory)
-    {
+    public static void updateChangeList(Repository repository, InstrumentChangeFactory newInstrumentFactory, InstrumentChangeFactory updatedInstrumentFactory) {
 
-        ImmutableSet<InstrumentChange> newInstruments = newInstrumentFactory.getChanges();
-        ImmutableSet<InstrumentChange> updatedInstruments = updatedInstrumentFactory.getChanges();
-        ImmutableSet<InstrumentChange> allNewChanges = new ImmutableSet.Builder<InstrumentChange>()
-                .addAll(newInstruments)
-                .addAll(updatedInstruments)
-                .build();
+        try {
+            ImmutableSet<InstrumentChange> newInstruments = newInstrumentFactory.getChanges();
+            ImmutableSet<InstrumentChange> updatedInstruments = updatedInstrumentFactory.getChanges();
+            ImmutableSet<InstrumentChange> allNewChanges = new ImmutableSet.Builder<InstrumentChange>()
+                    .addAll(newInstruments)
+                    .addAll(updatedInstruments)
+                    .build();
 
-        ImmutableSet<InstrumentChange> existingChanges = repository.getInstrumentChanges();
+            ImmutableSet<InstrumentChange> existingChanges = repository.getInstrumentChanges();
 
-        ImmutableSet<InstrumentChange> newChangesNotInRepository = Sets.difference(allNewChanges, existingChanges).immutableCopy();
+            ImmutableSet<InstrumentChange> newChangesNotInRepository = Sets.difference(allNewChanges, existingChanges).immutableCopy();
 
-        repository.addInstrumentChanges(newChangesNotInRepository);
-        repository.setLastUpdated(OffsetDateTime.now());
+            repository.addInstrumentChanges(newChangesNotInRepository);
+            repository.setLastUpdated(OffsetDateTime.now());
+        } catch (DvaSopApiError e) {
+            logger.error("Error occurred when updating change list.", e);
+        }
 
     }
-
-
 
 }
+
+
+
+
