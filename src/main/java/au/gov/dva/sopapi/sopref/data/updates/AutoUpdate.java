@@ -2,6 +2,7 @@ package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
+import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.SoPLoader;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
+import java.util.stream.Collectors;
 
 public class AutoUpdate {
 
@@ -54,6 +56,18 @@ public class AutoUpdate {
         } catch (DvaSopApiError e) {
             logger.error("Error occurred when updating change list.", e);
         }
+
+    }
+
+    public static void updateServiceDeterminations(Repository repository, RegisterClient registerClient)
+    {
+        LegRegChangeDetector legRegChangeDetector = new LegRegChangeDetector(registerClient);
+
+        ImmutableSet<String> currentServiceDeterminationIds = repository.getServiceDeterminations().stream()
+                .map(sd -> sd.getRegisterId())
+                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
+
+
 
     }
 

@@ -13,9 +13,10 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class NewInstrument extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
+public class NewSop extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
-    public NewInstrument(String registerId, OffsetDateTime date) {
+
+    public NewSop(String registerId, OffsetDateTime date) {
         super(registerId, registerId, date);
     }
 
@@ -69,9 +70,9 @@ public class NewInstrument extends InstrumentChangeBase implements InstrumentCha
         return "NewInstrument{} " + super.toString();
     }
 
-    public static NewInstrument fromJson(JsonNode jsonNode)
+    public static NewSop fromJson(JsonNode jsonNode)
     {
-        return new NewInstrument(
+        return new NewSop(
                 jsonNode.findValue("registerId").asText(),extractDate(jsonNode));
     }
 

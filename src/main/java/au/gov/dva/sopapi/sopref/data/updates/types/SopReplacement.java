@@ -17,10 +17,10 @@ import java.util.function.Function;
 
 // A SoP is repealed and replaced with one with the same name.
 // Shows in the repealed by area of Legislation Register.
-public class Replacement extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
+public class SopReplacement extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
 
-    public Replacement(String newInstrumentRegisterId, OffsetDateTime date, String oldInstrumentRegisterId) {
+    public SopReplacement(String newInstrumentRegisterId, OffsetDateTime date, String oldInstrumentRegisterId) {
         super(oldInstrumentRegisterId, newInstrumentRegisterId, date);
     }
 
@@ -82,9 +82,9 @@ public class Replacement extends InstrumentChangeBase implements InstrumentChang
         return root;
     }
 
-    public static Replacement fromJson(JsonNode jsonNode)
+    public static SopReplacement fromJson(JsonNode jsonNode)
     {
-        return new Replacement(jsonNode.findValue(REPEALED_LABEL).asText(), extractDate(jsonNode),jsonNode.findValue(NEW_LABEL).asText());
+        return new SopReplacement(jsonNode.findValue(REPEALED_LABEL).asText(), extractDate(jsonNode),jsonNode.findValue(NEW_LABEL).asText());
     }
 
 }

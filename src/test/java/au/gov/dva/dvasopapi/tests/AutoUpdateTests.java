@@ -11,8 +11,8 @@ import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
 import au.gov.dva.sopapi.sopref.data.JsonUtils;
 import au.gov.dva.sopapi.sopref.data.updates.LegRegChangeDetector;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
-import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
+import au.gov.dva.sopapi.sopref.data.updates.types.SopReplacement;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +45,7 @@ public class AutoUpdateTests {
 
     @Test
     public void serializeNewInstrument() throws JsonProcessingException {
-        InstrumentChange test = new NewInstrument("F2014L83848", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2015,1,1)));
+        InstrumentChange test = new NewSop("F2014L83848", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2015,1,1)));
         JsonNode node = test.toJson();
         System.out.print(TestUtils.prettyPrint(node));
         Assert.assertTrue(node != null);
@@ -73,7 +73,7 @@ public class AutoUpdateTests {
         ImmutableList<String> both =  new ImmutableList.Builder<String>().addAll(rh).addAll(bop).build();
         OffsetDateTime creationDate = DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,6));
         Stream<JsonNode> instrumentChangeStream = both.stream()
-                .map(id -> new NewInstrument(id,creationDate))
+                .map(id -> new NewSop(id,creationDate))
                 .map(ni -> ni.toJson());
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -122,7 +122,7 @@ public class AutoUpdateTests {
         LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislationClient());
         ImmutableSet<InstrumentChange> results  = underTest.detectReplacements(testSourceIds);
         results.stream().forEach(r -> System.out.println(r));
-        Replacement result = (Replacement)results.asList().get(0);
+        SopReplacement result = (SopReplacement)results.asList().get(0);
         Assert.assertTrue(result.getSourceInstrumentId().contentEquals(testSourceIds.asList().get(0)));
         Assert.assertTrue(result.getTargetInstrumentId().contentEquals(expectedIdOfRepealingInstrument));
     }

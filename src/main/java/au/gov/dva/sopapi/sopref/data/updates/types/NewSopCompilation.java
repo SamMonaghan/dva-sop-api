@@ -14,10 +14,10 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class Compilation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
+public class NewSopCompilation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
 
-    public Compilation(String currentRegisterId, String newCompilationId, OffsetDateTime date) {
+    public NewSopCompilation(String currentRegisterId, String newCompilationId, OffsetDateTime date) {
         super(currentRegisterId, newCompilationId, date);
     }
 
@@ -77,8 +77,8 @@ public class Compilation extends InstrumentChangeBase implements InstrumentChang
         return "Compilation{} " + super.toString();
     }
 
-    public static Compilation fromJson(JsonNode jsonNode) {
-        return new Compilation(jsonNode.findValue(SUPERSEDED_LABEL).asText(),
+    public static NewSopCompilation fromJson(JsonNode jsonNode) {
+        return new NewSopCompilation(jsonNode.findValue(SUPERSEDED_LABEL).asText(),
                 jsonNode.findValue(COMPILATION_LABEL).asText(),
                 extractDate(jsonNode)
         );

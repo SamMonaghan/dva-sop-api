@@ -2,8 +2,8 @@ package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
-import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
-import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewSopCompilation;
+import au.gov.dva.sopapi.sopref.data.updates.types.SopReplacement;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +31,9 @@ public class LegRegChangeDetector {
                 .collect(Collectors.toList());
         try {
             List<RedirectResult> results = AsyncUtils.sequence(tasks).get();
-            List<Compilation> compilations = results.stream()
+            List<NewSopCompilation> compilations = results.stream()
                     .filter(RedirectResult::isUpdatedCompilation)
-                    .map(redirectResult -> new Compilation(redirectResult.getSource(),redirectResult.getTarget().get(), OffsetDateTime.now()))
+                    .map(redirectResult -> new NewSopCompilation(redirectResult.getSource(),redirectResult.getTarget().get(), OffsetDateTime.now()))
                     .collect(Collectors.toList());
             return ImmutableSet.copyOf(compilations);
 
@@ -56,7 +56,7 @@ public class LegRegChangeDetector {
             List<InstrumentChange> results = AsyncUtils.sequence(batch).get()
                     .stream()
                     .filter(r -> r.getNewRegisterId().isPresent())
-                    .map(r -> new Replacement(r.getNewRegisterId().get(),OffsetDateTime.now(),r.getOriginalRegisterId()))
+                    .map(r -> new SopReplacement(r.getNewRegisterId().get(),OffsetDateTime.now(),r.getOriginalRegisterId()))
                     .collect(Collectors.toList());
 
             return ImmutableSet.copyOf(results);

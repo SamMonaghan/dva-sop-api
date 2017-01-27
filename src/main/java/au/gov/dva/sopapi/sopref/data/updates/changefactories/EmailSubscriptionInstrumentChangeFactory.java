@@ -5,7 +5,7 @@ import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
 import com.google.common.collect.ImmutableSet;
 
 import java.net.URL;
@@ -44,7 +44,7 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
                 .filter(u -> titlePosPattern.matcher(u.getInstrumentTitle()).find())
                 .map(u -> {
                             try {
-                                return Optional.of(new NewInstrument(
+                                return Optional.of(new NewSop(
                                         extractRegisterIdFromEmailUrl(u.getRegisterLink())
                                         , u.getDateReceived()));
                             } catch (AutoUpdateError e) {

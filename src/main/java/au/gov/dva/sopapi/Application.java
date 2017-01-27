@@ -27,10 +27,19 @@ public class Application implements spark.servlet.SparkApplication {
 
     public Application() {
         _repository = new AzureStorageRepository(au.gov.dva.sopapi.AppSettings.AzureStorage.getConnectionString());
+        seedStorage();
         autoUpdate();
     }
 
+    private void seedStorage() {
+        if (_repository.getAllSops().isEmpty())
+        {
+
+        }
+    }
+
     private void autoUpdate(){
+
         try {
             updateNow();
             startScheduledUpdates();
@@ -40,6 +49,8 @@ public class Application implements spark.servlet.SparkApplication {
             logger.error("Error occurred during update.",e);
         }
     }
+
+
 
     private void startScheduledUpdates() {
         startScheduledPollingForSoPChanges(LocalTime.of(15,30));
@@ -71,6 +82,14 @@ public class Application implements spark.servlet.SparkApplication {
                                 s -> s.getRegisterId())
                                 .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf))));
     }
+
+  //  private Runnable detectServiceDeterminationChanges() {
+
+//        return () -> AutoUpdate.updateServiceDeterminations(_repository,
+//                new LegislationRegisterSiteChangeFactory(new FederalRegisterOfLegislationClient(),
+//                        () -> _repository.getServiceDeterminations().stream().map(sd -> sd.getRegisterId()).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf))));
+
+ //   }
 
     private void startScheduledPollingForSoPChanges(LocalTime runTime) {
        startDailyExecutor(runTime,detectSoPChanges());

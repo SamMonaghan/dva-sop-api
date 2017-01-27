@@ -16,7 +16,7 @@ import au.gov.dva.sopapi.sopref.data.updates.LegislationRegisterEmailClientImpl;
 import au.gov.dva.sopapi.sopref.data.updates.SoPLoaderImpl;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.LegislationRegisterSiteChangeFactory;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
 import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableSet;
@@ -63,7 +63,7 @@ public class IntegrationTests {
         String registerId = "F2014L00933";
 
 
-        NewInstrument newInstrument = new NewInstrument("F2014L00933", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,1)));
+        NewSop newInstrument = new NewSop("F2014L00933", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,1)));
         localRepository.addInstrumentChanges(ImmutableSet.of(newInstrument));
         // end setup
 

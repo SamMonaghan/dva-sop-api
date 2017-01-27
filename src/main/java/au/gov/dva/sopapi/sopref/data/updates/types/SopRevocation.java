@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class Revocation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
+public class SopRevocation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
     private final LocalDate revocationDate;
 
     @Override
@@ -25,7 +25,7 @@ public class Revocation extends InstrumentChangeBase implements InstrumentChange
                 "} " + super.toString();
     }
 
-    public Revocation(String registerId, OffsetDateTime date, LocalDate revocationDate) {
+    public SopRevocation(String registerId, OffsetDateTime date, LocalDate revocationDate) {
         super(registerId, registerId, date);
         this.revocationDate = revocationDate;
     }
@@ -72,10 +72,10 @@ public class Revocation extends InstrumentChangeBase implements InstrumentChange
         return root;
     }
 
-    public static Revocation fromJson(JsonNode jsonNode)
+    public static SopRevocation fromJson(JsonNode jsonNode)
     {
         String repealDateString =  jsonNode.findValue(REVOCATION_DATE).asText();
         LocalDate repealDate = LocalDate.parse(repealDateString,DateTimeFormatter.ISO_LOCAL_DATE);
-        return new Revocation(jsonNode.findValue(REGISTER_ID).asText(),extractDate(jsonNode), repealDate);
+        return new SopRevocation(jsonNode.findValue(REGISTER_ID).asText(),extractDate(jsonNode), repealDate);
     }
 }

@@ -1,10 +1,10 @@
 package au.gov.dva.sopapi.interfaces.model;
 
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
-import au.gov.dva.sopapi.sopref.data.updates.types.Compilation;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
-import au.gov.dva.sopapi.sopref.data.updates.types.Revocation;
-import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewSopCompilation;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
+import au.gov.dva.sopapi.sopref.data.updates.types.SopRevocation;
+import au.gov.dva.sopapi.sopref.data.updates.types.SopReplacement;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -73,14 +73,14 @@ public class InstrumentChangeBase  {
       String type = jsonNode.findValue(TYPE_LABEL).asText();
       assert (type != null && !type.isEmpty());
       switch (type) {
-         case NewInstrument.TYPE_NAME:
-            return NewInstrument.fromJson(jsonNode);
-         case Replacement.TYPE_NAME:
-            return Replacement.fromJson(jsonNode);
-         case Revocation.TYPE_NAME:
-            return Revocation.fromJson(jsonNode);
-         case Compilation.TYPE_NAME:
-            return Compilation.fromJson(jsonNode);
+         case NewSop.TYPE_NAME:
+            return NewSop.fromJson(jsonNode);
+         case SopReplacement.TYPE_NAME:
+            return SopReplacement.fromJson(jsonNode);
+         case SopRevocation.TYPE_NAME:
+            return SopRevocation.fromJson(jsonNode);
+         case NewSopCompilation.TYPE_NAME:
+            return NewSopCompilation.fromJson(jsonNode);
          default:
             throw new AutoUpdateError(String.format("Cannot deserialize this type of instrument change from JSON: %s", type));
       }
