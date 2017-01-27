@@ -20,7 +20,6 @@ public class LegRegChangeDetector {
     private RegisterClient registerClient;
     private static final Logger logger = LoggerFactory.getLogger(LegRegChangeDetector.class);
 
-    // todo: make this static and pass in logger
     public LegRegChangeDetector(RegisterClient registerClient) {
         this.registerClient = registerClient;
     }

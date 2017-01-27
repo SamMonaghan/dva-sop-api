@@ -24,25 +24,6 @@ public class FederalRegisterOfLegislationClient implements RegisterClient {
 
     private static final String BASE_URL = "https://www.legislation.gov.au";
 
-     private static class AuthorisedInstrumentResult {
-
-        private final String registerId;
-        private final byte[] pdfBytes;
-
-        public AuthorisedInstrumentResult(String registerId, byte[] pdfBytes) {
-            this.registerId = registerId;
-            this.pdfBytes = pdfBytes.clone();
-        }
-
-        public byte[] getPdfBytes() {
-            return pdfBytes.clone();
-        }
-
-        public String getRegisterId() {
-            return registerId;
-        }
-    }
-
     final static Logger logger = LoggerFactory.getLogger(FederalRegisterOfLegislationClient.class);
 
 
