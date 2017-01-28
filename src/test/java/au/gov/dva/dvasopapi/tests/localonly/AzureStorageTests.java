@@ -4,7 +4,7 @@ import au.gov.dva.dvasopapi.tests.TestUtils;
 import au.gov.dva.dvasopapi.tests.categories.IntegrationTest;
 import au.gov.dva.dvasopapi.tests.mocks.MockLumbarSpondylosisSopRH;
 import au.gov.dva.sopapi.interfaces.Repository;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.AzureStorageRepository;
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
@@ -49,7 +49,7 @@ public class AzureStorageTests {
     @Test
     public void getInstrumentChanges() throws StorageException {
         Repository underTest = new AzureStorageRepository("UseDevelopmentStorage=true");
-        ImmutableSet<SopChange> results = underTest.getInstrumentChanges();
+        ImmutableSet<InstrumentChange> results = underTest.getInstrumentChanges();
         results.forEach(instrumentChange -> System.out.println(instrumentChange));
         Assert.assertTrue(results.size() > 0);
     }

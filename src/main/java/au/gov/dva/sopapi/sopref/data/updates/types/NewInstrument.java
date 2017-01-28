@@ -2,16 +2,16 @@ package au.gov.dva.sopapi.sopref.data.updates.types;
 
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.OffsetDateTime;
 
-public class NewSop extends InstrumentChangeBase implements SopChange, JsonSerializable {
+public class NewInstrument extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
 
-    public NewSop(String registerId, OffsetDateTime date) {
+    public NewInstrument(String registerId, OffsetDateTime date) {
         super(registerId, registerId, date);
     }
 
@@ -51,9 +51,9 @@ public class NewSop extends InstrumentChangeBase implements SopChange, JsonSeria
         return "NewInstrument{} " + super.toString();
     }
 
-    public static NewSop fromJson(JsonNode jsonNode)
+    public static NewInstrument fromJson(JsonNode jsonNode)
     {
-        return new NewSop(
+        return new NewInstrument(
                 jsonNode.findValue("registerId").asText(),extractDate(jsonNode));
     }
 

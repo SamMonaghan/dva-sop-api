@@ -2,16 +2,16 @@ package au.gov.dva.sopapi.sopref.data.updates.types;
 
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.OffsetDateTime;
 
-public class NewSopCompilation extends InstrumentChangeBase implements SopChange, JsonSerializable {
+public class NewCompilation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
 
-    public NewSopCompilation(String currentRegisterId, String newCompilationId, OffsetDateTime date) {
+    public NewCompilation(String currentRegisterId, String newCompilationId, OffsetDateTime date) {
         super(currentRegisterId, newCompilationId, date);
     }
 
@@ -49,8 +49,8 @@ public class NewSopCompilation extends InstrumentChangeBase implements SopChange
         return "Compilation{} " + super.toString();
     }
 
-    public static NewSopCompilation fromJson(JsonNode jsonNode) {
-        return new NewSopCompilation(jsonNode.findValue(SUPERSEDED_LABEL).asText(),
+    public static NewCompilation fromJson(JsonNode jsonNode) {
+        return new NewCompilation(jsonNode.findValue(SUPERSEDED_LABEL).asText(),
                 jsonNode.findValue(COMPILATION_LABEL).asText(),
                 extractDate(jsonNode)
         );

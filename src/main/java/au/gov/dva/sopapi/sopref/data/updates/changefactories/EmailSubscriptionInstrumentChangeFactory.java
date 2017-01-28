@@ -3,9 +3,9 @@ package au.gov.dva.sopapi.sopref.data.updates.changefactories;
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
 import com.google.common.collect.ImmutableSet;
 
 import java.net.URL;
@@ -32,19 +32,19 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
 
     }
 
-    private static ImmutableSet<SopChange> identifyNewInstruments(ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates) {
+    private static ImmutableSet<InstrumentChange> identifyNewInstruments(ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates) {
 
         Pattern titlePosPattern = Pattern.compile("(?i)Statement of Principles");
         Pattern titleNegPattern = Pattern.compile("(?i)amendment");
         Pattern updatePattern = Pattern.compile("(?i)published");
 
-        ImmutableSet<SopChange> newInstruments = emailUpdates.stream()
+        ImmutableSet<InstrumentChange> newInstruments = emailUpdates.stream()
                 .filter(u -> updatePattern.matcher(u.getUpdateDescription()).find())
                 .filter(u ->  !titleNegPattern.matcher(u.getInstrumentTitle()).find())
                 .filter(u -> titlePosPattern.matcher(u.getInstrumentTitle()).find())
                 .map(u -> {
                             try {
-                                return Optional.of(new NewSop(
+                                return Optional.of(new NewInstrument(
                                         extractRegisterIdFromEmailUrl(u.getRegisterLink())
                                         , u.getDateReceived()));
                             } catch (AutoUpdateError e) {
@@ -54,7 +54,7 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
                         }
                 )
                 .filter(u -> u.isPresent())
-                .map(u -> (SopChange) u.get())
+                .map(u -> (InstrumentChange) u.get())
                 .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
 
         return newInstruments;
@@ -76,11 +76,11 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
 
 
     @Override
-    public ImmutableSet<SopChange> getChanges() {
+    public ImmutableSet<InstrumentChange> getChanges() {
         long timeoutSeconds = 30;
         try {
             ImmutableSet<LegislationRegisterEmailUpdate> updates = emailClient.getUpdatesBetween(getLastUpdatedDate.get(),OffsetDateTime.now()).get(timeoutSeconds, TimeUnit.SECONDS);
-            ImmutableSet<SopChange> newInstruments = identifyNewInstruments(updates);
+            ImmutableSet<InstrumentChange> newInstruments = identifyNewInstruments(updates);
             return newInstruments;
 
         } catch (InterruptedException e) {

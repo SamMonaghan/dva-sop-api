@@ -59,7 +59,7 @@ public class Application implements spark.servlet.SparkApplication {
 
     private void updateNow()
     {
-        detectSoPChanges().run();
+        updateSops().run();
         AutoUpdate.patchChanges(_repository);
         _cache.refresh(_repository);
     }
@@ -70,7 +70,7 @@ public class Application implements spark.servlet.SparkApplication {
     }
 
 
-    private Runnable detectSoPChanges() {
+    private Runnable updateSops() {
         return () ->  AutoUpdate.updateChangeList(
                 _repository,
                 new EmailSubscriptionInstrumentChangeFactory(
@@ -83,16 +83,13 @@ public class Application implements spark.servlet.SparkApplication {
                                 .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf))));
     }
 
-  //  private Runnable detectServiceDeterminationChanges() {
+    private Runnable updateServiceDeterminations() {
 
-//        return () -> AutoUpdate.updateServiceDeterminations(_repository,
-//                new LegislationRegisterSiteChangeFactory(new FederalRegisterOfLegislationClient(),
-//                        () -> _repository.getServiceDeterminations().stream().map(sd -> sd.getRegisterId()).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf))));
-
- //   }
+        return () -> AutoUpdate.updateServiceDeterminations(_repository, new FederalRegisterOfLegislationClient());
+    }
 
     private void startScheduledPollingForSoPChanges(LocalTime runTime) {
-       startDailyExecutor(runTime,detectSoPChanges());
+       startDailyExecutor(runTime, updateSops());
     }
 
 

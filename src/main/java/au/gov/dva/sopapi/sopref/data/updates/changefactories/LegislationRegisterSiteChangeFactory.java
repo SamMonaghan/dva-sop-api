@@ -2,7 +2,7 @@ package au.gov.dva.sopapi.sopref.data.updates.changefactories;
 
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.sopref.data.updates.LegRegChangeDetector;
 import com.google.common.collect.ImmutableSet;
 
@@ -20,11 +20,11 @@ public class LegislationRegisterSiteChangeFactory implements InstrumentChangeFac
     }
 
     @Override
-    public ImmutableSet<SopChange> getChanges() {
+    public ImmutableSet<InstrumentChange> getChanges() {
         ImmutableSet<String> currentRegisterIds = getExistingInstrumentIds.get();
-        ImmutableSet<SopChange> newReplacements = legRegChangeDetector.detectReplacements(currentRegisterIds);
-        ImmutableSet<SopChange> newCompilations = legRegChangeDetector.detectNewCompilations(currentRegisterIds);
-        return new ImmutableSet.Builder<SopChange>().addAll(newReplacements).addAll(newCompilations).build();
+        ImmutableSet<InstrumentChange> newReplacements = legRegChangeDetector.detectReplacements(currentRegisterIds);
+        ImmutableSet<InstrumentChange> newCompilations = legRegChangeDetector.detectNewCompilations(currentRegisterIds);
+        return new ImmutableSet.Builder<InstrumentChange>().addAll(newReplacements).addAll(newCompilations).build();
 
     }
 }

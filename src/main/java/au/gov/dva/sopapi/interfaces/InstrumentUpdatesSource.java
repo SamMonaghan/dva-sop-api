@@ -1,9 +1,9 @@
 package au.gov.dva.sopapi.interfaces;
 
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 
 import java.time.LocalDate;
 
 public interface InstrumentUpdatesSource {
-    Iterable<SopChange> getChangesFrom(LocalDate date);
+    Iterable<InstrumentChange> getChangesFrom(LocalDate date);
 }

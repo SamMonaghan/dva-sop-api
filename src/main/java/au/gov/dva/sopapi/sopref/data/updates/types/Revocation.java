@@ -2,7 +2,7 @@ package au.gov.dva.sopapi.sopref.data.updates.types;
 
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class SopRevocation extends InstrumentChangeBase implements SopChange, JsonSerializable {
+public class Revocation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
     private final LocalDate revocationDate;
 
     @Override
@@ -20,7 +20,7 @@ public class SopRevocation extends InstrumentChangeBase implements SopChange, Js
                 "} " + super.toString();
     }
 
-    public SopRevocation(String registerId, OffsetDateTime date, LocalDate revocationDate) {
+    public Revocation(String registerId, OffsetDateTime date, LocalDate revocationDate) {
         super(registerId, registerId, date);
         this.revocationDate = revocationDate;
     }
@@ -59,10 +59,10 @@ public class SopRevocation extends InstrumentChangeBase implements SopChange, Js
         return root;
     }
 
-    public static SopRevocation fromJson(JsonNode jsonNode)
+    public static Revocation fromJson(JsonNode jsonNode)
     {
         String repealDateString =  jsonNode.findValue(REVOCATION_DATE).asText();
         LocalDate repealDate = LocalDate.parse(repealDateString,DateTimeFormatter.ISO_LOCAL_DATE);
-        return new SopRevocation(jsonNode.findValue(REGISTER_ID).asText(),extractDate(jsonNode), repealDate);
+        return new Revocation(jsonNode.findValue(REGISTER_ID).asText(),extractDate(jsonNode), repealDate);
     }
 }

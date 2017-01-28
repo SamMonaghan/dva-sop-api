@@ -6,7 +6,7 @@ import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.SoPLoader;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.AzureStorageRepository;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
@@ -16,7 +16,7 @@ import au.gov.dva.sopapi.sopref.data.updates.LegislationRegisterEmailClientImpl;
 import au.gov.dva.sopapi.sopref.data.updates.SoPLoaderImpl;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.LegislationRegisterSiteChangeFactory;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
 import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableSet;
@@ -63,7 +63,7 @@ public class IntegrationTests {
         String registerId = "F2014L00933";
 
 
-        NewSop newInstrument = new NewSop("F2014L00933", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,1)));
+        NewInstrument newInstrument = new NewInstrument("F2014L00933", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,1)));
         localRepository.addInstrumentChanges(ImmutableSet.of(newInstrument));
         // end setup
 
@@ -118,7 +118,7 @@ public class IntegrationTests {
         // F2017C00077
         AutoUpdate.updateChangeList(localRepository,emailChangeFactory,updateChangeFactory);
 
-        ImmutableSet<SopChange> updatesInRepo = localRepository.getInstrumentChanges();
+        ImmutableSet<InstrumentChange> updatesInRepo = localRepository.getInstrumentChanges();
         Assert.assertTrue(updatesInRepo.size() == 1);
         Assert.assertTrue(updatesInRepo.stream().findFirst().get().getSourceInstrumentId().contentEquals("F2017C00077"));
 

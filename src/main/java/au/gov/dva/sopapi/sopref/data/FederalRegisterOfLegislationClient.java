@@ -61,6 +61,26 @@ public class FederalRegisterOfLegislationClient implements RegisterClient {
     }
 
 
+    @Override
+    public CompletableFuture<byte[]> getLatestDocxInstrument(String registerId) {
+        URL urlForDownloadPage = BuildUrl.forLatestDownloadPage(registerId);
+
+        CompletableFuture<byte[]> promise =  downloadHtml(urlForDownloadPage)
+                .thenApply(htmlString -> {
+                    try {
+                        return getDocxDocumentLinkFromHtml(htmlString, registerId);
+                    } catch (MalformedURLException e) {
+                        throw new LegislationRegisterError(e);
+                    }
+                })
+                .thenCompose(url -> downloadFile(url));
+
+        return promise;
+
+    }
+
+
+
     public static CompletableFuture<byte[]> downloadFile(URL url) {
         AsyncHttpClient asyncHttpClient = asyncHttpClient();
         CompletableFuture<byte[]> promise = asyncHttpClient
@@ -109,7 +129,17 @@ public class FederalRegisterOfLegislationClient implements RegisterClient {
         Document htmlDocument = Jsoup.parse(html);
         // Note that currently at legislation.gov.au there is an additional space in the title for this element - probably an error.
         // There is additional selector with one space so this will still work if the devs fix that error.
-        String cssSelector = String.format("a[title*=\"%s  authorised version\"], [a[title*=\"%s authorised version\"]", registerID, registerID);
+        String cssSelector = String.format("a[title*=\"%s  authorised version\"], a[title*=\"%s authorised version\"]", registerID, registerID);
+        Elements elements = htmlDocument.select(cssSelector);
+        assert !elements.isEmpty();
+        String linkUrl = elements.attr("href");
+        assert !linkUrl.isEmpty();
+        return URI.create(linkUrl).toURL();
+    }
+
+    public static URL getDocxDocumentLinkFromHtml(String html, String registerId) throws MalformedURLException {
+        Document htmlDocument = Jsoup.parse(html);
+        String cssSelector = String.format("a[id*=\"hlPrimaryDoc\"] a[title=\"%s\"]", registerId);
         Elements elements = htmlDocument.select(cssSelector);
         assert !elements.isEmpty();
         String linkUrl = elements.attr("href");

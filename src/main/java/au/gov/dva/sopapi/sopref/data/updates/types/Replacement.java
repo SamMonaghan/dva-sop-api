@@ -2,7 +2,7 @@ package au.gov.dva.sopapi.sopref.data.updates.types;
 
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -10,10 +10,10 @@ import java.time.OffsetDateTime;
 
 // A SoP is repealed and replaced with one with the same name.
 // Shows in the repealed by area of Legislation Register.
-public class SopReplacement extends InstrumentChangeBase implements SopChange, JsonSerializable {
+public class Replacement extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
 
 
-    public SopReplacement(String newInstrumentRegisterId, OffsetDateTime date, String oldInstrumentRegisterId) {
+    public Replacement(String newInstrumentRegisterId, OffsetDateTime date, String oldInstrumentRegisterId) {
         super(oldInstrumentRegisterId, newInstrumentRegisterId, date);
     }
 
@@ -51,9 +51,9 @@ public class SopReplacement extends InstrumentChangeBase implements SopChange, J
         return root;
     }
 
-    public static SopReplacement fromJson(JsonNode jsonNode)
+    public static Replacement fromJson(JsonNode jsonNode)
     {
-        return new SopReplacement(jsonNode.findValue(REPEALED_LABEL).asText(), extractDate(jsonNode),jsonNode.findValue(NEW_LABEL).asText());
+        return new Replacement(jsonNode.findValue(REPEALED_LABEL).asText(), extractDate(jsonNode),jsonNode.findValue(NEW_LABEL).asText());
     }
 
 }

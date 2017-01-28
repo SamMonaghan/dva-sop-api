@@ -1,9 +1,9 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.interfaces.RegisterClient;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewSopCompilation;
-import au.gov.dva.sopapi.sopref.data.updates.types.SopReplacement;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewCompilation;
+import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +24,16 @@ public class LegRegChangeDetector {
         this.registerClient = registerClient;
     }
 
-    public ImmutableSet<SopChange> detectNewCompilations(ImmutableSet<String> registerIds)
+    public ImmutableSet<InstrumentChange> detectNewCompilations(ImmutableSet<String> registerIds)
     {
         List<CompletableFuture<RedirectResult>> tasks = registerIds.stream()
                 .map(s -> getRedirectResult(s))
                 .collect(Collectors.toList());
         try {
             List<RedirectResult> results = AsyncUtils.sequence(tasks).get();
-            List<NewSopCompilation> compilations = results.stream()
+            List<NewCompilation> compilations = results.stream()
                     .filter(RedirectResult::isUpdatedCompilation)
-                    .map(redirectResult -> new NewSopCompilation(redirectResult.getSource(),redirectResult.getTarget().get(), OffsetDateTime.now()))
+                    .map(redirectResult -> new NewCompilation(redirectResult.getSource(),redirectResult.getTarget().get(), OffsetDateTime.now()))
                     .collect(Collectors.toList());
             return ImmutableSet.copyOf(compilations);
 
@@ -46,17 +46,17 @@ public class LegRegChangeDetector {
         }
     }
 
-    public ImmutableSet<SopChange> detectReplacements(ImmutableSet<String> registerIds) {
+    public ImmutableSet<InstrumentChange> detectReplacements(ImmutableSet<String> registerIds) {
 
         List<CompletableFuture<ReplacementResult>> batch = registerIds.stream()
                 .map(s -> getReplacementResult(s))
                 .collect(Collectors.toList());
 
         try {
-            List<SopChange> results = AsyncUtils.sequence(batch).get()
+            List<InstrumentChange> results = AsyncUtils.sequence(batch).get()
                     .stream()
                     .filter(r -> r.getNewRegisterId().isPresent())
-                    .map(r -> new SopReplacement(r.getNewRegisterId().get(),OffsetDateTime.now(),r.getOriginalRegisterId()))
+                    .map(r -> new Replacement(r.getNewRegisterId().get(),OffsetDateTime.now(),r.getOriginalRegisterId()))
                     .collect(Collectors.toList());
 
             return ImmutableSet.copyOf(results);
@@ -70,7 +70,6 @@ public class LegRegChangeDetector {
         }
     }
 
-    // todo: here - update service determinations
 
 
     private CompletableFuture<ReplacementResult> getReplacementResult(String originalRegisterId)

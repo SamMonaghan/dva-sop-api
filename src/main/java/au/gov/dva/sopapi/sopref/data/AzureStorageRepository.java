@@ -2,7 +2,7 @@ package au.gov.dva.sopapi.sopref.data;
 
 import au.gov.dva.sopapi.exceptions.RepositoryError;
 import au.gov.dva.sopapi.interfaces.Repository;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.ServiceDetermination;
 import au.gov.dva.sopapi.interfaces.model.SoP;
@@ -44,6 +44,7 @@ public class AzureStorageRepository implements Repository {
     private static final String SERVICE_DETERMINATIONS_CONTAINER_NAME = "servicedeterminations";
     private static final String INSTRUMENT_CHANGES_CONTAINER_NAME = "instrumentchanges";
     private static final String ARCHIVED_SOPS_CONTAINER_NAME = "archivedsops";
+    private static final String ARCHIVED_SERVICE_DETERMINATIONS_CONTAINER_NAME = "archivedservicedeterminations";
     private static final String METADATA_CONTAINER_NAME = "metadata";
     private static final String LAST_SOPS_UPDATE_BLOB_NAME = "lastsopsupdate";
 
@@ -206,14 +207,14 @@ public class AzureStorageRepository implements Repository {
     }
 
     @Override
-    public ImmutableSet<SopChange> getInstrumentChanges() {
+    public ImmutableSet<InstrumentChange> getInstrumentChanges() {
 
 
         CloudBlobContainer cloudBlobContainer = null;
         try {
 
             cloudBlobContainer = getOrCreateContainer(INSTRUMENT_CHANGES_CONTAINER_NAME);
-            ImmutableSet.Builder<SopChange> builder = new ImmutableSet.Builder<>();
+            ImmutableSet.Builder<InstrumentChange> builder = new ImmutableSet.Builder<>();
             for (ListBlobItem listBlobItem : cloudBlobContainer.listBlobs()) {
                 if (listBlobItem instanceof CloudBlob) {
                     blobToInstrumentChangeStream((CloudBlob) listBlobItem).forEach(builder::add);
@@ -242,22 +243,22 @@ public class AzureStorageRepository implements Repository {
         }).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
     }
 
-    private static Stream<SopChange> blobToInstrumentChangeStream(CloudBlob cloudBlob) throws IOException, StorageException {
+    private static Stream<InstrumentChange> blobToInstrumentChangeStream(CloudBlob cloudBlob) throws IOException, StorageException {
         JsonNode jsonNode = getJsonNode(cloudBlob);
         ImmutableList<JsonNode> jsonObjects = JsonUtils.getChildrenOfArrayNode(jsonNode);
         return jsonObjects.stream().map(n -> InstrumentChangeBase.fromJson(n));
     }
 
     @Override
-    public void addInstrumentChanges(ImmutableSet<SopChange> sopChanges) {
+    public void addInstrumentChanges(ImmutableSet<InstrumentChange> instrumentChanges) {
         try {
             CloudBlobContainer container = getOrCreateContainer(INSTRUMENT_CHANGES_CONTAINER_NAME);
 
-            String newBlobName = createBlobNameForInstrumentChangeBatch(sopChanges);
+            String newBlobName = createBlobNameForInstrumentChangeBatch(instrumentChanges);
             CloudBlockBlob blob = container.getBlockBlobReference(newBlobName);
             ObjectMapper objectMapper = new ObjectMapper();
             ArrayNode root = objectMapper.createArrayNode();
-            sopChanges.stream().forEach(ic -> root.add(ic.toJson()));
+            instrumentChanges.stream().forEach(ic -> root.add(ic.toJson()));
             blob.uploadText(Conversions.toString(root));
         } catch (RuntimeException e) {
             throw new RepositoryError(e);
@@ -266,7 +267,7 @@ public class AzureStorageRepository implements Repository {
         }
     }
 
-    private static String createBlobNameForInstrumentChangeBatch(ImmutableSet<SopChange> sopChanges) {
+    private static String createBlobNameForInstrumentChangeBatch(ImmutableSet<InstrumentChange> instrumentChanges) {
 //        A blob name must conforming to the following naming rules:
 //        A blob name can contain any combination of characters.
 //            A blob name must be at least one character long and cannot be more than 1,024 characters long.
@@ -274,7 +275,7 @@ public class AzureStorageRepository implements Repository {
 //            Reserved URL characters must be properly escaped.
 //        The number of path segments comprising the blob name cannot exceed 254. A path segment is the string between consecutive delimiter characters (e.g., the forward slash '/') that corresponds to the name of a virtual directory.
 
-        int numberOfChanges = sopChanges.size();
+        int numberOfChanges = instrumentChanges.size();
         String timeForBlobName = OffsetDateTime.now().format(DateTimeFormatter.ISO_INSTANT).replace(':', '-');
         String uuid = UUID.randomUUID().toString();
         String blobName = String.format("%s_%d_changes_%s.json", timeForBlobName, numberOfChanges, uuid);
@@ -292,6 +293,29 @@ public class AzureStorageRepository implements Repository {
         } catch (RuntimeException e) {
             throw new RepositoryError(e);
         } catch (Exception e) {
+            throw new RepositoryError(e);
+        }
+    }
+
+    @Override
+    public void archiveServiceDetermination(String registerId) {
+        try {
+            Optional<CloudBlob> cloudBlob = getBlobByName(SERVICE_DETERMINATIONS_CONTAINER_NAME, registerId);
+            if (!cloudBlob.isPresent()) {
+                throw new RepositoryError(String.format("Service Determination with register ID does not exist: %s", registerId));
+            }
+
+            byte[] blobBytes = getBlobBytes(cloudBlob.get());
+
+            String archivedServiceDeterminationBlobName = String.format("%s_%s", registerId, UUID.randomUUID().toString());
+            saveBlob(archivedServiceDeterminationBlobName, archivedServiceDeterminationBlobName, blobBytes);
+            deleteBlob(SERVICE_DETERMINATIONS_CONTAINER_NAME, registerId);
+
+        } catch (URISyntaxException e) {
+            throw new RepositoryError(e);
+        } catch (StorageException e) {
+            throw new RepositoryError(e);
+        } catch (IOException e) {
             throw new RepositoryError(e);
         }
     }

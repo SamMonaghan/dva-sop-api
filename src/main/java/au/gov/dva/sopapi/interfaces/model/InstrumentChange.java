@@ -4,7 +4,7 @@ import au.gov.dva.sopapi.interfaces.JsonSerializable;
 
 import java.time.OffsetDateTime;
 
-public interface SopChange extends JsonSerializable {
+public interface InstrumentChange extends JsonSerializable {
      OffsetDateTime getDate();
      String getSourceInstrumentId();
      String getTargetInstrumentId();

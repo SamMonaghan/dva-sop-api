@@ -1,9 +1,12 @@
 package au.gov.dva.sopapi;
 
 import au.gov.dva.sopapi.exceptions.InitialSeedingError;
+import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.interfaces.model.ServiceDetermination;
+import au.gov.dva.sopapi.sopref.data.ServiceDeterminations;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
@@ -15,10 +18,10 @@ import java.util.stream.Collectors;
 
 class Seeds {
 
-    public static void addSops(Repository repository) {
+    public static void queueNewSopChanges(Repository repository) {
         try {
             String[] registerIdsOfInitialSops =  Resources.toString(Resources.getResource("initialsops.txt"), Charsets.UTF_8).split("\\r?\\n");
-            ImmutableSet<SopChange> newInstruments = Arrays.stream(registerIdsOfInitialSops).map(id -> new NewSop(id, OffsetDateTime.now()))
+            ImmutableSet<InstrumentChange> newInstruments = Arrays.stream(registerIdsOfInitialSops).map(id -> new NewInstrument(id, OffsetDateTime.now()))
                     .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
             repository.addInstrumentChanges(newInstruments);
         } catch (IOException e) {
@@ -27,14 +30,17 @@ class Seeds {
 
     }
 
-    public static void addServiceDeterminations(Repository repository)
+    public static void addServiceDeterminations(Repository repository, RegisterClient registerClient)
     {
         try {
             String[] registerIdsOfInitialServiceDeterminations =  Resources.toString(Resources.getResource("initialservicedeterminations.txt"), Charsets.UTF_8).split("\\r?\\n");
-            ImmutableSet<SopChange> newInstruments = Arrays.stream(registerIdsOfInitialServiceDeterminations).map(id -> new NewSop(id, OffsetDateTime.now()))
-                    .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
 
-            // todo
+            Arrays.stream(registerIdsOfInitialServiceDeterminations)
+                    .forEach(id -> {
+                        ServiceDetermination serviceDetermination = ServiceDeterminations.create(id,registerClient);
+                        repository.archiveServiceDetermination(id);
+                        repository.addServiceDetermination(serviceDetermination);
+                    });
 
         } catch (IOException e) {
             e.printStackTrace();

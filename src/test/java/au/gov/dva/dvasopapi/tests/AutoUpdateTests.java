@@ -4,15 +4,15 @@ import au.gov.dva.dvasopapi.tests.categories.IntegrationTest;
 import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
-import au.gov.dva.sopapi.interfaces.model.SopChange;
+import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
 import au.gov.dva.sopapi.sopref.data.JsonUtils;
 import au.gov.dva.sopapi.sopref.data.updates.LegRegChangeDetector;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
-import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
-import au.gov.dva.sopapi.sopref.data.updates.types.SopReplacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
+import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +45,7 @@ public class AutoUpdateTests {
 
     @Test
     public void serializeNewInstrument() throws JsonProcessingException {
-        SopChange test = new NewSop("F2014L83848", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2015,1,1)));
+        InstrumentChange test = new NewInstrument("F2014L83848", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2015,1,1)));
         JsonNode node = test.toJson();
         System.out.print(TestUtils.prettyPrint(node));
         Assert.assertTrue(node != null);
@@ -56,7 +56,7 @@ public class AutoUpdateTests {
         String updatesString = Resources.toString(Resources.getResource("updates/updates.json"), Charsets.UTF_8);
         JsonNode jsonNode = (new ObjectMapper()).readTree(updatesString);
         ImmutableList<JsonNode> jsonObjects = JsonUtils.getChildrenOfArrayNode(jsonNode);
-        List<SopChange> results = jsonObjects.stream().map(n -> InstrumentChangeBase.fromJson(n)).collect(Collectors.toList());
+        List<InstrumentChange> results = jsonObjects.stream().map(n -> InstrumentChangeBase.fromJson(n)).collect(Collectors.toList());
         results.forEach(r -> System.out.println(r));
         Assert.assertTrue(results.size() == 5);
     }
@@ -73,7 +73,7 @@ public class AutoUpdateTests {
         ImmutableList<String> both =  new ImmutableList.Builder<String>().addAll(rh).addAll(bop).build();
         OffsetDateTime creationDate = DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,6));
         Stream<JsonNode> instrumentChangeStream = both.stream()
-                .map(id -> new NewSop(id,creationDate))
+                .map(id -> new NewInstrument(id,creationDate))
                 .map(ni -> ni.toJson());
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -101,9 +101,9 @@ public class AutoUpdateTests {
         );
 
         LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislationClient());
-        ImmutableSet<SopChange> newCompilations = underTest.detectNewCompilations(testSourceIds);
+        ImmutableSet<InstrumentChange> newCompilations = underTest.detectNewCompilations(testSourceIds);
 
-        for (SopChange s : newCompilations)
+        for (InstrumentChange s : newCompilations)
         {
             System.out.println(s);
         }
@@ -120,9 +120,9 @@ public class AutoUpdateTests {
         String expectedIdOfRepealingInstrument = "F2017L00016";
 
         LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislationClient());
-        ImmutableSet<SopChange> results  = underTest.detectReplacements(testSourceIds);
+        ImmutableSet<InstrumentChange> results  = underTest.detectReplacements(testSourceIds);
         results.stream().forEach(r -> System.out.println(r));
-        SopReplacement result = (SopReplacement)results.asList().get(0);
+        Replacement result = (Replacement)results.asList().get(0);
         Assert.assertTrue(result.getSourceInstrumentId().contentEquals(testSourceIds.asList().get(0)));
         Assert.assertTrue(result.getTargetInstrumentId().contentEquals(expectedIdOfRepealingInstrument));
     }
@@ -136,7 +136,7 @@ public class AutoUpdateTests {
                 "F2014L00930"
         );
         LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislationClient());
-        ImmutableSet<SopChange> results = underTest.detectReplacements(testSourceIds);
+        ImmutableSet<InstrumentChange> results = underTest.detectReplacements(testSourceIds);
         Assert.assertTrue(results.isEmpty());
     }
 
@@ -206,7 +206,7 @@ public class AutoUpdateTests {
         LegislationRegisterEmailClient mockClient = new MockEmailClient();
         Supplier<OffsetDateTime> fromDateSupplier = () -> OffsetDateTime.of(2017,1,1,0,0,0,0, ZoneOffset.UTC);
         InstrumentChangeFactory underTest = new EmailSubscriptionInstrumentChangeFactory(mockClient,fromDateSupplier);
-        ImmutableSet<SopChange> results = underTest.getChanges();
+        ImmutableSet<InstrumentChange> results = underTest.getChanges();
         Assert.assertTrue(results.size() == 1 && results.stream().findFirst().get().getTargetInstrumentId().contentEquals("F2017L00015"));
     }
 
