@@ -27,14 +27,19 @@ public class Application implements spark.servlet.SparkApplication {
 
     public Application() {
         _repository = new AzureStorageRepository(au.gov.dva.sopapi.AppSettings.AzureStorage.getConnectionString());
-        seedStorage();
+        seedStorageIfNecessary();
         autoUpdate();
     }
 
-    private void seedStorage() {
+    private void seedStorageIfNecessary() {
         if (_repository.getAllSops().isEmpty())
         {
+            Seeds.queueNewSopChanges(_repository);
+        }
 
+        if (_repository.getServiceDeterminations().isEmpty())
+        {
+            Seeds.addServiceDeterminations(_repository,new FederalRegisterOfLegislationClient());
         }
     }
 
@@ -53,14 +58,16 @@ public class Application implements spark.servlet.SparkApplication {
 
 
     private void startScheduledUpdates() {
-        startScheduledPollingForSoPChanges(LocalTime.of(15,30));
+        startScheduledPollingForSoPChanges(LocalTime.of(3,30));
         startScheduledLoadingOfSops(LocalTime.of(20,0));
+        startScheduledPollingForServiceDeterminationChanges(LocalTime.of(0,0));
     }
 
     private void updateNow()
     {
         updateSops().run();
-        AutoUpdate.patchChanges(_repository);
+        AutoUpdate.patchSoPChanges(_repository);
+        updateServiceDeterminations().run();
         _cache.refresh(_repository);
     }
 
@@ -88,6 +95,10 @@ public class Application implements spark.servlet.SparkApplication {
         return () -> AutoUpdate.updateServiceDeterminations(_repository, new FederalRegisterOfLegislationClient());
     }
 
+    private void startScheduledPollingForServiceDeterminationChanges(LocalTime localTime) {
+        startDailyExecutor(localTime,updateServiceDeterminations());
+    }
+
     private void startScheduledPollingForSoPChanges(LocalTime runTime) {
        startDailyExecutor(runTime, updateSops());
     }
@@ -96,7 +107,7 @@ public class Application implements spark.servlet.SparkApplication {
     private void startScheduledLoadingOfSops(LocalTime runTime) {
         // idea: provide antecedent sop register ID also
         startDailyExecutor(runTime,() -> {
-            AutoUpdate.patchChanges(_repository);
+            AutoUpdate.patchSoPChanges(_repository);
             _cache.refresh(_repository);
         });
 

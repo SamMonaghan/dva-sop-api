@@ -22,7 +22,7 @@ public class AutoUpdate {
 
     private static Logger logger = LoggerFactory.getLogger(AutoUpdate.class);
 
-    public static void patchChanges(Repository repository) {
+    public static void patchSoPChanges(Repository repository) {
 
         try {
             SoPLoader soPLoader = new SoPLoaderImpl(
