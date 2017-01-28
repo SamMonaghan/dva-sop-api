@@ -1,20 +1,14 @@
 package au.gov.dva.sopapi.sopref.data.updates.types;
 
-import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
-import au.gov.dva.sopapi.interfaces.Repository;
-import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
-import au.gov.dva.sopapi.interfaces.model.SoP;
-import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
+import au.gov.dva.sopapi.interfaces.model.SopChange;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.OffsetDateTime;
-import java.util.Optional;
-import java.util.function.Function;
 
-public class NewSopCompilation extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
+public class NewSopCompilation extends InstrumentChangeBase implements SopChange, JsonSerializable {
 
 
     public NewSopCompilation(String currentRegisterId, String newCompilationId, OffsetDateTime date) {
@@ -40,28 +34,6 @@ public class NewSopCompilation extends InstrumentChangeBase implements Instrumen
         return super.getTargetRegisterId();
     }
 
-    @Override
-    public void apply(Repository repository, Function<String, Optional<SoP>> soPProvider) {
-
-        Optional<SoP> existing = repository.getSop(getTargetRegisterId());
-        if (existing.isPresent())
-            return;
-
-        Optional<SoP> toEndDate = repository.getSop(getSourceInstrumentId());
-        if (!toEndDate.isPresent()) {
-            throw new AutoUpdateError(String.format("Attempt to update the end date of SoP %s failed because it is not present in the Repository.", getSourceInstrumentId()));
-        }
-
-        Optional<SoP> newCompilation = soPProvider.apply(getTargetInstrumentId());
-        if (!newCompilation.isPresent()) {
-            throw new AutoUpdateError(String.format("Could not get new compilation for SoP: %s", getTargetInstrumentId()));
-        }
-
-        SoP endDatedSop = StoredSop.withEndDate(toEndDate.get(), newCompilation.get().getEffectiveFromDate().minusDays(1));
-        repository.archiveSoP(getSourceInstrumentId());
-        repository.saveSop(endDatedSop);
-        repository.saveSop(newCompilation.get());
-    }
 
 
     @Override

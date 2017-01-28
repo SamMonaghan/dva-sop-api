@@ -6,7 +6,7 @@ import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.SoPLoader;
-import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.interfaces.model.SopChange;
 import au.gov.dva.sopapi.interfaces.model.SoP;
 import au.gov.dva.sopapi.sopref.data.AzureStorageRepository;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
@@ -118,7 +118,7 @@ public class IntegrationTests {
         // F2017C00077
         AutoUpdate.updateChangeList(localRepository,emailChangeFactory,updateChangeFactory);
 
-        ImmutableSet<InstrumentChange> updatesInRepo = localRepository.getInstrumentChanges();
+        ImmutableSet<SopChange> updatesInRepo = localRepository.getInstrumentChanges();
         Assert.assertTrue(updatesInRepo.size() == 1);
         Assert.assertTrue(updatesInRepo.stream().findFirst().get().getSourceInstrumentId().contentEquals("F2017C00077"));
 

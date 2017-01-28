@@ -5,7 +5,7 @@ import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.SoPLoader;
-import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.interfaces.model.SopChange;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
 import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator;
 import com.google.common.collect.ImmutableSet;
@@ -40,16 +40,16 @@ public class AutoUpdate {
     public static void updateChangeList(Repository repository, InstrumentChangeFactory newInstrumentFactory, InstrumentChangeFactory updatedInstrumentFactory) {
 
         try {
-            ImmutableSet<InstrumentChange> newInstruments = newInstrumentFactory.getChanges();
-            ImmutableSet<InstrumentChange> updatedInstruments = updatedInstrumentFactory.getChanges();
-            ImmutableSet<InstrumentChange> allNewChanges = new ImmutableSet.Builder<InstrumentChange>()
+            ImmutableSet<SopChange> newInstruments = newInstrumentFactory.getChanges();
+            ImmutableSet<SopChange> updatedInstruments = updatedInstrumentFactory.getChanges();
+            ImmutableSet<SopChange> allNewChanges = new ImmutableSet.Builder<SopChange>()
                     .addAll(newInstruments)
                     .addAll(updatedInstruments)
                     .build();
 
-            ImmutableSet<InstrumentChange> existingChanges = repository.getInstrumentChanges();
+            ImmutableSet<SopChange> existingChanges = repository.getInstrumentChanges();
 
-            ImmutableSet<InstrumentChange> newChangesNotInRepository = Sets.difference(allNewChanges, existingChanges).immutableCopy();
+            ImmutableSet<SopChange> newChangesNotInRepository = Sets.difference(allNewChanges, existingChanges).immutableCopy();
 
             repository.addInstrumentChanges(newChangesNotInRepository);
             repository.setLastUpdated(OffsetDateTime.now());

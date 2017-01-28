@@ -3,7 +3,7 @@ package au.gov.dva.sopapi.sopref.data.updates.changefactories;
 import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
-import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.interfaces.model.SopChange;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
 import com.google.common.collect.ImmutableSet;
@@ -32,13 +32,13 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
 
     }
 
-    private static ImmutableSet<InstrumentChange> identifyNewInstruments(ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates) {
+    private static ImmutableSet<SopChange> identifyNewInstruments(ImmutableSet<LegislationRegisterEmailUpdate> emailUpdates) {
 
         Pattern titlePosPattern = Pattern.compile("(?i)Statement of Principles");
         Pattern titleNegPattern = Pattern.compile("(?i)amendment");
         Pattern updatePattern = Pattern.compile("(?i)published");
 
-        ImmutableSet<InstrumentChange> newInstruments = emailUpdates.stream()
+        ImmutableSet<SopChange> newInstruments = emailUpdates.stream()
                 .filter(u -> updatePattern.matcher(u.getUpdateDescription()).find())
                 .filter(u ->  !titleNegPattern.matcher(u.getInstrumentTitle()).find())
                 .filter(u -> titlePosPattern.matcher(u.getInstrumentTitle()).find())
@@ -54,7 +54,7 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
                         }
                 )
                 .filter(u -> u.isPresent())
-                .map(u -> (InstrumentChange) u.get())
+                .map(u -> (SopChange) u.get())
                 .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
 
         return newInstruments;
@@ -76,11 +76,11 @@ public class EmailSubscriptionInstrumentChangeFactory implements InstrumentChang
 
 
     @Override
-    public ImmutableSet<InstrumentChange> getChanges() {
+    public ImmutableSet<SopChange> getChanges() {
         long timeoutSeconds = 30;
         try {
             ImmutableSet<LegislationRegisterEmailUpdate> updates = emailClient.getUpdatesBetween(getLastUpdatedDate.get(),OffsetDateTime.now()).get(timeoutSeconds, TimeUnit.SECONDS);
-            ImmutableSet<InstrumentChange> newInstruments = identifyNewInstruments(updates);
+            ImmutableSet<SopChange> newInstruments = identifyNewInstruments(updates);
             return newInstruments;
 
         } catch (InterruptedException e) {

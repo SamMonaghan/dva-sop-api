@@ -69,7 +69,7 @@ public class InstrumentChangeBase  {
       return objectNode;
    }
 
-   public static InstrumentChange fromJson(JsonNode jsonNode) {
+   public static SopChange fromJson(JsonNode jsonNode) {
       String type = jsonNode.findValue(TYPE_LABEL).asText();
       assert (type != null && !type.isEmpty());
       switch (type) {

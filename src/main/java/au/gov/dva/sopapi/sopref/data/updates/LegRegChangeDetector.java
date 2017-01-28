@@ -1,7 +1,7 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
 import au.gov.dva.sopapi.interfaces.RegisterClient;
-import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
+import au.gov.dva.sopapi.interfaces.model.SopChange;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewSopCompilation;
 import au.gov.dva.sopapi.sopref.data.updates.types.SopReplacement;
 import com.google.common.collect.ImmutableSet;
@@ -24,7 +24,7 @@ public class LegRegChangeDetector {
         this.registerClient = registerClient;
     }
 
-    public ImmutableSet<InstrumentChange> detectNewCompilations(ImmutableSet<String> registerIds)
+    public ImmutableSet<SopChange> detectNewCompilations(ImmutableSet<String> registerIds)
     {
         List<CompletableFuture<RedirectResult>> tasks = registerIds.stream()
                 .map(s -> getRedirectResult(s))
@@ -46,14 +46,14 @@ public class LegRegChangeDetector {
         }
     }
 
-    public ImmutableSet<InstrumentChange> detectReplacements(ImmutableSet<String> registerIds) {
+    public ImmutableSet<SopChange> detectReplacements(ImmutableSet<String> registerIds) {
 
         List<CompletableFuture<ReplacementResult>> batch = registerIds.stream()
                 .map(s -> getReplacementResult(s))
                 .collect(Collectors.toList());
 
         try {
-            List<InstrumentChange> results = AsyncUtils.sequence(batch).get()
+            List<SopChange> results = AsyncUtils.sequence(batch).get()
                     .stream()
                     .filter(r -> r.getNewRegisterId().isPresent())
                     .map(r -> new SopReplacement(r.getNewRegisterId().get(),OffsetDateTime.now(),r.getOriginalRegisterId()))
@@ -69,6 +69,8 @@ public class LegRegChangeDetector {
             return ImmutableSet.of();
         }
     }
+
+    // todo: here - update service determinations
 
 
     private CompletableFuture<ReplacementResult> getReplacementResult(String originalRegisterId)
@@ -91,6 +93,7 @@ public class LegRegChangeDetector {
                     }
                 });
     }
+
 
     private static class ReplacementResult{
         private final String originalRegisterId;

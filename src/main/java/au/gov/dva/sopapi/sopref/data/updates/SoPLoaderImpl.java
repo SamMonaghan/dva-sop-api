@@ -1,19 +1,27 @@
 package au.gov.dva.sopapi.sopref.data.updates;
 
+import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.interfaces.RegisterClient;
 import au.gov.dva.sopapi.interfaces.Repository;
 import au.gov.dva.sopapi.interfaces.SoPLoader;
-import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.SoP;
+import au.gov.dva.sopapi.interfaces.model.SopChange;
 import au.gov.dva.sopapi.sopref.data.Conversions;
+import au.gov.dva.sopapi.sopref.data.sops.StoredSop;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewSop;
+import au.gov.dva.sopapi.sopref.data.updates.types.NewSopCompilation;
+import au.gov.dva.sopapi.sopref.data.updates.types.SopReplacement;
+import au.gov.dva.sopapi.sopref.data.updates.types.SopRevocation;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPCleanser;
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory;
+import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -21,11 +29,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SoPLoaderImpl implements SoPLoader {
 
-    private final Repository repository;
+    private Repository repository;
     private final RegisterClient registerClient;
     private final Function<String, SoPCleanser> sopCleanserProvider;
     private final Function<String, SoPFactory> sopFactoryProvider;
@@ -55,6 +64,7 @@ public class SoPLoaderImpl implements SoPLoader {
         try {
             Optional<SoP> result = resultTask.get(timeoutSecs,TimeUnit.SECONDS);
             return result;
+
         } catch (InterruptedException e) {
             logger.error(String.format("Task to get SoP was interrupted: %s", registerId),e);
             return Optional.empty();
@@ -67,15 +77,24 @@ public class SoPLoaderImpl implements SoPLoader {
         }
     };
 
+    private Function<String,ImmutableSet<String>> antecedentRegisterIdProvider = s ->
+            repository.getInstrumentChanges()
+           .stream()
+           .filter(sopChange ->  sopChange instanceof SopReplacement || sopChange instanceof NewSopCompilation)
+           .filter(sopChange -> sopChange.getTargetInstrumentId().contentEquals(s))
+           .map(SopChange::getSourceInstrumentId)
+           .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
+
+
     @Override
     public void applyAll(long timeOutSeconds) {
-        Stream<InstrumentChange> sequencedInstrumentChanges = repository.getInstrumentChanges()
+        Stream<SopChange> sequencedInstrumentChanges = repository.getInstrumentChanges()
                 .stream()
                 .sorted(new InstrumentChangeComparator());
 
         sequencedInstrumentChanges.forEach(ic -> {
             try {
-                ic.apply(repository, sopProvider);
+                applyInstrumentChange(ic,repository,sopProvider);
             }
             catch (DvaSopApiError e)
             {
@@ -84,11 +103,89 @@ public class SoPLoaderImpl implements SoPLoader {
         });
     }
 
-    private static class InstrumentChangeComparator implements Comparator<InstrumentChange>, Serializable
+    // RR suggested this be decoupled, rather than as methods on the change object.
+    private static void applyInstrumentChange(SopChange sopChange, Repository repository, Function<String,Optional<SoP>> soPProvider)
+    {
+        if (sopChange instanceof NewSop)
+        {
+            Optional<SoP> existingIfAny = repository.getSop(sopChange.getTargetInstrumentId());
+            if (existingIfAny.isPresent())
+                return;
+
+            Optional<SoP> sop = soPProvider.apply(sopChange.getTargetInstrumentId());
+
+            if (!sop.isPresent())
+            {
+                throw new AutoUpdateError(String.format("Cannot get a SoP for instrument ID: %s", sopChange.getTargetInstrumentId()));
+            }
+
+            repository.saveSop(sop.get());
+        }
+        else if (sopChange instanceof SopReplacement)
+        {
+            Optional<SoP> newInstrument = repository.getSop(sopChange.getTargetInstrumentId());
+            if (newInstrument.isPresent())
+                return;
+
+            Optional<SoP> toEndDate = repository.getSop(sopChange.getSourceInstrumentId());
+            if (!toEndDate.isPresent())
+            {
+                throw new AutoUpdateError(String.format("Attempt to update the end date of SoP %s failed because it is not present in the Repository.", sopChange.getSourceInstrumentId()));
+            }
+
+            Optional<SoP> repealingSop = soPProvider.apply(sopChange.getTargetInstrumentId());
+            if (!repealingSop.isPresent())
+            {
+                throw new AutoUpdateError(String.format("Replacement of repealed SoP %s failed because could not obtain new SoP %s", sopChange.getSourceInstrumentId(), sopChange.getTargetInstrumentId()));
+            }
+
+            LocalDate effectiveDateOfNewSoP = repealingSop.get().getEffectiveFromDate();
+            SoP endDated = StoredSop.withEndDate(toEndDate.get(), effectiveDateOfNewSoP.minusDays(1));
+            repository.saveSop(endDated);
+            repository.saveSop(repealingSop.get());
+        }
+
+        else if (sopChange instanceof NewSopCompilation)
+        {
+            Optional<SoP> existing = repository.getSop(sopChange.getTargetInstrumentId());
+            if (existing.isPresent())
+                return;
+
+            Optional<SoP> toEndDate = repository.getSop(sopChange.getSourceInstrumentId());
+            if (!toEndDate.isPresent()) {
+                throw new AutoUpdateError(String.format("Attempt to update the end date of SoP %s failed because it is not present in the Repository.", sopChange.getSourceInstrumentId()));
+            }
+
+            Optional<SoP> newCompilation = soPProvider.apply(sopChange.getTargetInstrumentId());
+            if (!newCompilation.isPresent()) {
+                throw new AutoUpdateError(String.format("Could not get new compilation for SoP: %s", sopChange.getTargetInstrumentId()));
+            }
+
+            repository.archiveSoP(sopChange.getSourceInstrumentId());
+            repository.saveSop(newCompilation.get());
+        }
+
+        else if (sopChange instanceof SopRevocation)
+        {
+            Optional<SoP> existing = repository.getSop(sopChange.getSourceInstrumentId());
+            if (!existing.isPresent())
+                return;
+
+            repository.archiveSoP(sopChange.getSourceInstrumentId());
+            SoP endDated = StoredSop.withEndDate(existing.get(), ((SopRevocation)sopChange).getRevocationDate());
+            repository.saveSop(endDated);
+        }
+
+        else throw new AutoUpdateError(String.format("Unable to apply this instrument change type to repository: %s", sopChange.getClass().getName()));
+    }
+
+
+
+    private static class InstrumentChangeComparator implements Comparator<SopChange>, Serializable
     {
         static final long serialVersionUID = 42L;
         @Override
-        public int compare(InstrumentChange o1, InstrumentChange o2) {
+        public int compare(SopChange o1, SopChange o2) {
             return o1.getDate().compareTo(o2.getDate());
         }
     }
@@ -126,6 +223,29 @@ public class SoPLoaderImpl implements SoPLoader {
                 SoP soP = soPFactory.create(registerId, rawText, cleansedText);
                 return Optional.of(soP);
             } catch (Error e) {
+
+                // try factories for antecedent sops
+                ImmutableSet<String> antecedentRegisterIds = antecedentRegisterIdProvider.apply(registerId);
+
+                if (!antecedentRegisterIds.isEmpty()) {
+                    for (String antecedent : antecedentRegisterIds) {
+
+                        logger.trace(String.format("Failed to create SoP with register ID %s using default factory,trying factory for antecedent SoP with register ID: %s...", registerId), antecedent);
+
+                        SoPFactory antecedentSopFactory = sopFactoryProvider.apply(antecedent);
+                        try {
+                            SoP antecedentResult = antecedentSopFactory.create(registerId, rawText, cleansedText);
+                            return Optional.of(antecedentResult);
+                        }
+                        catch (DvaSopApiError antecedentError)
+                        {
+                            logger.error(String.format("Failed to create SoP with Register ID %s using factory for antecedent SoP with Register ID %s", registerId, antecedent));
+                        }
+
+                    }
+                }
+
+
                 logger.error(buildLoggerMessage(registerId, "Failed to create SoP."), e);
                 return Optional.empty();
             }

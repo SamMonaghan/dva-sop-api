@@ -1,19 +1,14 @@
 package au.gov.dva.sopapi.sopref.data.updates.types;
 
-import au.gov.dva.sopapi.exceptions.AutoUpdateError;
 import au.gov.dva.sopapi.interfaces.JsonSerializable;
-import au.gov.dva.sopapi.interfaces.Repository;
-import au.gov.dva.sopapi.interfaces.model.InstrumentChange;
 import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
-import au.gov.dva.sopapi.interfaces.model.SoP;
+import au.gov.dva.sopapi.interfaces.model.SopChange;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.OffsetDateTime;
-import java.util.Optional;
-import java.util.function.Function;
 
-public class NewSop extends InstrumentChangeBase implements InstrumentChange, JsonSerializable {
+public class NewSop extends InstrumentChangeBase implements SopChange, JsonSerializable {
 
 
     public NewSop(String registerId, OffsetDateTime date) {
@@ -48,21 +43,7 @@ public class NewSop extends InstrumentChangeBase implements InstrumentChange, Js
         return root;
     }
 
-    @Override
-    public void apply(Repository repository, Function<String,Optional<SoP>> soPProvider)
-    {
-        Optional<SoP> existingIfAny = repository.getSop(this.getTargetInstrumentId());
-        if (existingIfAny.isPresent())
-            return;
 
-        Optional<SoP> sop = soPProvider.apply(getTargetInstrumentId());
-        if (!sop.isPresent())
-        {
-            throw new AutoUpdateError(String.format("Cannot get a SoP for instrument ID: %s", getTargetInstrumentId()));
-        }
-
-        repository.saveSop(sop.get());
-    }
 
 
     @Override
