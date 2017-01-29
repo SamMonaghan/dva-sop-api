@@ -32,7 +32,7 @@ public class Application implements spark.servlet.SparkApplication {
     }
 
     private void seedStorageIfNecessary() {
-        if (_repository.getAllSops().isEmpty())
+        if (_repository.getAllSops().isEmpty() && _repository.getInstrumentChanges().isEmpty())
         {
             Seeds.queueNewSopChanges(_repository);
         }

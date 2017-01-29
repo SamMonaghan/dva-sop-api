@@ -20,6 +20,7 @@ class Seeds {
 
     public static void queueNewSopChanges(Repository repository) {
         try {
+            assert(repository.getAllSops().isEmpty() && repository.getInstrumentChanges().isEmpty());
             String[] registerIdsOfInitialSops =  Resources.toString(Resources.getResource("initialsops.txt"), Charsets.UTF_8).split("\\r?\\n");
             ImmutableSet<InstrumentChange> newInstruments = Arrays.stream(registerIdsOfInitialSops).map(id -> new NewInstrument(id, OffsetDateTime.now()))
                     .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
@@ -33,12 +34,12 @@ class Seeds {
     public static void addServiceDeterminations(Repository repository, RegisterClient registerClient)
     {
         try {
+            assert(repository.getServiceDeterminations().isEmpty());
             String[] registerIdsOfInitialServiceDeterminations =  Resources.toString(Resources.getResource("initialservicedeterminations.txt"), Charsets.UTF_8).split("\\r?\\n");
 
             Arrays.stream(registerIdsOfInitialServiceDeterminations)
                     .forEach(id -> {
                         ServiceDetermination serviceDetermination = ServiceDeterminations.create(id,registerClient);
-                        repository.archiveServiceDetermination(id);
                         repository.addServiceDetermination(serviceDetermination);
                     });
 

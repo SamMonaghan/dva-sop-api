@@ -308,7 +308,7 @@ public class AzureStorageRepository implements Repository {
             byte[] blobBytes = getBlobBytes(cloudBlob.get());
 
             String archivedServiceDeterminationBlobName = String.format("%s_%s", registerId, UUID.randomUUID().toString());
-            saveBlob(archivedServiceDeterminationBlobName, archivedServiceDeterminationBlobName, blobBytes);
+            saveBlob(ARCHIVED_SERVICE_DETERMINATIONS_CONTAINER_NAME, archivedServiceDeterminationBlobName, blobBytes);
             deleteBlob(SERVICE_DETERMINATIONS_CONTAINER_NAME, registerId);
 
         } catch (URISyntaxException e) {
@@ -324,7 +324,7 @@ public class AzureStorageRepository implements Repository {
     public ImmutableSet<ServiceDetermination> getServiceDeterminations() {
 
         try {
-            CloudBlobContainer cloudBlobContainer = _cloudBlobClient.getContainerReference(SERVICE_DETERMINATIONS_CONTAINER_NAME);
+            CloudBlobContainer cloudBlobContainer = getOrCreateContainer(SERVICE_DETERMINATIONS_CONTAINER_NAME);
 
             Iterable<ListBlobItem> blobs = cloudBlobContainer.listBlobs();
 

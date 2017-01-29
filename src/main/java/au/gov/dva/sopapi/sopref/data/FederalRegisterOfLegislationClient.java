@@ -63,7 +63,7 @@ public class FederalRegisterOfLegislationClient implements RegisterClient {
 
     @Override
     public CompletableFuture<byte[]> getLatestDocxInstrument(String registerId) {
-        URL urlForDownloadPage = BuildUrl.forLatestDownloadPage(registerId);
+        URL urlForDownloadPage = BuildUrl.forDownloadPage(registerId);
 
         CompletableFuture<byte[]> promise =  downloadHtml(urlForDownloadPage)
                 .thenApply(htmlString -> {
@@ -139,10 +139,10 @@ public class FederalRegisterOfLegislationClient implements RegisterClient {
 
     public static URL getDocxDocumentLinkFromHtml(String html, String registerId) throws MalformedURLException {
         Document htmlDocument = Jsoup.parse(html);
-        String cssSelector = String.format("a[id*=\"hlPrimaryDoc\"] a[title=\"%s\"]", registerId);
+        String cssSelector = String.format("a[title=\"%s\"]", registerId);
         Elements elements = htmlDocument.select(cssSelector);
         assert !elements.isEmpty();
-        String linkUrl = elements.attr("href");
+        String linkUrl = elements.first().attr("href");
         assert !linkUrl.isEmpty();
         return URI.create(linkUrl).toURL();
     }
@@ -246,12 +246,24 @@ public class FederalRegisterOfLegislationClient implements RegisterClient {
             }
         }
 
+
         public static URL forLatestDownloadPage(String registerId) {
             try {
                 return new URL(String.format("%s/Latest/%s/Download", BASE_URL, registerId));
             } catch (MalformedURLException e) {
                 throw new LegislationRegisterError(e);
             }
+        }
+
+        public static URL forDownloadPage(String registerId) {
+            try {
+                return new URL(String.format("%s/Details/%s/Download",BASE_URL,registerId));
+            } catch (MalformedURLException e)
+            {
+                throw new LegislationRegisterError(e);
+            }
+
+
         }
 
         public static URL forSeriesRepealedByPage(String registerId)
