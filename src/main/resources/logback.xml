@@ -11,6 +11,14 @@
     </appender>
 
     <root level="error">
-        <appender-ref ref="STDERR" />
+        <appender-ref ref="STDOUT" />
     </root>
+    <logger name="dvasopapi.autoupdate" level="trace">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="dvasopapi.soploader" level="trace">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
 </configuration>

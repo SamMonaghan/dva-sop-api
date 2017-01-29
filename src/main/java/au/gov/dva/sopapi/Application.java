@@ -26,7 +26,9 @@ public class Application implements spark.servlet.SparkApplication {
     private static Logger logger = LoggerFactory.getLogger(Application.class);
 
     public Application() {
-        _repository = new AzureStorageRepository(au.gov.dva.sopapi.AppSettings.AzureStorage.getConnectionString());
+        _repository = new AzureStorageRepository(AppSettings.AzureStorage.getConnectionString());
+        if (AppSettings.getEnvironment().isDev())
+            _repository.purge();
         seedStorageIfNecessary();
         autoUpdate();
     }
@@ -117,11 +119,11 @@ public class Application implements spark.servlet.SparkApplication {
     {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         OffsetDateTime nowCanberraTime = OffsetDateTime.now(ZoneId.of(DateTimeUtils.TZDB_REGION_CODE));
-        OffsetDateTime threeThirtyAmTodayCanberraTime = OffsetDateTime.from(
+        OffsetDateTime scheduledTimeTodayCanberraTime = OffsetDateTime.from(
                 ZonedDateTime.of(nowCanberraTime.toLocalDate(),
                         runTime,
                         ZoneId.of(DateTimeUtils.TZDB_REGION_CODE)));
-        OffsetDateTime nextScheduledTime = threeThirtyAmTodayCanberraTime.isAfter(nowCanberraTime) ? threeThirtyAmTodayCanberraTime : threeThirtyAmTodayCanberraTime.plusDays(1);
+        OffsetDateTime nextScheduledTime = scheduledTimeTodayCanberraTime.isAfter(nowCanberraTime) ? scheduledTimeTodayCanberraTime : scheduledTimeTodayCanberraTime.plusDays(1);
         long minutesToNextScheduledTime = Duration.between(nowCanberraTime, nextScheduledTime).toMinutes();
         scheduledExecutorService.scheduleAtFixedRate(runnable,
                 minutesToNextScheduledTime,

@@ -38,7 +38,7 @@ public class SoPLoaderImpl implements SoPLoader {
     private final RegisterClient registerClient;
     private final Function<String, SoPCleanser> sopCleanserProvider;
     private final Function<String, SoPFactory> sopFactoryProvider;
-    private final Logger logger = LoggerFactory.getLogger(SoPLoaderImpl.class);
+    private final Logger logger = LoggerFactory.getLogger("dvasopapi.soploader");
 
     public SoPLoaderImpl(Repository repository, RegisterClient registerClient, Function<String, SoPCleanser> sopCleanserProvider, Function<String, SoPFactory> sopFactoryProvider) {
         this.repository = repository;
@@ -119,7 +119,7 @@ public class SoPLoaderImpl implements SoPLoader {
                 throw new AutoUpdateError(String.format("Cannot get a SoP for instrument ID: %s", instrumentChange.getTargetInstrumentId()));
             }
 
-            repository.saveSop(sop.get());
+            repository.addSop(sop.get());
         }
         else if (instrumentChange instanceof Replacement)
         {
@@ -141,8 +141,8 @@ public class SoPLoaderImpl implements SoPLoader {
 
             LocalDate effectiveDateOfNewSoP = repealingSop.get().getEffectiveFromDate();
             SoP endDated = StoredSop.withEndDate(toEndDate.get(), effectiveDateOfNewSoP.minusDays(1));
-            repository.saveSop(endDated);
-            repository.saveSop(repealingSop.get());
+            repository.addSop(endDated);
+            repository.addSop(repealingSop.get());
         }
 
         else if (instrumentChange instanceof NewCompilation)
@@ -162,7 +162,7 @@ public class SoPLoaderImpl implements SoPLoader {
             }
 
             repository.archiveSoP(instrumentChange.getSourceInstrumentId());
-            repository.saveSop(newCompilation.get());
+            repository.addSop(newCompilation.get());
         }
 
         else if (instrumentChange instanceof Revocation)
@@ -173,7 +173,7 @@ public class SoPLoaderImpl implements SoPLoader {
 
             repository.archiveSoP(instrumentChange.getSourceInstrumentId());
             SoP endDated = StoredSop.withEndDate(existing.get(), ((Revocation) instrumentChange).getRevocationDate());
-            repository.saveSop(endDated);
+            repository.addSop(endDated);
         }
 
         else throw new AutoUpdateError(String.format("Unable to apply this instrument change type to repository: %s", instrumentChange.getClass().getName()));

@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 public interface Repository {
-     void saveSop(SoP sop);
+     void addSop(SoP sop);
      Optional<SoP> getSop(String registerId);
      ImmutableSet<SoP> getAllSops();
      void archiveSoP(String registerId);
@@ -20,4 +20,5 @@ public interface Repository {
      ImmutableSet<ServiceDetermination> getServiceDeterminations();
      Optional<OffsetDateTime> getLastUpdated();
      void setLastUpdated(OffsetDateTime offsetDateTime);
+     void purge();
 }

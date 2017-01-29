@@ -76,10 +76,12 @@ public class AzureStorageRepository implements Repository {
     }
 
     @Override
-    public void saveSop(SoP sop) {
+    public void addSop(SoP sop) {
         try {
             CloudBlobContainer container = getOrCreateContainer(SOP_CONTAINER_NAME);
             CloudBlockBlob blob = container.getBlockBlobReference(sop.getRegisterId());
+            blob.getProperties().setContentType("application/json");
+            blob.getProperties().setContentEncoding("UTF-8");
             JsonNode jsonNode = StoredSop.toJson(sop);
             blob.uploadText(Conversions.toString(jsonNode));
         } catch (RuntimeException e) {
@@ -289,6 +291,8 @@ public class AzureStorageRepository implements Repository {
             CloudBlobContainer container = getOrCreateContainer(SERVICE_DETERMINATIONS_CONTAINER_NAME);
             CloudBlockBlob blob = container.getBlockBlobReference(serviceDetermination.getRegisterId());
             JsonNode jsonNode = StoredServiceDetermination.toJson(serviceDetermination);
+            blob.getProperties().setContentType("application/json");
+            blob.getProperties().setContentEncoding("UTF-8");
             blob.uploadText(Conversions.toString(jsonNode));
         } catch (RuntimeException e) {
             throw new RepositoryError(e);
@@ -372,6 +376,8 @@ public class AzureStorageRepository implements Repository {
         try {
             CloudBlobContainer container = getOrCreateContainer(METADATA_CONTAINER_NAME);
             CloudBlockBlob blob = container.getBlockBlobReference(LAST_SOPS_UPDATE_BLOB_NAME);
+            blob.getProperties().setContentType("text/plain");
+            blob.getProperties().setContentEncoding("UTF-8");
             blob.uploadText(offsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         } catch (URISyntaxException e) {
             throw new RepositoryError(e);
@@ -415,9 +421,14 @@ public class AzureStorageRepository implements Repository {
         }
     }
 
-    public void purge() throws StorageException {
+    @Override
+    public void purge() {
         for (CloudBlobContainer cloudBlobContainer : _cloudBlobClient.listContainers()) {
-            cloudBlobContainer.deleteIfExists();
+            try {
+                cloudBlobContainer.deleteIfExists();
+            } catch (StorageException e) {
+                throw new RepositoryError(e);
+            }
         }
     }
 

@@ -13,7 +13,8 @@ class Cache {
     private ImmutableSet<ServiceDetermination> _allServiceDeterminations;
 
     private Cache() {
-
+        _allSops = ImmutableSet.of();
+        _allServiceDeterminations = ImmutableSet.of();
     }
 
     protected static Cache getInstance() {
