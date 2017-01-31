@@ -10,7 +10,7 @@ import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.PreAugust2015Par
 import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory
 
 object LsSoPFactory extends SoPFactory{
-  override def create(registerId : String, rawText : String, cleansedText: String): SoP = {
+  override def create(registerId : String, cleansedText: String): SoP = {
     val extractor = PreAugust2015Extractor
     val citation = PreAugust2015Parser.parseCitation(extractor.extractCitation(cleansedText));
     val instrumentNumber = PreAugust2015Parser.parseInstrumentNumber(citation);
@@ -45,7 +45,5 @@ object LsSoPFactory extends SoPFactory{
 
     new ParsedSop(registerId,instrumentNumber,citation,aggravationFactors, onsetFactors, effectiveFromDate,standardOfProof,icdCodes,conditionName)
   }
-
-
 
 }

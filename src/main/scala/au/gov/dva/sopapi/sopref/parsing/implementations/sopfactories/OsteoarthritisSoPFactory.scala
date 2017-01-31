@@ -12,17 +12,14 @@ import au.gov.dva.sopapi.sopref.parsing.traits.SoPFactory
 
 object OsteoarthritisSoPFactory extends SoPFactory {
 
-  override def create(registerId : String, rawText : String, cleansedText: String): SoP = {
+  override def create(registerId : String, cleansedText: String): SoP = {
     val extractor = PreAugust2015Extractor
     val citation = OsteoarthritisParser.parseCitation(extractor.extractCitation(cleansedText));
     val instrumentNumber = OsteoarthritisParser.parseInstrumentNumber(citation);
 
     val definedTermsList: List[DefinedTerm] = OsteoarthritisParser.parseDefinitions(extractor.extractDefinitionsSection(cleansedText))
 
-    // Keep extra white space in the raw text to make it easier to capture sub-paras
-    val rawWithoutAuthorisedFooter = GenericCleanser.removeAuthorisedFootnote(rawText)
-    val rawWithoutPageNumberFooter = GenericCleanser.removePageNumberFootNote(rawWithoutAuthorisedFooter)
-    val factorsSection: (Int, String) = extractor.extractFactorSection(rawWithoutPageNumberFooter)
+    val factorsSection: (Int, String) = extractor.extractFactorSection(cleansedText)
     val factors: (StandardOfProof, List[(String, String)]) = OsteoarthritisParser.parseFactors(factorsSection._2)
 
     val factorObjects = this.buildFactorObjects(factors._2,factorsSection._1,definedTermsList)

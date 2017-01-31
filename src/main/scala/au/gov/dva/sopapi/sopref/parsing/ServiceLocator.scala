@@ -1,4 +1,4 @@
-package au.gov.dva.sopapi.sopref.parsing.factories
+package au.gov.dva.sopapi.sopref.parsing
 
 import au.gov.dva.sopapi.sopref.parsing.implementations.cleansers.GenericCleanser
 import au.gov.dva.sopapi.sopref.parsing.implementations.sopfactories.{CartilageTearSoPFactory, LsSoPFactory, OsteoarthritisSoPFactory}

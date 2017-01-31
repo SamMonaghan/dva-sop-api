@@ -17,7 +17,7 @@ import au.gov.dva.sopapi.sopref.data.updates.SoPLoaderImpl;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.LegislationRegisterSiteChangeFactory;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
-import au.gov.dva.sopapi.sopref.parsing.factories.ServiceLocator;
+import au.gov.dva.sopapi.sopref.parsing.ServiceLocator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableSet;
 import com.microsoft.azure.storage.StorageException;
