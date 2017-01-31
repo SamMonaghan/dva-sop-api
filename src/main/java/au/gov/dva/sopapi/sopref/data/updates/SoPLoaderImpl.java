@@ -221,6 +221,7 @@ public class SoPLoaderImpl implements SoPLoader {
             SoPFactory soPFactory = sopFactoryProvider.apply(registerId);
             try {
                 SoP soP = soPFactory.create(registerId, cleansedText);
+                logger.trace(buildLoggerMessage(registerId,"Successfully parsed text to SoP object."));
                 return Optional.of(soP);
             } catch (Error e) {
 
