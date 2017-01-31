@@ -1,12 +1,13 @@
 
-package au.gov.dva.sopapi.tests.parsers;
+package au.gov.dva.sopapi.tests.parsertests
 
 import java.time.LocalDate
 
 import au.gov.dva.dvasopapi.tests.TestUtils
 import au.gov.dva.sopapi.dtos.StandardOfProof
-import au.gov.dva.sopapi.sopref.data.sops.{BasicICDCode, StoredSop}
+import au.gov.dva.sopapi.sopref.data.sops.StoredSop
 import au.gov.dva.sopapi.sopref.parsing.implementations.model.ParsedFactor
+import au.gov.dva.sopapi.tests.parsers.ParserTestUtils
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
