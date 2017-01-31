@@ -8,6 +8,9 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url "http://frequal.com/maven-repository"
+        }
     }
 
 }
@@ -52,6 +55,9 @@ test {
     exclude 'au/gov/dva/dvasopapi/tests/localonly/**'
 }
 
+configurations.all {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+}
 
 dependencies {
     zinc 'com.typesafe.zinc:zinc:0.3.9'
