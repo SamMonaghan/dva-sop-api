@@ -27,7 +27,7 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsPar
     case para ~ factorText => (para, factorText)
   }
 
-  def mainParaHeadParser : Parser[String] = mainFactorBodyText <~ ":"
+  def factorsSectionHead : Parser[String] = mainFactorBodyText <~ ":"
 
   def paraAndTextParser : Parser[(String, String)] = paraLetterParser ~ mainFactorBodyText ^^ {
     case para ~ text => (para, text)
@@ -38,7 +38,7 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsPar
   }
 
 
-  def completeFactorSectionParser : Parser[(String,List[(String, String)])] = mainParaHeadParser ~ separatedFactorListParser <~ periodTerminator ^^ {
+  def completeFactorSectionParser : Parser[(String,List[(String, String)])] = factorsSectionHead ~ separatedFactorListParser <~ periodTerminator ^^ {
     case head ~ factorList => (head, factorList)
   }
 
@@ -52,7 +52,6 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsPar
       throw new SopParserError("Cannot determine standard of proof from text: " + headerText)
     }
   }
-
 
 
   override def parseFactors(factorsSection: String): (StandardOfProof, List[(String, String)]) =
