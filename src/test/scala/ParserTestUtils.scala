@@ -33,5 +33,12 @@ object ParserTestUtils {
       sop
   }
 
+  def produceCleansedText(registerId: String, resourcePath : String) = {
+    val bytes = resourceToBytes(resourcePath);
+    val rawText = Conversions.pdfToPlainText(bytes);
+    val cleansedText = ServiceLocator.findTextCleanser(registerId).cleanse(rawText)
+    cleansedText
+  }
+
 
 }

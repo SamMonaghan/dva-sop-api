@@ -64,14 +64,14 @@ class LabralTearTests extends FunSuite {
     val a = new ParsedFactor("6(a)",
       "having a significant physical force applied to or through the affected shoulder " +
         "joint or the affected hip joint at the time of the clinical onset of labral tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     val b = new ParsedFactor("6(b)",
       "for labral tear of the shoulder joint only, performing forceful and repetitive " +
         "throwing motions or forceful and repetitive overhead motions of the arm of the " +
         "affected side for at least eight hours per week for the one month before the " +
         "clinical onset of labral tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     assert(rhFixture.result.getOnsetFactors.contains(a))
     assert(rhFixture.result.getOnsetFactors.contains(b))
@@ -81,7 +81,7 @@ class LabralTearTests extends FunSuite {
   test("Parse RH labral tear aggravation factors") {
     val c = new ParsedFactor("6(c)",
       "inability to obtain appropriate clinical management for labral tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     assert(rhFixture.result.getAggravationFactors.contains(c))
   }
@@ -127,14 +127,14 @@ class LabralTearTests extends FunSuite {
     val a = new ParsedFactor("6(a)",
       "having a significant physical force applied to or through the affected shoulder " +
         "joint or the affected hip joint at the time of the clinical onset of labral tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     val b = new ParsedFactor("6(b)",
       "for labral tear of the shoulder joint only, performing forceful and repetitive " +
         "throwing motions or forceful and repetitive overhead motions of the arm of the " +
         "affected side for at least eight hours per week for the one month before the " +
         "clinical onset of labral tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     assert(bopFixture.result.getOnsetFactors.contains(a))
     assert(bopFixture.result.getOnsetFactors.contains(b))
@@ -144,7 +144,7 @@ class LabralTearTests extends FunSuite {
   test("Parse BoP labral tear aggravation factors") {
     val c = new ParsedFactor("6(c)",
       "inability to obtain appropriate clinical management for labral tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     assert(bopFixture.result.getAggravationFactors.contains(c))
   }

@@ -64,7 +64,7 @@ class MeniscalTearOfKneeTests extends FunSuite {
     val a = new ParsedFactor("6(a)",
       "having a significant physical force applied to or through the affected knee joint at " +
         "the time of the clinical onset of acute meniscal tear of the knee",
-      Nil, Nil.toSet)
+      Nil.toSet)
 
     assert(rhFixture.result.getOnsetFactors.contains(a))
   }
@@ -73,7 +73,7 @@ class MeniscalTearOfKneeTests extends FunSuite {
   test("Parse RH acute meniscal tear of the knee aggravation factors") {
     val b = new ParsedFactor("6(b)",
       "inability to obtain appropriate clinical management for acute meniscal tear of the knee",
-      Nil, Nil.toSet)
+       Nil.toSet)
 
     assert(rhFixture.result.getOnsetFactors.contains(b))
   }
@@ -119,7 +119,7 @@ class MeniscalTearOfKneeTests extends FunSuite {
     val a = new ParsedFactor("6(a)",
       "having a significant physical force applied to or through the affected " +
         "knee joint at the time of the clinical onset of acute meniscal tear of the knee",
-      Nil, Nil.toSet)
+       Nil.toSet)
 
     assert(bopFixture.result.getOnsetFactors.contains(a))
   }
@@ -128,7 +128,7 @@ class MeniscalTearOfKneeTests extends FunSuite {
   test("Parse BoP acute meniscal tear of the knee aggravation factors") {
     val b = new ParsedFactor("6(b)",
       "inability to obtain appropriate clinical management for acute meniscal tear of the knee",
-      Nil, Nil.toSet)
+       Nil.toSet)
 
     assert(bopFixture.result.getAggravationFactors.contains(b))
   }

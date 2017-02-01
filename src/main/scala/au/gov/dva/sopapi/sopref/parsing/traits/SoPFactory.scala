@@ -19,7 +19,7 @@ trait SoPFactory {
       .map(f => (factorSectionNumber.toString.concat(f._1),f._2)) // prepend para number to letter
       .map(i =>
         { val relevantDefinitions = definedTerms.filter(d => i._2.contains(d.getTerm)).toSet
-          new ParsedFactor(i._1,i._2,List.empty,relevantDefinitions)
+          new ParsedFactor(i._1,i._2,relevantDefinitions)
         }
       )
   }

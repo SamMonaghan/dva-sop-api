@@ -27,19 +27,22 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers {
     case para ~ factorText => (para, factorText)
   }
 
-  def headParser : Parser[String] = bodyTextParser <~ ":"
+  def mainParaHeadParser : Parser[String] = bodyTextParser <~ ":"
 
   def paraAndTextParser : Parser[(String, String)] = paraLetterParser ~ bodyTextParser ^^ {
     case para ~ text => (para, text)
   }
 
+
   def separatedFactorListParser : Parser[List[(String, String)]] = repsep(paraAndTextParser, orTerminator) ^^ {
     case listOfFactors: Seq[(String, String)] => listOfFactors
   }
 
-  def completeFactorSectionParser : Parser[(String,List[(String, String)])] = headParser ~ separatedFactorListParser <~ periodTerminator ^^ {
+
+  def completeFactorSectionParser : Parser[(String,List[(String, String)])] = mainParaHeadParser ~ separatedFactorListParser <~ periodTerminator ^^ {
     case head ~ factorList => (head, factorList)
   }
+
 
   def extractStandardOfProofFromHeader(headerText: String): StandardOfProof = {
     if (headerText.contains("balance of probabilities"))

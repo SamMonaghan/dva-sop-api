@@ -64,7 +64,7 @@ class CartilageTearTests extends FunSuite {
     val a = new ParsedFactor("6(a)",
       "having a significant physical force applied to or through the affected joint " +
         "at the time of the clinical onset of acute articular cartilage tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     assert(rhFixture.result.getOnsetFactors.contains(a))
   }
@@ -73,7 +73,7 @@ class CartilageTearTests extends FunSuite {
   test("Parse RH acute articular cartilage tear aggravation factors") {
     val b = new ParsedFactor("6(b)",
       "inability to obtain appropriate clinical management for acute articular cartilage tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     assert(rhFixture.result.getAggravationFactors.contains(b))
   }
@@ -120,7 +120,7 @@ class CartilageTearTests extends FunSuite {
     val a = new ParsedFactor("6(a)",
       "having a significant physical force applied to or through the affected joint at the " +
         "time of the clinical onset of acute articular cartilage tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     assert(bopFixture.result.getOnsetFactors.contains(a))
   }
@@ -129,7 +129,7 @@ class CartilageTearTests extends FunSuite {
   test("Parse BoP acute articular cartilage tear aggravation factors") {
     val b = new ParsedFactor("6(b)",
       "inability to obtain appropriate clinical management for acute articular cartilage tear",
-      Nil.toList, Nil.toSet)
+      Nil.toSet)
 
     assert(bopFixture.result.getAggravationFactors.contains(b))
   }

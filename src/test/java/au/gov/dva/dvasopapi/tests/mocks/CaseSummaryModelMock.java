@@ -4,8 +4,6 @@ import au.gov.dva.sopapi.interfaces.model.*;
 import au.gov.dva.sopapi.interfaces.model.casesummary.CaseSummaryModel;
 import com.google.common.collect.ImmutableSet;
 
-import java.util.List;
-
 public class CaseSummaryModelMock implements CaseSummaryModel{
 
     public Condition getCondition() {
@@ -37,10 +35,7 @@ public class CaseSummaryModelMock implements CaseSummaryModel{
                         "before the clinical onset of lumbar spondylosis";
             }
 
-            @Override
-            public List<SubFactor> getSubFactors() {
-                return null;
-            }
+
 
             @Override
             public ImmutableSet<DefinedTerm> getDefinedTerms() {
@@ -72,10 +67,6 @@ public class CaseSummaryModelMock implements CaseSummaryModel{
                         "lumbar spondylosis";
             }
 
-            @Override
-            public List<SubFactor> getSubFactors() {
-                return null;
-            }
 
             @Override
             public ImmutableSet<DefinedTerm> getDefinedTerms() {

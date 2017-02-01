@@ -63,7 +63,7 @@ class MunitionsDischargeTests extends FunSuite {
   test("Parse RH physical injury due to munitions discharge onset factors") {
     val a = new ParsedFactor("6(a)",
       "sustaining physical injury due to munitions discharge",
-      Nil, Nil.toSet)
+      Nil.toSet)
 
     assert(rhFixture.result.getOnsetFactors.contains(a))
   }
@@ -73,7 +73,7 @@ class MunitionsDischargeTests extends FunSuite {
     val b = new ParsedFactor("6(b)",
       "inability to obtain appropriate clinical management for physical injury " +
         "due to munitions discharge",
-      Nil, Nil.toSet)
+      Nil.toSet)
 
     assert(rhFixture.result.getOnsetFactors.contains(b))
   }
@@ -118,7 +118,7 @@ class MunitionsDischargeTests extends FunSuite {
   test("Parse BoP physical injury due to munitions discharge onset factors") {
     val a = new ParsedFactor("6(a)",
       "sustaining physical injury due to munitions discharge",
-      Nil, Nil.toSet)
+      Nil.toSet)
 
     assert(bopFixture.result.getOnsetFactors.contains(a))
   }
@@ -128,7 +128,7 @@ class MunitionsDischargeTests extends FunSuite {
     val b = new ParsedFactor("6(b)",
       "inability to obtain appropriate clinical management for physical injury due " +
         "to munitions discharge",
-      Nil, Nil.toSet)
+      Nil.toSet)
 
     assert(bopFixture.result.getAggravationFactors.contains(b))
   }
