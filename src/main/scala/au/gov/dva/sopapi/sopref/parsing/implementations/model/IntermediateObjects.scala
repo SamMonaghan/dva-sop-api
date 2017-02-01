@@ -1,16 +1,13 @@
-package au.gov.dva.sopapi.sopref.parsing.implementations.parsers
-
-import au.gov.dva.sopapi.interfaces.model.DefinedTerm
-import com.google.common.collect.ImmutableSet
+package au.gov.dva.sopapi.sopref.parsing.implementations.model
 
 import scala.util.Properties
 
-abstract class Factor {
+abstract class FactorInfo {
   def getLetter : String
   def getText : String
 }
 
-class FactorWithoutSubParas(mainParaLetter : String, bodyText: String) extends Factor
+class FactorInfoWithoutSubParas(mainParaLetter : String, bodyText: String) extends FactorInfo
 {
   override def getLetter: String = mainParaLetter
 
@@ -20,7 +17,7 @@ class FactorWithoutSubParas(mainParaLetter : String, bodyText: String) extends F
 }
 
 
-class FactorWithSubParas(mainParaLetter : String, head : String, subparas : List[(String,String)], tail :  Option[String]) extends Factor
+class FactorInfoWithSubParas(mainParaLetter : String, head : String, subparas : List[(String,String)], tail :  Option[String]) extends FactorInfo
 {
   private def format: String = head + "," + Properties.lineSeparator + subparas.map(sp => sp._1 + " " + sp._2).mkString("; or" + Properties.lineSeparator) + formatTail(tail)
 

@@ -7,7 +7,7 @@ import au.gov.dva.sopapi.dtos.StandardOfProof
 import au.gov.dva.sopapi.sopref.parsing.implementations.extractors.PreAugust2015Extractor
 import au.gov.dva.sopapi.sopref.parsing.implementations.model.ParsedSop
 import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.PreAugust2015Parser
-import au.gov.dva.sopapi.sopref.parsing.traits.{PreAugust2015SoPExtractor, SoPFactory}
+import au.gov.dva.sopapi.sopref.parsing.traits.{PreAugust2015SoPExtractor, SoPExtractor, SoPFactory}
 
 object LsSoPFactory extends SoPFactory{
   override def create(registerId : String, cleansedText: String): SoP = {

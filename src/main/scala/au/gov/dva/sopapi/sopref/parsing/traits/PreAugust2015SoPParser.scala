@@ -7,7 +7,7 @@ import au.gov.dva.sopapi.dtos.StandardOfProof
 import au.gov.dva.sopapi.exceptions.SopParserError
 import au.gov.dva.sopapi.interfaces.model.{DefinedTerm, InstrumentNumber}
 import au.gov.dva.sopapi.sopref.parsing.implementations.model.{ParsedDefinedTerm, ParsedInstrumentNumber}
-import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.{DefinitionsParsers, Factor, FactorWithSubParas, FactorWithoutSubParas}
+import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.DefinitionsParsers
 
 import scala.util.parsing.combinator.RegexParsers
 import scala.collection.immutable.Seq
@@ -16,9 +16,6 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsPar
 
   def paraLetterParser : Parser[String] = """\([a-z]+\)""".r
   def bodyTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r
-
-  def orTerminator : Parser[String] = """;\s+or""".r
-  def periodTerminator : Parser[String] = """\.$""".r
 
   // singleParaParser is used in tests
   def andTerminator : Parser[String] = """;\s+and""".r
