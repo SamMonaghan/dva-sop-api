@@ -14,13 +14,11 @@ trait FactorsParser extends RegexParsers {
   def mainParaLetter: Parser[String] =
     """\(([a-z])+\)""".r
 
-  def limitedBodyText: Parser[String] = """[a-z\s]+""".r
-
   def mainFactorBodyText : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r
 
   private def factorsSectionHead : Parser[String] = mainFactorBodyText <~ ":"
 
-  def head: Parser[String] = limitedBodyText <~ """,""".r
+  def head: Parser[String] = """[a-z\s]+""".r <~ """,""".r
 
   private def orTerminator = """; or""".r
   private def periodTerminator = """\.$""".r
@@ -37,7 +35,7 @@ trait FactorsParser extends RegexParsers {
 
   def subParaList: Parser[List[(String, String)]] = rep1sep(subPara, subParaTerminator)
 
-  def tail: Parser[String] = """; for [a-z\s]+""".r
+  def tail: Parser[String] = not(orTerminator) ~> """; [a-z\s]+""".r
 
   def completeFactorWithSubParas: Parser[(String,String,List[(String,String)],Option[String])] = mainParaLetter ~ head ~ subParaList ~ opt(tail) ^^ {
     case mainParaLetter ~ head ~ paralist ~ tailOption => {
@@ -61,7 +59,6 @@ trait FactorsParser extends RegexParsers {
   def factorList : Parser[List[Factor]] = rep1sep(factor, orTerminator) ^^ {
     case lf => lf
   }
-
 
     def parseFactorSection : Parser[(StandardOfProof,List[Factor])] = factorsSectionHead ~ factorList <~ periodTerminator ^^ {
     case standardOfProof ~ factorList => {

@@ -115,7 +115,6 @@ class OsteoarthritisTests extends FunSuite {
     val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.parseFactorSection,input)
     println(result)
     assert(result.successful)
-
   }
 
   test("Parse entire factors section")
@@ -125,6 +124,5 @@ class OsteoarthritisTests extends FunSuite {
     println(result)
     assert(result.successful)
   }
-
 
 }
