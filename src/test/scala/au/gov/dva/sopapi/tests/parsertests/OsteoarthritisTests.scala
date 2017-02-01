@@ -58,6 +58,7 @@ class OsteoarthritisTests extends FunSuite {
 
     val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParasParser, input)
 
+    assert(result.successful)
     println(result)
   }
 
@@ -67,8 +68,18 @@ class OsteoarthritisTests extends FunSuite {
 
     val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParasParser, input)
 
+    assert(result.successful)
     println(result)
   }
 
+  test("Para n")
+  {
+    val input = "(n) for osteoarthritis of a joint of the lower limb or hand joint only, (i) being overweight for at least 10 years before the clinical onset of osteoarthritis in that joint; or (ii) for males, having a waist to hip circumference ratio exceeding 1.0 for at least 10 years, before the clinical onset of osteoarthritis in that joint; or (iii) for females, having a waist to hip circumference ratio exceeding 0.9 for at least 10 years, before the clinical onset of osteoarthritis in that joint"
+
+    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParasParser,input)
+
+    assert(result.successful)
+    println(result)
+  }
 
 }
