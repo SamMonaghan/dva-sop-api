@@ -9,7 +9,6 @@ class ParsedFactor(paragraph : String, text: String, definedTerms : Set[DefinedT
 
   override def getText: String = text
 
-
   override def getDefinedTerms: ImmutableSet[DefinedTerm] = ImmutableSet.copyOf(definedTerms.toArray)
 
   override def toString = s"ParsedFactor($getParagraph, $getText)"
@@ -26,3 +25,5 @@ class ParsedFactor(paragraph : String, text: String, definedTerms : Set[DefinedT
 
   override def hashCode(): Int = Objects.hashCode(this.paragraph, this.text, this.definedTerms)
 }
+
+

@@ -5,14 +5,14 @@ import java.time.format.DateTimeFormatter
 
 import au.gov.dva.sopapi.dtos.StandardOfProof
 import au.gov.dva.sopapi.exceptions.SopParserError
-import au.gov.dva.sopapi.interfaces.model._
+import au.gov.dva.sopapi.interfaces.model.{DefinedTerm, InstrumentNumber}
 import au.gov.dva.sopapi.sopref.parsing.implementations.model.{ParsedDefinedTerm, ParsedInstrumentNumber}
-import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.DefinitionsParsers
+import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.{DefinitionsParsers, Factor, FactorWithSubParas, FactorWithoutSubParas}
 
 import scala.util.parsing.combinator.RegexParsers
 import scala.collection.immutable.Seq
 
-trait PreAugust2015SoPParser extends SoPParser with RegexParsers {
+trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsParser {
 
   def paraLetterParser : Parser[String] = """\([a-z]+\)""".r
   def bodyTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r
@@ -23,16 +23,15 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers {
   // singleParaParser is used in tests
   def andTerminator : Parser[String] = """;\s+and""".r
   def paraTerminatorParser : Parser[String] = orTerminator | andTerminator | periodTerminator
-  def singleParaParser: Parser[(String, String)] = paraLetterParser ~ bodyTextParser <~ paraTerminatorParser ^^ {
+  def singleParaParser: Parser[(String, String)] = paraLetterParser ~ mainFactorBodyText <~ paraTerminatorParser ^^ {
     case para ~ factorText => (para, factorText)
   }
 
-  def mainParaHeadParser : Parser[String] = bodyTextParser <~ ":"
+  def mainParaHeadParser : Parser[String] = mainFactorBodyText <~ ":"
 
-  def paraAndTextParser : Parser[(String, String)] = paraLetterParser ~ bodyTextParser ^^ {
+  def paraAndTextParser : Parser[(String, String)] = paraLetterParser ~ mainFactorBodyText ^^ {
     case para ~ text => (para, text)
   }
-
 
   def separatedFactorListParser : Parser[List[(String, String)]] = repsep(paraAndTextParser, orTerminator) ^^ {
     case listOfFactors: Seq[(String, String)] => listOfFactors
@@ -53,6 +52,8 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers {
       throw new SopParserError("Cannot determine standard of proof from text: " + headerText)
     }
   }
+
+
 
   override def parseFactors(factorsSection: String): (StandardOfProof, List[(String, String)]) =
   {

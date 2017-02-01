@@ -56,7 +56,7 @@ class OsteoarthritisTests extends FunSuite {
   test("Para with sub paras parses and no tail") {
     val input = "(l) for osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait"
 
-    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParasParser, input)
+    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParas, input)
 
     assert(result.successful)
     println(result)
@@ -66,20 +66,38 @@ class OsteoarthritisTests extends FunSuite {
   test("Para with sub paras and tail") {
     val input = "(l) for osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait; for at least three years before the clinical onset of osteoarthritis in that joint"
 
-    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParasParser, input)
+    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParas, input)
 
     assert(result.successful)
     println(result)
   }
+
+  test("Para with sub paras and tail to object") {
+    val input = "(l) for osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait; for at least three years before the clinical onset of osteoarthritis in that joint"
+
+    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.parseFactor, input)
+
+    assert(result.successful)
+    println(result)
+  }
+
 
   test("Para n")
   {
     val input = "(n) for osteoarthritis of a joint of the lower limb or hand joint only, (i) being overweight for at least 10 years before the clinical onset of osteoarthritis in that joint; or (ii) for males, having a waist to hip circumference ratio exceeding 1.0 for at least 10 years, before the clinical onset of osteoarthritis in that joint; or (iii) for females, having a waist to hip circumference ratio exceeding 0.9 for at least 10 years, before the clinical onset of osteoarthritis in that joint"
 
-    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParasParser,input)
+    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParas,input)
 
     assert(result.successful)
     println(result)
   }
+
+  test("Ordinary single para factor works with parser that can also parse two level factors") {
+    val input = "(a) being a prisoner of war before the clinical onset of osteoarthritis"
+    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.parseFactor,input)
+    println(result)
+    assert(result.successful)
+  }
+
 
 }
