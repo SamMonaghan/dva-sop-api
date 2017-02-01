@@ -1,10 +1,10 @@
 package au.gov.dva.sopapi.sopref.parsing.implementations.parsers
 
-import au.gov.dva.sopapi.sopref.parsing.traits.PreAugust2015SoPParser
+import au.gov.dva.sopapi.sopref.parsing.traits.{OsteoArthritisSubParasParser, PreAugust2015SoPParser}
 
 import scala.collection.immutable.Seq
 
-object OsteoarthritisParser extends PreAugust2015SoPParser {
+object OsteoarthritisParser extends PreAugust2015SoPParser with OsteoArthritisSubParasParser {
 
   // Cater for ';' not followed by 'or' and ';' followed by 'or' but with only one space
   def factorTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])|;(?!\s+or)|;(?=\s+or\s(?=\())))+""".r

@@ -39,29 +39,36 @@ class OsteoarthritisTests extends FunSuite {
     assert(result != null)
   }
 
-  test("Separated factor list parser works on sub paras without or terminator")
-  {
+  test("Separated factor list parser works on sub paras without or terminator") {
     val input = ParserTestUtils.resourceToString("subparasOnlyText.txt");
-    val result = PreAugust2015Parser.parseAll(PreAugust2015Parser.separatedFactorListParser,input);
+    val result = PreAugust2015Parser.parseAll(PreAugust2015Parser.separatedFactorListParser, input);
     println(result)
     assert(result.successful)
   }
 
-  test("Separated factor list parser works on ordinary paras without or terminator")
-  {
+  test("Separated factor list parser works on ordinary paras without or terminator") {
     val input = "(a) being a prisoner of war before the clinical onset of osteoarthritis;\nor\n(b) having inflammatory joint disease of the affected joint before the\nclinical onset of osteoarthritis in that joint"
-    val result = PreAugust2015Parser.parseAll(PreAugust2015Parser.separatedFactorListParser,input);
+    val result = PreAugust2015Parser.parseAll(PreAugust2015Parser.separatedFactorListParser, input);
     println(result)
     assert(result.successful)
   }
 
+  test("Para with sub paras parses and no tail") {
+    val input = "(l) for osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait"
+
+    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParasParser, input)
+
+    println(result)
+  }
 
 
+  test("Para with sub paras and tail") {
+    val input = "(l) for osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait; for at least three years before the clinical onset of osteoarthritis in that joint"
 
+    val result = OsteoarthritisParser.parseAll(OsteoarthritisParser.completeFactorWithSubParasParser, input)
 
-
-
-
+    println(result)
+  }
 
 
 }
