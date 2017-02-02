@@ -1,7 +1,6 @@
 package au.gov.dva.sopapi.tests.parsertests
 
-import au.gov.dva.dvasopapi.tests.TestUtils
-import au.gov.dva.sopapi.sopref.data.sops.StoredSop
+import au.gov.dva.sopapi.sopref.parsing.SoPExtractorUtilities
 import au.gov.dva.sopapi.tests.parsers.ParserTestUtils
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
@@ -63,6 +62,17 @@ class PreAug2015Tests extends FunSuite{
       assert(result != null)
     })
 
+  }
+
+
+
+  test("Main para capitaliser")
+  {
+    val input = ParserTestUtils.produceCleansedText("F2013L01129","sops_rh/F2013L01129.pdf")
+    val factorsSection: (Int, List[String]) = SoPExtractorUtilities.getSection(input, """^Factors$""".r)
+    val factorsSectionLines = factorsSection._2
+    val result = SoPExtractorUtilities.capitaliseMainFactorParaLetters(factorsSectionLines)
+    println(result)
   }
 
 
