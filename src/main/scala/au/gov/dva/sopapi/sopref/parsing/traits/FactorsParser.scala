@@ -80,3 +80,4 @@ trait TerminatorParsers extends RegexParsers {
   def orTerminator : Parser[String] = """; or""".r
   def periodTerminator: Parser[String] = """\.$""".r
 }
+
