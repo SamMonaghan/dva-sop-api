@@ -10,24 +10,24 @@ abstract class FactorInfo {
 
 class FactorInfoWithoutSubParas(mainParaLetter : String, bodyText: String) extends FactorInfo
 {
-  override def getLetter: String = mainParaLetter
+  override def getLetter: String = mainParaLetter.toLowerCase()
 
   override def getText: String = bodyText
 
-  override def toString: String = mainParaLetter + " " + bodyText
+  override def toString: String = getLetter + " " + bodyText
 }
 
 
 class FactorInfoWithSubParas(mainParaLetter : String, head : String, subparas : List[(String,String)], tail :  Option[String]) extends FactorInfo
 {
-  private def format: String = head + "," + Properties.lineSeparator + subparas.map(sp => sp._1 + " " + sp._2).mkString("; or" + Properties.lineSeparator) + formatTail(tail)
+  private def format: String = getLetter + " " +  head + "," + Properties.lineSeparator + subparas.map(sp => sp._1 + " " + sp._2).mkString("; or" + Properties.lineSeparator) + formatTail(tail)
 
   private def formatTail(tailOption : Option[String]) = if (tailOption.isDefined) "," + Properties.lineSeparator + tailOption.get
   else "";
 
   override def toString: String = format
 
-  override def getLetter: String = mainParaLetter
+  override def getLetter: String = mainParaLetter.toLowerCase()
 
   override def getText: String = this.format
 }
