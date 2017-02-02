@@ -8,3 +8,5 @@ build/
 client/
 dtos/
 out/
+deploy/
+src/
