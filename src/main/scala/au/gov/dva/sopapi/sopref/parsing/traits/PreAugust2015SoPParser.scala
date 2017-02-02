@@ -16,7 +16,6 @@ trait PreAugust2015SoPParser extends SoPParser with FactorsParser {
 
 
 
-
   def extractStandardOfProofFromHeader(headerText: String): StandardOfProof = {
     if (headerText.contains("balance of probabilities"))
       return StandardOfProof.BalanceOfProbabilities

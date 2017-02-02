@@ -196,5 +196,40 @@ class SopParserTests extends FunSuite {
     assert(result != null)
     System.out.print(result)
   }
+
+  test("Split factors sections to individual factors for ls")
+  {
+    val input = ParserTestUtils.resourceToString("lsFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
+    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(input)
+    assert(result.size == 31)
+    println(result)
+  }
+
+  test("Split factor section to individual factors for osteo")
+  {
+    val input = ParserTestUtils.resourceToString("osteoFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
+    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(input)
+    println(result)
+    assert(result.size == 40)
+
+  }
+
+  test("Split factors for sleep apnoae")
+  {
+    // this one is tricky because the (h) para has sub paras starting with (i) and the next main para also starts with (i)
+    val input = ParserTestUtils.resourceToString("sleepApnoeaFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
+    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(input)
+    val hFactor = result.find(f => f.head.startsWith("(h)"))
+    println(result)
+    assert(hFactor.get.size > 1)
+  }
+
+
+  test("Get sequence of main factors")
+  {
+    val result = SoPExtractorUtilities.getMainParaLetterSequence
+    println(result)
+  }
+
 }
 

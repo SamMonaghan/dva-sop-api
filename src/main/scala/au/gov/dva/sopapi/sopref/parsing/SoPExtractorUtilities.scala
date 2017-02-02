@@ -2,7 +2,7 @@ package au.gov.dva.sopapi.sopref.parsing
 
 import au.gov.dva.sopapi.exceptions.SopParserError
 
-import scala.collection.immutable.Seq
+import scala.collection.immutable.{IndexedSeq, Seq}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex
@@ -12,7 +12,7 @@ object SoPExtractorUtilities {
 
   def getSections(cleansedSoPText: String, sectionHeaderLineRegex: Regex): List[List[String]] = {
     val acc = List[List[String]]();
-    val lines = cleansedSoPText.split("[\r\n]+").toList
+    val lines = cleansedSoPText.split("[\r\n]+").toList // todo: change to platfrom indep line sep
     divideRecursive(List.empty, sectionHeaderLineRegex, acc, lines)
   }
 
@@ -59,20 +59,49 @@ object SoPExtractorUtilities {
     (sectionForSpecifiedPara.get._1.get, sectionForSpecifiedPara.get._3)
   }
 
-  def capitaliseMainFactorParaLetters(linesOfFactorSection: List[String])  = {
 
-    linesOfFactorSection.indices
-        .map(index => {
-          val currentLine = linesOfFactorSection(index)
-          if (!currentLine.startsWith("("))  currentLine
-          else if (currentLine.endsWith(","))  capitaliseParaLetter(currentLine)
-          else if (isParaExceptSmallRomans(currentLine))  capitaliseParaLetter(currentLine)
-          else currentLine
-        })
+  def getMainParaLetterSequence = {
+    val aToz = 'a' to 'z'
+    val doubled = aToz.map(l => s"$l$l")
+    val combined = aToz ++ doubled
+    combined.map(i => "(" + i + ")")
+  }
+
+  def splitFactorsSectionByFactor(factorsSection: List[String]): List[List[String]] = {
+
+    val lettersSequence = getMainParaLetterSequence.toList
+    // skip the head
+    val sectionWithoutHead = factorsSection.dropWhile(l => !l.startsWith("("));
+    divideFactorSectionRecursive(lettersSequence, 1, List.empty, sectionWithoutHead).reverse
+
+  }
+
+  def divideFactorSectionRecursive(lettersSequence: List[String], nextLetterIndex: Int, acc: List[List[String]], remainingLines: List[String]): List[List[String]] = {
+    if (remainingLines.isEmpty)
+      acc
+    else {
+      val nextLetter = lettersSequence(nextLetterIndex)
+      val factorLines = remainingLines.takeWhile(l => !l.startsWith(nextLetter)) // todo: what if a letter is missing
+      divideFactorSectionRecursive(lettersSequence, nextLetterIndex + 1, factorLines :: acc, remainingLines.drop(factorLines.size))
+    }
+
   }
 
 
-  private def isParaExceptSmallRomans(line : String) = {
+  def capitaliseMainFactorParaLetters(linesOfFactorSection: List[String]) = {
+
+    linesOfFactorSection.indices
+      .map(index => {
+        val currentLine = linesOfFactorSection(index)
+        if (!currentLine.startsWith("(")) currentLine
+        else if (currentLine.endsWith(",")) capitaliseParaLetter(currentLine)
+        else if (isParaExceptSmallRomans(currentLine)) capitaliseParaLetter(currentLine)
+        else currentLine
+      })
+  }
+
+
+  private def isParaExceptSmallRomans(line: String) = {
     val letterRegexExcludingSmallRomans = """^\(([^xiv]+)\)""".r
     !letterRegexExcludingSmallRomans.findAllMatchIn(line).isEmpty
   }
