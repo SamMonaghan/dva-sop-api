@@ -10,3 +10,6 @@ dtos/
 out/
 deploy/
 src/
+doctrees/
+.buildinfo
+
