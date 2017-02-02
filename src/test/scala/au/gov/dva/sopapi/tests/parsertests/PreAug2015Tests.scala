@@ -47,9 +47,10 @@ class PreAug2015Tests extends FunSuite{
     test("Push all pre Aug BOP 2015 through pipeline")
      {
         BoPidsForPreAug2015.foreach(id => {
+          println(id)
           val result = ParserTestUtils.executeWholeParsingPipeline(id, "sops_bop/" + id + ".pdf")
           assert(result != null)
-          println(TestUtils.prettyPrint(StoredSop.toJson(result)))
+
         })
 
      }
@@ -57,9 +58,9 @@ class PreAug2015Tests extends FunSuite{
   test("Push all pre Aug  2015 RH through pipeline")
   {
     RHIdsForPreAug2015.foreach(id => {
+      println(id)
       val result = ParserTestUtils.executeWholeParsingPipeline(id, "sops_rh/" + id + ".pdf")
       assert(result != null)
-      println(TestUtils.prettyPrint(StoredSop.toJson(result)))
     })
 
   }

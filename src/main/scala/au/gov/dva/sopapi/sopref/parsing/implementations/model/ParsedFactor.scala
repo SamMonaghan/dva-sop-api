@@ -1,8 +1,8 @@
 package au.gov.dva.sopapi.sopref.parsing.implementations.model
 
-import au.gov.dva.sopapi.interfaces.model.{DefinedTerm, Factor, SubFactor}
+import au.gov.dva.sopapi.interfaces.model.{DefinedTerm, Factor}
 import com.google.common.base.Objects
-import com.google.common.collect.{ImmutableList, ImmutableSet}
+import com.google.common.collect.ImmutableSet
 
 class ParsedFactor(paragraph : String, text: String, definedTerms : Set[DefinedTerm]) extends Factor{
   override def getParagraph: String = paragraph

@@ -2,6 +2,7 @@ package au.gov.dva.sopapi.sopref.parsing.implementations.model
 
 import scala.util.Properties
 
+// intermediate objects created by parsing SoP text
 abstract class FactorInfo {
   def getLetter : String
   def getText : String

@@ -13,7 +13,6 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
   def mainParaLetter: Parser[String] =
     """\(([a-z])+\)""".r
 
-
   private def factorsSectionHead : Parser[String] = mainFactorBodyText <~ ":"
 
   def head: Parser[String] = """[a-z\s]+""".r <~ """,""".r
@@ -50,10 +49,19 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     case lf => lf
   }
 
-    def parseFactorSection : Parser[(StandardOfProof,List[FactorInfo])] = factorsSectionHead ~ factorList <~ periodTerminator ^^ {
+  def factorsSection : Parser[(StandardOfProof,List[FactorInfo])] = factorsSectionHead ~ factorList <~ periodTerminator ^^ {
     case standardOfProof ~ factorList => {
       val standard = extractStandardOfProofFromHeader(standardOfProof)
       (standard,factorList)
+    }
+  }
+
+  def parseFactorsSection(factorsSectionText : String) : (StandardOfProof,List[FactorInfo]) = {
+    val result = this.parseAll(factorsSection,factorsSectionText)
+    if (result.successful)
+      return result.get;
+    else {
+      throw new SopParserError(s"Could not parse factors section: $result${scala.util.Properties.lineSeparator}$factorsSectionText.")
     }
   }
 

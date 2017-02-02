@@ -1,7 +1,7 @@
 package au.gov.dva.sopapi.sopref.parsing
 
 import au.gov.dva.sopapi.sopref.parsing.implementations.cleansers.GenericCleanser
-import au.gov.dva.sopapi.sopref.parsing.implementations.sopfactories.{CartilageTearSoPFactory, LsSoPFactory, OsteoarthritisSoPFactory}
+import au.gov.dva.sopapi.sopref.parsing.implementations.sopfactories.{CartilageTearSoPFactory, LsSoPFactory, OsteoarthritisSoPFactory, PreAug2015SoPFactory}
 import au.gov.dva.sopapi.sopref.parsing.traits.{SoPCleanser, SoPFactory}
 
 object ServiceLocator {
@@ -10,19 +10,19 @@ object ServiceLocator {
   def findSoPFactory(registerId : String) : SoPFactory =
     {
       registerId match  {
-        case "F2014L00933" => LsSoPFactory
-        case "F2014L00930" => LsSoPFactory
-        case "F2011C00491" => OsteoarthritisSoPFactory
-        case "F2011C00492" => OsteoarthritisSoPFactory
-        case "F2010L01666" => CartilageTearSoPFactory
-        case "F2010L01667" => CartilageTearSoPFactory
-        case "F2010L01668" => CartilageTearSoPFactory
-        case "F2010L01669" => CartilageTearSoPFactory
-        case "F2010L02850" => CartilageTearSoPFactory
-        case "F2010L02851" => CartilageTearSoPFactory
-        case "F2012L01789" => CartilageTearSoPFactory
-        case "F2012L01790" => CartilageTearSoPFactory
-        case _ => LsSoPFactory // todo generic factory
+        case "F2014L00933" => PreAug2015SoPFactory
+        case "F2014L00930" => PreAug2015SoPFactory
+        case "F2011C00491" => PreAug2015SoPFactory
+        case "F2011C00492" => PreAug2015SoPFactory
+        case "F2010L01666" => PreAug2015SoPFactory
+        case "F2010L01667" => PreAug2015SoPFactory
+        case "F2010L01668" => PreAug2015SoPFactory
+        case "F2010L01669" => PreAug2015SoPFactory
+        case "F2010L02850" => PreAug2015SoPFactory
+        case "F2010L02851" => PreAug2015SoPFactory
+        case "F2012L01789" => PreAug2015SoPFactory
+        case "F2012L01790" => PreAug2015SoPFactory
+        case _ => PreAug2015SoPFactory // todo switch between pre aug and post
       }
     }
 

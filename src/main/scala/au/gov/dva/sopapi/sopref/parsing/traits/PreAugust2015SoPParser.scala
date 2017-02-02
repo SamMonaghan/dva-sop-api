@@ -12,32 +12,9 @@ import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.DefinitionsParse
 import scala.util.parsing.combinator.RegexParsers
 import scala.collection.immutable.Seq
 
-trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsParser {
-
-  def paraLetterParser : Parser[String] = """\([a-z]+\)""".r
-  def bodyTextParser : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r
-
-  // singleParaParser is used in tests
-  def andTerminator : Parser[String] = """;\s+and""".r
-  def paraTerminatorParser : Parser[String] = orTerminator | andTerminator | periodTerminator
-  def singleParaParser: Parser[(String, String)] = paraLetterParser ~ mainFactorBodyText <~ paraTerminatorParser ^^ {
-    case para ~ factorText => (para, factorText)
-  }
-
-  def factorsSectionHead : Parser[String] = mainFactorBodyText <~ ":"
-
-  def paraAndTextParser : Parser[(String, String)] = paraLetterParser ~ mainFactorBodyText ^^ {
-    case para ~ text => (para, text)
-  }
-
-  def separatedFactorListParser : Parser[List[(String, String)]] = repsep(paraAndTextParser, orTerminator) ^^ {
-    case listOfFactors: Seq[(String, String)] => listOfFactors
-  }
+trait PreAugust2015SoPParser extends SoPParser with FactorsParser {
 
 
-  def completeFactorSectionParser : Parser[(String,List[(String, String)])] = factorsSectionHead ~ separatedFactorListParser <~ periodTerminator ^^ {
-    case head ~ factorList => (head, factorList)
-  }
 
 
   def extractStandardOfProofFromHeader(headerText: String): StandardOfProof = {
@@ -45,22 +22,11 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsPar
       return StandardOfProof.BalanceOfProbabilities
     if (headerText.contains("reasonable hypothesis"))
       return StandardOfProof.ReasonableHypothesis
-    else {
+     else {
       throw new SopParserError("Cannot determine standard of proof from text: " + headerText)
     }
   }
 
-
-  override def parseFactors(factorsSection: String): (StandardOfProof, List[(String, String)]) =
-  {
-    val result = this.parseAll(this.completeFactorSectionParser, factorsSection)
-    if (!result.successful)
-      throw new SopParserError(result.toString)
-    else {
-      val standardOfProof = extractStandardOfProofFromHeader(result.get._1)
-      (standardOfProof, result.get._2)
-    }
-  }
 
   override def parseInstrumentNumber(citationSection: String): InstrumentNumber = {
     val instrumentNumberRegex = """No\.?\s+([0-9]+)\s+of\s+([0-9]{4,4})""".r
@@ -99,10 +65,17 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsPar
   // Used for aggravation interval (eg. Paragraphs 6(u) to 6(nn) apply)
   override def parseStartAndEndAggravationParas(aggravationSection: String): (String, String) = {
     val paraIntervalRegex = """Paragraphs [0-9]+(\([a-z]+\)) to [0-9]*(\([a-z]+\))""".r
-    val m = paraIntervalRegex.findFirstMatchIn(aggravationSection)
-    if (m.isEmpty)
+    val intervalMatch = paraIntervalRegex.findFirstMatchIn(aggravationSection)
+    if (intervalMatch.isDefined) return (intervalMatch.get.group(1), intervalMatch.get.group(2))
+
+    val singleParaRegex = """Paragraph [0-9]+(\([a-z]+\))""".r
+    val singleParaMatch = singleParaRegex.findFirstMatchIn(aggravationSection)
+    if (singleParaMatch.isDefined) {
+      val para = singleParaMatch.get.group(1)
+      return (para,para)
+    }
+    else
       throw new SopParserError("Cannot determine aggravation paras from: " + aggravationSection)
-    (m.get.group(1), m.get.group(2))
   }
 
   override def parseCitation(citationSection: String): String = {
@@ -122,6 +95,12 @@ trait PreAugust2015SoPParser extends SoPParser with RegexParsers with FactorsPar
       throw new SopParserError("Cannot get condition name from this citation: %s".format(citation))
     return m.get.group(1)
   }
+
+  override def parseFactors(factorsSection: String) = {
+     parseFactorsSection(factorsSection)
+  }
+
+
 
 }
 

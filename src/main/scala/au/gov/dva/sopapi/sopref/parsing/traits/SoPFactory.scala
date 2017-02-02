@@ -1,16 +1,72 @@
 package au.gov.dva.sopapi.sopref.parsing.traits
 
-import au.gov.dva.sopapi.interfaces.model.{DefinedTerm, Factor, SoP}
-import au.gov.dva.sopapi.sopref.parsing.implementations.model.{FactorInfo, ParsedFactor}
+import java.time.LocalDate
+
+import au.gov.dva.sopapi.dtos.StandardOfProof
+import au.gov.dva.sopapi.interfaces.model.{DefinedTerm, Factor, ICDCode, SoP}
+import au.gov.dva.sopapi.sopref.parsing.implementations.model.{FactorInfo, ParsedFactor, ParsedSop}
+import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.PreAugust2015Parser
+
 
 trait SoPFactory {
   def create(registerId: String, cleansedText: String): SoP
 
+  def create(registerId : String, cleansedText: String, extractor : SoPExtractor, parser: SoPParser) = {
+    val citation = parser.parseCitation(extractor.extractCitation(cleansedText));
+    val instrumentNumber = parser.parseInstrumentNumber(citation);
+
+    val definedTermsList: List[DefinedTerm] = parser.parseDefinitions(extractor.extractDefinitionsSection(cleansedText))
+
+    val factorsSection: (Int, String) = extractor.extractFactorSection(cleansedText)
+    val factors: (StandardOfProof, List[FactorInfo]) = parser.parseFactors(factorsSection._2)
+
+    val factorObjects: List[Factor] = this.buildFactorObjectsFromInfo(factors._2,factorsSection._1,definedTermsList)
+
+    val startAndEndOfAggravationParas = parser.parseStartAndEndAggravationParas(extractor.extractAggravationSection(cleansedText))
+
+    val(onsetFactors,aggravationFactors) = divideFactorObjectsToOnsetAndAggravation(factorObjects,startAndEndOfAggravationParas._1,startAndEndOfAggravationParas._2)
+
+    val effectiveFromDate: LocalDate = parser.parseDateOfEffect(extractor.extractDateOfEffectSection(cleansedText))
+
+    val standardOfProof = factors._1
+
+    val icdCodes: List[ICDCode] = extractor.extractICDCodes(cleansedText)
+
+    val conditionName = PreAugust2015Parser.parseConditionNameFromCitation(citation);
+
+    new ParsedSop(registerId,instrumentNumber,citation,aggravationFactors, onsetFactors, effectiveFromDate,standardOfProof,icdCodes,conditionName)
+  }
+
+  def stripParaNumber(paraWithNumber : String): String = {
+    assert(!paraWithNumber.takeWhile(c => c.isDigit).isEmpty)
+    paraWithNumber.dropWhile(c => c.isDigit)
+  }
+
+  def divideFactorObjectsToOnsetAndAggravation(factorObjects: List[Factor], startParaLetterOfAgg : String, endParaLetterOfAgg : String) = {
+    val orderedParaLetters = factorObjects.map(f => f.getParagraph.dropWhile(c => c.isDigit)).toList
+
+    val splitOfOnsetAndAggravationFactors =  this.splitFactors(
+      orderedParaLetters,startParaLetterOfAgg,endParaLetterOfAgg)
+
+    val onsetParasWithoutNumber = splitOfOnsetAndAggravationFactors._1;
+    val aggParasWithoutNumber = splitOfOnsetAndAggravationFactors._2;
+
+    val onsetFactors = factorObjects
+      .filter(f => onsetParasWithoutNumber.contains(stripParaNumber(f.getParagraph)))
+    val aggravationFactors = factorObjects
+      .filter(f => aggParasWithoutNumber.contains(stripParaNumber(f.getParagraph)))
+
+    (onsetFactors,aggravationFactors)
+
+  }
+
   def splitFactors(parasInOrder: List[String], startPara: String, endPara: String) = {
-    val onsetParas = parasInOrder.takeWhile(i => i != startPara) ++
-      (parasInOrder.reverse.takeWhile(i => i != endPara)).reverse
-    val aggParas = parasInOrder.filter(p => !onsetParas.contains(p))
-    (onsetParas, aggParas)
+    val firstChunkOfOnsetParas = parasInOrder.takeWhile(i => i != startPara);
+    val lastChunkOfOnsetParas = parasInOrder.reverse.takeWhile(i => i != endPara).reverse;
+    val allOnsetParas = firstChunkOfOnsetParas ++ lastChunkOfOnsetParas
+
+    val aggParas = parasInOrder.filter(p => !allOnsetParas.contains(p))
+    (allOnsetParas, aggParas)
   }
 
   def buildFactorObjectsFromInfo(factors: List[FactorInfo], factorSectionNumber: Int, definedTerms: List[DefinedTerm]): List[Factor] = {
