@@ -81,11 +81,16 @@ object SoPExtractorUtilities {
       acc
     else {
       val nextLetter = lettersSequence(nextLetterIndex)
-      val factorLines = remainingLines.takeWhile(l => !l.startsWith(nextLetter)) // todo: what if a letter is missing
+
+      val factorLines = remainingLines.takeWhile(l => !l.startsWith(nextLetter)) // todo: what if a letter is missing, eg repealed?
       divideFactorSectionRecursive(lettersSequence, nextLetterIndex + 1, factorLines :: acc, remainingLines.drop(factorLines.size))
     }
 
   }
+
+  // edge case is where h para has sub para beginning with i
+  // can tell this because first line of h para ends in ,
+
 
 
   def capitaliseMainFactorParaLetters(linesOfFactorSection: List[String]) = {
