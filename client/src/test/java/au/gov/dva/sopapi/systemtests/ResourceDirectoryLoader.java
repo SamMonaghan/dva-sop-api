@@ -1,4 +1,4 @@
-package au.gov.dva.dvasopapi.tests;
+package au.gov.dva.sopapi.systemtests;
 
 import java.io.BufferedReader;
 import java.io.IOException;

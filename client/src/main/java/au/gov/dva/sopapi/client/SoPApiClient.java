@@ -84,6 +84,7 @@ public class SoPApiClient {
         CompletableFuture<SopSupportResponseDto> promise = asyncHttpClient
                 .prepareGet(serviceUrl.toString())
                 .setHeader("Accept", "application/json")
+                .setBody(jsonRequestBody)
                 .execute()
                 .toCompletableFuture()
                 .thenApply(response -> response.getResponseBody())
