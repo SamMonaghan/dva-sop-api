@@ -224,7 +224,6 @@ class SopParserTests extends FunSuite {
     assert(hFactor.get.size > 1)
   }
 
-
   test("Get sequence of main factors")
   {
     val result = SoPExtractorUtilities.getMainParaLetterSequence
