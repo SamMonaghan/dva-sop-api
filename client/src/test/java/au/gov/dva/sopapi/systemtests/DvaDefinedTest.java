@@ -39,21 +39,13 @@ public class DvaDefinedTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() throws IOException {
 
-        // load all json file names
-        // get expected result and convert to boolean
-
         ResourceDirectoryLoader resourceDirectoryLoader = new ResourceDirectoryLoader();
         List<String> testFileNames =  resourceDirectoryLoader.getResourceFiles(TEST_FILE_DIR);
         Collection<Object[]> parameters = testFileNames.stream()
                 .map(f -> createParameterFromFileName(f))
                 .collect(Collectors.toList());
         return parameters;
-
     }
-
-
-
-
 
     private static boolean parsePassOrFail(String fileName){
         if (fileName.toLowerCase().startsWith("pass")){

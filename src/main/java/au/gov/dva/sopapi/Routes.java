@@ -7,6 +7,8 @@ import au.gov.dva.sopapi.dtos.StandardOfProof;
 import au.gov.dva.sopapi.dtos.sopref.OperationsResponseDto;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportRequestDto;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportResponseDto;
+import au.gov.dva.sopapi.exceptions.DvaSopApiError;
+import au.gov.dva.sopapi.exceptions.ProcessingRuleError;
 import au.gov.dva.sopapi.interfaces.model.Deployment;
 import au.gov.dva.sopapi.interfaces.model.ServiceDetermination;
 import au.gov.dva.sopapi.interfaces.model.SoP;
@@ -132,6 +134,12 @@ class Routes {
                     sb.append(schema);
                 }
                 return sb.toString();
+            }
+            catch (ProcessingRuleError e)
+            {
+                logger.error("Error applying rule.", e);
+                setResponseHeaders(res,false,400);
+                return e.getMessage();
             }
         }));
     }

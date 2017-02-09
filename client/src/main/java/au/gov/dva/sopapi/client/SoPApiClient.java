@@ -87,10 +87,26 @@ public class SoPApiClient {
                 .setBody(jsonRequestBody)
                 .execute()
                 .toCompletableFuture()
-                .thenApply(response -> response.getResponseBody())
+                .thenApply(response -> {
+                            if (response.getStatusCode() == 200) {
+
+                                return response.getResponseBody();
+
+                            }
+                            else {
+                                throw new SoPApiClientError(buildErrorMsg(response.getStatusCode(),response.getResponseBody()));
+                            }
+                        }
+                    )
+
                 .thenApply(json -> SopSupportResponseDto.fromJsonString(json.toString()));
 
         return promise;
+    }
+
+    private static String buildErrorMsg(Integer statusCode, String msg)
+    {
+        return String.format("HTTP Status Code: %d, %s.", statusCode, msg);
     }
 
 }
