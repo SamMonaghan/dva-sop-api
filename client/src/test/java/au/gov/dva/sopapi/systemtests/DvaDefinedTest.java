@@ -1,5 +1,6 @@
+package au.gov.dva.sopapi.systemtests;
 
-
+import au.gov.dva.sopapi.AppSettings;
 import au.gov.dva.sopapi.client.SoPApiClient;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportRequestDto;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportResponseDto;
@@ -26,8 +27,6 @@ public class DvaDefinedTest {
 
 
     private static final String TEST_FILE_DIR = "dvaDefinedTestData";
-    private static final String TEST_URL_ENDPOINT = "https://dvasopapi-devtest.azurewebsites.net";
-
     private String fileName;
     private Boolean expectedResult;
 
@@ -83,7 +82,8 @@ public class DvaDefinedTest {
     private Boolean runTestCase(String jsonFileResourcePath) throws IOException, ExecutionException, InterruptedException {
         String jsonString = Resources.toString(Resources.getResource(TEST_FILE_DIR + "/" + jsonFileResourcePath), Charsets.UTF_8);
 
-        URL url = new URL(TEST_URL_ENDPOINT);
+
+        URL url = new URL(AppSettings.getBaseUrl());
         SoPApiClient underTest = new SoPApiClient(url);
         SopSupportResponseDto result = underTest.getSatisfiedFactors(jsonString).get();
         ImmutableList<FactorWithInferredResultDto> satisfiedFactors =

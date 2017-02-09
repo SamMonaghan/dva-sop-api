@@ -56,6 +56,10 @@ public class AppSettings {
 
     }
 
+    public static String getBaseUrl() {
+        return getPropertyValue("BASE_URL");
+    }
+
     public static class LegislationRegisterEmailSubscription {
         private static final String LEGISLATION_REGISTER_SUBSCRIPTION_EMAIL_USER_ID = "LRS_USERID";
         private static final String LEGISLATION_REGISTER_SUBSCRIPTION_EMAIL_PASSWORD = "LRS_PASSWORD";
