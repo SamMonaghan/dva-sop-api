@@ -1,12 +1,12 @@
-{
+﻿{
   "condition": {
     "conditionName": "lumbar spondylosis",
-    "incidentType": "aggravation",
+    "incidentType": "onset",
     "icdCodeVersion": "ICD-10-AM",
     "icdCodeValue": "M47.16",
     "onsetDates": {
-      "onsetRangeStartDate": "2005-07-01Z",
-      "onsetRangeEndDate": "2005-07-01Z"
+      "onsetRangeStartDate": "2004-10-01Z",
+      "onsetRangeEndDate": "2004-10-01Z"
     },
     "aggravationDates": {
       "aggravationRangeStartDate": "2005-01-01Z",
@@ -22,7 +22,7 @@
         "serviceType": "Regular/Permanent Force",
         "startDate": "2004-07-01Z",
         "endDate": "2016-01-01Z",
-        "rank": "officer",
+        "rank": "other rank",
         "operationalService": [
           {
             "assigned": "2006-07-01Z",

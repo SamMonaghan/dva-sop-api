@@ -115,7 +115,7 @@ class Routes {
             }
 
             try {
-                SopSupportRequestDto sopSupportRequestDto = SopSupportRequestDto.fromJsonString(req.body());
+                SopSupportRequestDto sopSupportRequestDto = SopSupportRequestDto.fromJsonString(cleanseJson(req.body()));
 
                 ImmutableSet<SoPPair> soPPairs = SoPs.groupSopsToPairs(cache.get_allSops());
                 ImmutableSet<ServiceDetermination> serviceDeterminations = cache.get_allServiceDeterminations();
@@ -249,5 +249,8 @@ class Routes {
         return AppSettings.getEnvironment() == AppSettings.Environment.prod;
     }
 
-
+    private static String cleanseJson(String incomingJson)
+    {
+        return incomingJson.replace("\uFEFF","");
+    }
 }

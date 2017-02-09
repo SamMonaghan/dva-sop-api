@@ -50,9 +50,8 @@ task copyWar(type: Copy, dependsOn: 'war') {
     rename { String fileName -> 'ROOT.war' }
 }
 
-
 test {
-    exclude 'au/gov/dva/dvasopapi/tests/localonly/**'
+    include 'au/gov/dva/dvasopapi/systemtests/**'
 }
 
 configurations.all {
@@ -100,14 +99,12 @@ dependencies {
     testCompile 'info.solidsoft.mockito:mockito-java8:2.0.0'
 }
 
-
 project(':client') {
     dependencies {
         project(':dtos')
         project(':appSettings')
     }
 }
-
 
 
 ScalaCompileOptions.metaClass.daemonServer = true

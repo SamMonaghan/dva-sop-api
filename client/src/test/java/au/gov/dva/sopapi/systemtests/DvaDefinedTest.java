@@ -66,6 +66,8 @@ public class DvaDefinedTest {
 
     @Test
     public void runDvaDefinedStpTest() throws IOException, ExecutionException, InterruptedException {
+        System.out.println("Running test case: " + fileName + "...");
+
         Boolean actualResult = runTestCase(fileName);
         Assert.assertEquals(expectedResult,actualResult);
     }
