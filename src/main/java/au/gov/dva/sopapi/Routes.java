@@ -80,7 +80,7 @@ class Routes {
             QueryParamsMap queryParamsMap = req.queryMap();
             String icdCodeValue = queryParamsMap.get("icdCodeValue").value();
             String icdCodeVersion = queryParamsMap.get("icdCodeVersion").value();
-            String standardOfProof = queryParamsMap.get("standardOfProof").value();
+            String standardOfProof = queryParamsMap.get("standardOfProof").value(); // todo: make optional
             String conditionName = queryParamsMap.get("conditionName").value();
             String incidentType = queryParamsMap.get("incidentType").value();
 
