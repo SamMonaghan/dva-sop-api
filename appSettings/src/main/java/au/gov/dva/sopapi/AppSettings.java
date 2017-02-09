@@ -1,9 +1,8 @@
 package au.gov.dva.sopapi;
 
-
-import au.gov.dva.sopapi.exceptions.ConfigurationError;
-
-import static au.gov.dva.sopapi.AppSettings.Environment.*;
+import static au.gov.dva.sopapi.AppSettings.Environment.devtest;
+import static au.gov.dva.sopapi.AppSettings.Environment.devtestlocal;
+import static au.gov.dva.sopapi.AppSettings.Environment.prod;
 
 public class AppSettings {
 
@@ -103,7 +102,7 @@ public class AppSettings {
 
         public boolean isDev()
         {
-            return this.equals(Environment.devtest) || this.equals(Environment.devtestlocal);
+            return this.equals(devtest) || this.equals(devtestlocal);
         }
     }
 }

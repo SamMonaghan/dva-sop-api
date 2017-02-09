@@ -62,6 +62,7 @@ configurations.all {
 dependencies {
     zinc 'com.typesafe.zinc:zinc:0.3.9'
     compile project(':dtos')
+    compile project(':appSettings')
 
     compile group: 'com.sparkjava', name: 'spark-core', version: '2.5.2'
     compile group: 'org.scala-lang', name: 'scala-library', version: '2.12.1'
@@ -103,6 +104,7 @@ dependencies {
 project(':client') {
     dependencies {
         project(':dtos')
+        project(':appSettings')
     }
 }
 
