@@ -1,4 +1,4 @@
-﻿{
+{
   "condition": {
     "conditionName": "lumbar spondylosis",
     "incidentType": "onset",
@@ -39,7 +39,7 @@
             "endDate": "2010-07-01Z"
           }
         ],
-        "service": "Australian Navy"
+        "service": "Royal Australian Navy"
       }
     ]
   }

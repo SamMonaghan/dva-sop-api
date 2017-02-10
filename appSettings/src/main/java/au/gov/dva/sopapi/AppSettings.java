@@ -6,6 +6,7 @@ import static au.gov.dva.sopapi.AppSettings.Environment.prod;
 
 public class AppSettings {
 
+
     private static final String envVarName = "DEP_ENV";
 
     public static Environment getEnvironment() {
