@@ -5,8 +5,8 @@
     "icdCodeVersion" : "ICD-10-AM",
     "icdCodeValue" : "M47.16",
     "onsetDates" : {
-      "onsetRangeStartDate" : "2004-01-01Z",
-      "onsetRangeEndDate" : "2004-01-01Z"
+      "onsetRangeStartDate" : "2016-10-01Z",
+      "onsetRangeEndDate" : "2016-10-01Z"
     },
     "aggravationDates" : {
       "aggravationRangeStartDate" : "2005-01-01Z",
@@ -35,7 +35,7 @@
         "startDate" : "2009-07-10Z",
         "endDate" : "2010-07-01Z"
       } ],
-      "service" : "Australian Army"
+      "service" : "Royal Australian Navy"
     } ]
   }
 }

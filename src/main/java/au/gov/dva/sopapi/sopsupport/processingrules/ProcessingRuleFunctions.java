@@ -115,6 +115,8 @@ public class ProcessingRuleFunctions {
     }
 
     public static Rank getRankProximateToDate(ImmutableSet<Service> services, OffsetDateTime testDate) {
+        // todo: find most 'beneficial rank': army first, if there is at least 1 year of service, then if any service of navy,
+        // use navy rank,
         logger.trace("Getting the rank on the last service before date " + testDate);
         Optional<Service> relevantService = services.stream()
                 .sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate())) // most recent first

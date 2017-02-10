@@ -43,7 +43,7 @@ public class LumbarSpondylosisRule implements ProcessingRule, AccumulationRule {
                 startDateForPeriodOfOperationalService,endDateForPeriodOfOperationalService,
                 ProcessingRuleFunctions.getDeployments(serviceHistory),
                 isOperational);
-        logger.trace("Days of operational service: ");
+        logger.trace("Days of operational service: " + daysOfOperationalService);
 
         Rank rank = ProcessingRuleFunctions.getRankProximateToDate(serviceHistory.getServices(),condition.getStartDate());
 
