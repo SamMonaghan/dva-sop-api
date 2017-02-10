@@ -8,7 +8,10 @@ import au.gov.dva.sopapi.dtos.sopsupport.components.FactorWithInferredResultDto;
 import au.gov.dva.sopapi.systemtests.ResourceDirectoryLoader;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
+import jdk.nashorn.internal.runtime.options.Option;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,35 +19,23 @@ import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-@RunWith(Parameterized.class)
 public class DvaDefinedTest {
 
 
     private static final String TEST_FILE_DIR = "dvaDefinedTestData";
-    private String fileName;
-    private Boolean expectedResult;
 
-    public DvaDefinedTest(String fileName, Boolean expectedResult)
-    {
-        this.fileName = fileName;
-        this.expectedResult = expectedResult;
-    }
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() throws IOException {
+    public static ImmutableList<String> data() throws IOException {
 
         ResourceDirectoryLoader resourceDirectoryLoader = new ResourceDirectoryLoader();
         List<String> testFileNames =  resourceDirectoryLoader.getResourceFiles(TEST_FILE_DIR);
-        Collection<Object[]> parameters = testFileNames.stream()
-                .map(f -> createParameterFromFileName(f))
-                .collect(Collectors.toList());
-        return parameters;
+        return ImmutableList.copyOf(testFileNames);
+
     }
 
     private static boolean parsePassOrFail(String fileName){
@@ -58,43 +49,86 @@ public class DvaDefinedTest {
         throw new IllegalArgumentException(String.format("File name must start with 'PASS' or 'FAIL': %s.", fileName));
     }
 
-    private static Object[] createParameterFromFileName(String fileName)
-    {
-        return new Object[]{fileName,parsePassOrFail(fileName)};
-    }
 
 
     @Test
-    public void runDvaDefinedStpTest() throws IOException, ExecutionException, InterruptedException {
-        System.out.println("Running test case: " + fileName + "...");
+    public void runDvaDefinedTests() throws IOException, ExecutionException, InterruptedException {
 
-        Boolean actualResult = runTestCase(fileName);
-        Assert.assertEquals(expectedResult,actualResult);
+        ImmutableList<String> testFiles = data();
+        if (testFiles.isEmpty())
+        {
+            System.out.println("No test files found.");
+            return;
+        }
+
+        List<TestCaseResult> results = testFiles.stream().map(f -> runTestCase(f))
+                .collect(Collectors.toList());
+
+
+        for (TestCaseResult result : results)
+        {
+            System.out.println(result);
+        }
+
+        Assert.assertTrue(results.stream().allMatch(testCaseResult -> testCaseResult.passed));
+
     }
 
 
-    private Boolean runTestCase(String jsonFileResourcePath) throws IOException, ExecutionException, InterruptedException {
-        String jsonString = Resources.toString(Resources.getResource(TEST_FILE_DIR + "/" + jsonFileResourcePath), Charsets.UTF_8);
+    private  TestCaseResult runTestCase(String jsonFileResourcePath)  {
+        try {
+            String jsonString = Resources.toString(Resources.getResource(TEST_FILE_DIR + "/" + jsonFileResourcePath), Charsets.UTF_8);
+            Boolean expectedResult = parsePassOrFail(jsonFileResourcePath);
 
+            URL url = new URL(AppSettings.getBaseUrl());
+            SoPApiClient underTest = new SoPApiClient(url);
+            SopSupportResponseDto result = underTest.getSatisfiedFactors(jsonString).get();
+            ImmutableList<FactorWithInferredResultDto> satisfiedFactors =
+                    result.getFactors().stream()
+                            .filter(f -> f.getSatisfaction())
+                            .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
 
-        URL url = new URL(AppSettings.getBaseUrl());
-        SoPApiClient underTest = new SoPApiClient(url);
-        SopSupportResponseDto result = underTest.getSatisfiedFactors(jsonString).get();
-        ImmutableList<FactorWithInferredResultDto> satisfiedFactors =
-                result.getFactors().stream()
-                .filter(f -> f.getSatisfaction())
-                .collect(Collectors.collectingAndThen(Collectors.toList(),ImmutableList::copyOf));
-        System.out.println("FILE: " + jsonFileResourcePath);
-        System.out.println("SATISFIED FACTORS: ");
-        if (satisfiedFactors.isEmpty())
+            StringBuilder log = new StringBuilder();
+
+            log.append(String.format("SATISFIED FACTORS:%n"));
+            if (satisfiedFactors.isEmpty()) {
+                System.out.println("None.");
+            } else {
+                satisfiedFactors.stream().forEach(f -> log.append(String.format("* %s %s.%n", f.getParagraph(), f.getText())));
+            }
+            Boolean passed = expectedResult == !satisfiedFactors.isEmpty();
+
+            return new TestCaseResult(jsonFileResourcePath,passed,log.toString());
+
+        }
+        catch (Exception e) {
+            return new TestCaseResult(jsonFileResourcePath,false,e.toString());
+        }
+
+    }
+
+    private class TestCaseResult {
+        public final String fileName;
+        public final Boolean passed;
+        public final String log;
+
+        public TestCaseResult(String fileName, Boolean passed, String log)
         {
-            System.out.println("None.");
-        }
-        else {
-            satisfiedFactors.stream().forEach(f -> System.out.printf("* %s %s.%n", f.getParagraph(), f.getText()));
-        }
-        return !satisfiedFactors.isEmpty();
 
+            this.fileName = fileName;
+            this.passed = passed;
+            this.log = log;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuffer sb = new StringBuffer("TestCaseResult{");
+            sb.append("fileName='").append(fileName).append('\'');
+            sb.append(", passed=").append(passed);
+            sb.append(", log='").append("\r\n").append(log).append('\'');
+            sb.append('}');
+            return sb.toString();
+        }
     }
 
 }
