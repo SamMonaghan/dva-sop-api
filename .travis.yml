@@ -20,6 +20,7 @@ branches:
   only:
   - devtest
   - master
+  - dvatesting
 
 
 before_cache:
