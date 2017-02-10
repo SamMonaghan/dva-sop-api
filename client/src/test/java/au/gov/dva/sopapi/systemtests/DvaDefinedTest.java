@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
 import jdk.nashorn.internal.runtime.options.Option;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -50,9 +51,8 @@ public class DvaDefinedTest {
     }
 
 
-
     @Test
-    public void runDvaDefinedTests() throws IOException, ExecutionException, InterruptedException {
+    public void runAllDvaDefinedTests() throws IOException, ExecutionException, InterruptedException {
 
         ImmutableList<String> testFiles = data();
         if (testFiles.isEmpty())
@@ -75,7 +75,7 @@ public class DvaDefinedTest {
     }
 
 
-    private  TestCaseResult runTestCase(String jsonFileResourcePath)  {
+    public static  TestCaseResult runTestCase(String jsonFileResourcePath)  {
         try {
             String jsonString = Resources.toString(Resources.getResource(TEST_FILE_DIR + "/" + jsonFileResourcePath), Charsets.UTF_8);
             Boolean expectedResult = parsePassOrFail(jsonFileResourcePath);
@@ -107,28 +107,6 @@ public class DvaDefinedTest {
 
     }
 
-    private class TestCaseResult {
-        public final String fileName;
-        public final Boolean passed;
-        public final String log;
 
-        public TestCaseResult(String fileName, Boolean passed, String log)
-        {
-
-            this.fileName = fileName;
-            this.passed = passed;
-            this.log = log;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuffer sb = new StringBuffer("TestCaseResult{");
-            sb.append("fileName='").append(fileName).append('\'');
-            sb.append(", passed=").append(passed);
-            sb.append(", log='").append("\r\n").append(log).append('\'');
-            sb.append('}');
-            return sb.toString();
-        }
-    }
 
 }

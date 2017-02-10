@@ -74,6 +74,7 @@ public class LumbarSpondylosisRule implements ProcessingRule, AccumulationRule {
 
             return inferredFactors;
         }
+        else
         {
             return ProcessingRuleFunctions.withSatsifiedFactors(applicableFactors);
         }
