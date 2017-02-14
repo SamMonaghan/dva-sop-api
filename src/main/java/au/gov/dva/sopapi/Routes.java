@@ -7,8 +7,8 @@ import au.gov.dva.sopapi.dtos.StandardOfProof;
 import au.gov.dva.sopapi.dtos.sopref.OperationsResponseDto;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportRequestDto;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportResponseDto;
-import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.exceptions.ProcessingRuleError;
+import au.gov.dva.sopapi.interfaces.CaseTrace;
 import au.gov.dva.sopapi.interfaces.model.Deployment;
 import au.gov.dva.sopapi.interfaces.model.ServiceDetermination;
 import au.gov.dva.sopapi.interfaces.model.SoP;
@@ -19,6 +19,7 @@ import au.gov.dva.sopapi.sopref.SoPs;
 import au.gov.dva.sopapi.sopref.data.servicedeterminations.ServiceDeterminationPair;
 import au.gov.dva.sopapi.sopref.data.sops.BasicICDCode;
 import au.gov.dva.sopapi.sopsupport.SopSupport;
+import au.gov.dva.sopapi.sopsupport.SopSupportCaseTrace;
 import au.gov.dva.sopapi.sopsupport.processingrules.ProcessingRuleFunctions;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -36,6 +37,7 @@ import spark.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
@@ -121,7 +123,11 @@ class Routes {
                 ImmutableSet<ServiceDetermination> serviceDeterminations = cache.get_allServiceDeterminations();
                 ServiceDeterminationPair serviceDeterminationPair = Operations.getLatestDeterminationPair(serviceDeterminations);
                 Predicate<Deployment> isOperational = ProcessingRuleFunctions.getIsOperationalPredicate(serviceDeterminationPair);
-                SopSupportResponseDto sopSupportResponseDto = SopSupport.applyRules(sopSupportRequestDto, soPPairs, isOperational);
+                CaseTrace caseTrace = new SopSupportCaseTrace(UUID.randomUUID().toString());
+                caseTrace.addTrace(req.body());
+                SopSupportResponseDto sopSupportResponseDto = SopSupport.applyRules(sopSupportRequestDto, soPPairs, isOperational, caseTrace);
+                if (AppSettings.getEnvironment().isDev())
+                    logger.trace(caseTrace.toString());
                 setResponseHeaders(res, true, 200);
                 return SopSupportResponseDto.toJsonString(sopSupportResponseDto);
             } catch (DvaSopApiDtoError e) {

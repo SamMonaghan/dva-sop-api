@@ -2,7 +2,6 @@ package au.gov.dva.sopapi.sopsupport.processingrules;
 
 import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.dtos.EmploymentType;
-import au.gov.dva.sopapi.dtos.IncidentType;
 import au.gov.dva.sopapi.dtos.Rank;
 import au.gov.dva.sopapi.exceptions.ProcessingRuleError;
 import au.gov.dva.sopapi.interfaces.model.*;
@@ -14,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -192,6 +190,11 @@ public class ProcessingRuleFunctions {
             String lowerCasedeploymentNameWithoutOperation = deploymentName.getOperationName().toLowerCase().replace("operation", "").trim();
             return setOfLowerCaseOpNames.contains(lowerCasedeploymentNameWithoutOperation);
         });
+    }
+
+    public static Boolean conditionIsBeforeService(Condition condition, ServiceHistory serviceHistory)
+    {
+        return condition.getStartDate().isBefore(serviceHistory.getHireDate());
     }
 
 }

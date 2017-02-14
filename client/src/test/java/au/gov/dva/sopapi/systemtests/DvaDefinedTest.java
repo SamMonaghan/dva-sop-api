@@ -2,26 +2,17 @@ package au.gov.dva.sopapi.systemtests;
 
 import au.gov.dva.sopapi.AppSettings;
 import au.gov.dva.sopapi.client.SoPApiClient;
-import au.gov.dva.sopapi.dtos.sopsupport.SopSupportRequestDto;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportResponseDto;
 import au.gov.dva.sopapi.dtos.sopsupport.components.FactorWithInferredResultDto;
-import au.gov.dva.sopapi.systemtests.ResourceDirectoryLoader;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
-import jdk.nashorn.internal.runtime.options.Option;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -92,7 +83,7 @@ public class DvaDefinedTest {
 
             log.append(String.format("SATISFIED FACTORS:%n"));
             if (satisfiedFactors.isEmpty()) {
-                System.out.println("None.");
+                log.append("None.");
             } else {
                 satisfiedFactors.stream().forEach(f -> log.append(String.format("* %s %s.%n", f.getParagraph(), f.getText())));
             }

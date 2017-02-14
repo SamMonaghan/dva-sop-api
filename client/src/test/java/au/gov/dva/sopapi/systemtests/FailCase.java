@@ -1,7 +1,5 @@
 package au.gov.dva.sopapi.systemtests;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,6 +12,12 @@ public class FailCase {
         TestCaseResult result = DvaDefinedTest.runTestCase("FAIL_3.json");
         System.out.println(result.log);
         Assert.assertTrue(result.passed);
+    }
 
+    @Test
+    public void systemTestCaseWhereInjuryOccursBeforeService() {
+        TestCaseResult result = DvaDefinedTest.runTestCase("FAIL_5.json");
+        System.out.println(result.log);
+        Assert.assertTrue(result.passed);
     }
 }
