@@ -33,6 +33,12 @@ findbugs {
     excludeFilter = file("findBugsExcludeFilter.xml")
 }
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
 tasks.withType(FindBugs) {
     reports {
         xml.enabled false
