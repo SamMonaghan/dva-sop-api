@@ -15,7 +15,7 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
 
   private def factorsSectionHead : Parser[String] = mainFactorBodyText <~ ":"
 
-  def head: Parser[String] = """[a-z\s]+""".r <~ """,""".r
+  def head: Parser[String] = """[a-z\s]+""".r <~ """[,:]""".r
 
   def subParaLetter: Parser[String] = """\([ixv]+\)""".r
 
