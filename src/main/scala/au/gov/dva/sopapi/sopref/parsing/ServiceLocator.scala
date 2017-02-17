@@ -14,6 +14,8 @@ object ServiceLocator {
         case "F2014L00930" => PreAug2015SoPFactory
         case "F2011C00491" => PreAug2015SoPFactory
         case "F2011C00492" => PreAug2015SoPFactory
+        case "F2010L00553" => PreAug2015SoPFactory
+        case "F2010L00554" => PreAug2015SoPFactory
         case "F2010L01666" => PreAug2015SoPFactory
         case "F2010L01667" => PreAug2015SoPFactory
         case "F2010L01668" => PreAug2015SoPFactory
