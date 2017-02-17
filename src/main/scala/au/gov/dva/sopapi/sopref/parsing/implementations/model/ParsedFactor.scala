@@ -13,12 +13,15 @@ class ParsedFactor(paragraph : String, text: String, definedTerms : Set[DefinedT
 
   override def toString = s"ParsedFactor($getParagraph, $getText)"
 
+  def canEqual(a: Any) = a.isInstanceOf[Factor]
+
   override def equals(factor: Any): Boolean = {
     factor match {
-      case otherFactor: ParsedFactor =>
-        this.getParagraph == otherFactor.getParagraph
-        this.getText == otherFactor.getText
-        this.getDefinedTerms == otherFactor.getDefinedTerms
+      case factor: ParsedFactor =>
+        factor.canEqual(this) &&
+          Objects.equal(this.getParagraph, factor.getParagraph) &&
+          Objects.equal(this.getText, factor.getText) &&
+          Objects.equal(this.getDefinedTerms, factor.getDefinedTerms)
       case _ => false
     }
   }
