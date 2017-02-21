@@ -294,7 +294,7 @@ Status
 .. [#f1] Java version "1.8.0_111" Java(TM)<br>SE Runtime Environment (build 1.8.0_111-b14)<br>Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)
 .. [#f2] Runs on Jetty Distribution 9.3.14.
 
-.. [#f3] See methods handling HTTP requests in https://raw.githubusercontent.com/govlawtech/dva-sop-api/devtest/src/main/java/au/gov/dva/sopapi/Application.java.
+.. [#f3] Note one exception: the HTTP request to the SoP Support Service to determine satisfied factors according is a POST rather than a GET.  This is for better compatibility with security testing tools.
  Java's OffsetDateTime class with standard formatters for ISO date times.  Date strings ending in 'Z' with no time information are assumed to be 12am midnight UTC. (eg '2017-01-01Z')
 
 .. [#f4] Logging throughout application using SL4J.
