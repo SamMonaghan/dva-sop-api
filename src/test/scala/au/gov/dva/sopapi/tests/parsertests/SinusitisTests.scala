@@ -187,6 +187,7 @@ class SinusitisTests extends FunSuite {
     assert(onsetFactors.contains(j))
     assert(onsetFactors.contains(k))
     assert(onsetFactors.contains(l))
+    assert(onsetFactors.size() === 12)
   }
 
   // Aggravation factors
@@ -266,6 +267,7 @@ class SinusitisTests extends FunSuite {
     assert(aggravationFactors.contains(w))
     assert(aggravationFactors.contains(x))
     assert(aggravationFactors.contains(y))
+    assert(aggravationFactors.size() === 13)
   }
 
 //  test("Parse entire BoP LS SoP")
