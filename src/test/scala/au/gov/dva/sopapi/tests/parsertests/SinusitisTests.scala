@@ -5,7 +5,6 @@ import java.time.LocalDate
 
 import au.gov.dva.dvasopapi.tests.TestUtils
 import au.gov.dva.sopapi.dtos.StandardOfProof
-import au.gov.dva.sopapi.interfaces.model.InstrumentNumber
 import au.gov.dva.sopapi.sopref.data.sops.{BasicICDCode, StoredSop}
 import au.gov.dva.sopapi.sopref.parsing.implementations.model.{ParsedDefinedTerm, ParsedFactor}
 import au.gov.dva.sopapi.tests.parsers.ParserTestUtils
@@ -111,9 +110,9 @@ class SinusitisTests extends FunSuite {
   // ICD codes
   test("Parse RH sinusitis ICD codes") {
     val icdCodes = rhFixture.result.getICDCodes
+    assert(icdCodes.size() === 2)
     assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "J01")))
     assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "J32")))
-    assert(icdCodes.size() === 2)
   }
 
   // Onset factors
@@ -175,6 +174,7 @@ class SinusitisTests extends FunSuite {
       Nil.toSet)
 
     val onsetFactors = rhFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 12)
     assert(onsetFactors.contains(a))
     assert(onsetFactors.contains(b))
     assert(onsetFactors.contains(c))
@@ -187,7 +187,6 @@ class SinusitisTests extends FunSuite {
     assert(onsetFactors.contains(j))
     assert(onsetFactors.contains(k))
     assert(onsetFactors.contains(l))
-    assert(onsetFactors.size() === 12)
   }
 
   // Aggravation factors
@@ -254,6 +253,7 @@ class SinusitisTests extends FunSuite {
       Nil.toSet)
 
     val aggravationFactors = rhFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 13)
     assert(aggravationFactors.contains(m))
     assert(aggravationFactors.contains(n))
     assert(aggravationFactors.contains(o))
@@ -267,253 +267,174 @@ class SinusitisTests extends FunSuite {
     assert(aggravationFactors.contains(w))
     assert(aggravationFactors.contains(x))
     assert(aggravationFactors.contains(y))
-    assert(aggravationFactors.size() === 13)
   }
 
-//  test("Parse entire BoP LS SoP")
-//  {
-//    System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
-//    assert(bopFixture.result != null)
-//  }
-//
-//  test("Parse BoP sinusitis register ID") {
-//    assert(bopFixture.result.getRegisterId === "F2014L00930")
-//  }
-//
-//  test("Parse BoP sinusitis instrument number") {
-//    assert(bopFixture.result.getInstrumentNumber.getNumber === 63)
-//    assert(bopFixture.result.getInstrumentNumber.getYear === 2014)
-//  }
-//
-//  test("Parse BoP sinusitis citation") {
-//    assert(bopFixture.result.getCitation === "Statement of Principles concerning " +
-//      "sinusitis No. 63 of 2014")
-//  }
-//
-//  test("Parse BoP sinusitis condition name") {
-//    assert(bopFixture.result.getConditionName === "sinusitis")
-//  }
-//
-//  test("Parse BoP sinusitis effective from date") {
-//    assert(bopFixture.result.getEffectiveFromDate === LocalDate.of(2014, 7, 2))
-//  }
-//
-//  test("Parse BoP sinusitis standard of proof") {
-//    assert(bopFixture.result.getStandardOfProof === StandardOfProof.BalanceOfProbabilities)
-//  }
-//
-//  // ICD codes
-//  test("Parse BoP sinusitis ICD codes") {
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.27")))
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.86")))
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.87")))
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.96")))
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.97")))
-//    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M51.3")))
-//  }
-//
-//  // Onset factors
-//  test("Parse BoP sinusitis onset factors") {
-//    val a = new ParsedFactor("6(a)",
-//      "having inflammatory joint disease in the lumbar spine before the clinical " +
-//        "onset of sinusitis",
-//      Nil.toSet)
-//
-//    val b = new ParsedFactor("6(b)",
-//      "having an infection of the affected joint as specified at least one year " +
-//        "before the clinical onset of sinusitis",
-//      Nil.toSet)
-//
-//    val c = new ParsedFactor("6(c)",
-//      "having an intra-articular fracture of the lumbar spine at least one year " +
-//        "before the clinical onset of sinusitis",
-//      Nil.toSet)
-//
-//    val d = new ParsedFactor("6(d)",
-//      "having a specified spinal condition affecting the lumbar spine for at " +
-//        "least the one year before the clinical onset of sinusitis",
-//      Nil.toSet)
-//
-//    val e = new ParsedFactor("6(e)",
-//      "having leg length inequality for at least the five years before the clinical " +
-//        "onset of sinusitiss",
-//      Nil.toSet)
-//
-//    val f = new ParsedFactor("6(f)",
-//      "having a depositional joint disease in the lumbar spine before the clinical " +
-//        "onset of sinusitis",
-//      Nil.toSet)
-//
-//    val g = new ParsedFactor("6(g)",
-//      "having trauma to the lumbar spine at least one year before the clinical onset " +
-//        "of sinusitis, and where the trauma to the lumbar spine occurred " +
-//        "within the 25 years before the clinical onset of sinusitis",
-//      Nil.toSet)
-//
-//    val h = new ParsedFactor("6(h)",
-//      "having a lumbar intervertebral disc prolapse before the clinical onset of lumbar " +
-//        "spondylosis at the level of the intervertebral disc prolapse",
-//      Nil.toSet)
-//
-//    val i = new ParsedFactor("6(i)",
-//      "lifting loads of at least 35 kilograms while bearing weight through the lumbar " +
-//        "spine to a cumulative total of at least 168 000 kilograms within any ten year " +
-//        "period before the clinical onset of sinusitis, and where the clinical " +
-//        "onset of sinusitis occurs within the 25 years following that period",
-//      Nil.toSet)
-//
-//    val j = new ParsedFactor("6(j)",
-//      "carrying loads of at least 35 kilograms while bearing weight through the lumbar " +
-//        "spine to a cumulative total of at least 3 800 hours within any ten year period " +
-//        "before the clinical onset of sinusitis, and where the clinical onset " +
-//        "of sinusitis occurs within the 25 years following that period",
-//      Nil.toSet)
-//
-//    val k = new ParsedFactor("6(k)",
-//      "being obese for at least ten years within the 25 years before the clinical onset " +
-//        "of sinusitis",
-//      Nil.toSet)
-//
-//    val l = new ParsedFactor("6(l)",
-//      "flying in a powered aircraft as operational aircrew, for a cumulative total of at least 2 000 " +
-//        "hours within the 25 years before the clinical onset of sinusitis",
-//      Nil.toSet)
-//
-//    val m = new ParsedFactor("6(m)",
-//      "extreme forward flexion of the lumbar spine for a cumulative total of at least 1 500 hours " +
-//        "before the clinical onset of sinusitis",
-//      Nil.toSet)
-//
-//    val n = new ParsedFactor("6(n)",
-//      "having acromegaly involving the lumbar spine before the clinical onset of sinusitis",
-//      Nil.toSet)
-//
-//    val o = new ParsedFactor("6(o)",
-//      "having Paget's disease of bone involving the lumbar spine before the clinical onset of " +
-//        "sinusitis",
-//      Nil.toSet)
-//
-//    assert(bopFixture.result.getOnsetFactors.contains(a))
-//    assert(bopFixture.result.getOnsetFactors.contains(b))
-//    assert(bopFixture.result.getOnsetFactors.contains(c))
-//    assert(bopFixture.result.getOnsetFactors.contains(d))
-//    assert(bopFixture.result.getOnsetFactors.contains(e))
-//    assert(bopFixture.result.getOnsetFactors.contains(f))
-//    assert(bopFixture.result.getOnsetFactors.contains(g))
-//    assert(bopFixture.result.getOnsetFactors.contains(h))
-//    assert(bopFixture.result.getOnsetFactors.contains(i))
-//    assert(bopFixture.result.getOnsetFactors.contains(j))
-//    assert(bopFixture.result.getOnsetFactors.contains(k))
-//    assert(bopFixture.result.getOnsetFactors.contains(l))
-//    assert(bopFixture.result.getOnsetFactors.contains(m))
-//    assert(bopFixture.result.getOnsetFactors.contains(n))
-//    assert(bopFixture.result.getOnsetFactors.contains(o))
-//  }
-//
-//  // Aggravation factors
-//  test("Parse BoP sinusitis aggravation factors") {
-//    val p = new ParsedFactor("6(p)",
-//      "having inflammatory joint disease in the lumbar spine before the clinical " +
-//        "worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val q = new ParsedFactor("6(q)",
-//      "having an infection of the affected joint as specified at least one year " +
-//        "before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val r = new ParsedFactor("6(r)",
-//      "having an intra-articular fracture of the lumbar spine at least one year before " +
-//        "the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val s = new ParsedFactor("6(s)",
-//      "having a specified spinal condition affecting the lumbar spine for at least " +
-//        "the one year before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val t = new ParsedFactor("6(t)",
-//      "having leg length inequality for at least the five years before the clinical " +
-//        "worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val u = new ParsedFactor("6(u)",
-//      "having a depositional joint disease in the lumbar spine before the clinical " +
-//        "worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val v = new ParsedFactor("6(v)",
-//      "having trauma to the lumbar spine at least one year before the clinical " +
-//        "worsening of sinusitis, and where the trauma to the lumbar spine " +
-//        "occurred within the 25 years before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val w = new ParsedFactor("6(w)",
-//      "having a lumbar intervertebral disc prolapse before the clinical worsening of lumbar " +
-//        "spondylosis at the level of the intervertebral disc prolapse",
-//      Nil.toSet)
-//
-//    val x = new ParsedFactor("6(x)",
-//      "lifting loads of at least 35 kilograms while bearing weight through the lumbar " +
-//        "spine to a cumulative total of at least 168 000 kilograms within any ten year " +
-//        "period before the clinical worsening of sinusitis, and where the clinical " +
-//        "worsening of sinusitis occurs within the 25 years following that period",
-//      Nil.toSet)
-//
-//    val y = new ParsedFactor("6(y)",
-//      "carrying loads of at least 35 kilograms while bearing weight through the lumbar " +
-//        "spine to a cumulative total of at least 3 800 hours within any ten year period " +
-//        "before the clinical worsening of sinusitis, and where the clinical " +
-//        "worsening of sinusitis occurs within the 25 years following that period",
-//      Nil.toSet)
-//
-//    val z = new ParsedFactor("6(z)",
-//      "being obese for at least ten years within the 25 years before the clinical " +
-//        "worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val aa = new ParsedFactor("6(aa)",
-//      "flying in a powered aircraft as operational aircrew, for a cumulative total of at least " +
-//        "2 000 hours within the 25 years before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val bb = new ParsedFactor("6(bb)",
-//      "extreme forward flexion of the lumbar spine for a cumulative total of at least 1 500 " +
-//        "hours before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val cc = new ParsedFactor("6(cc)",
-//      "having acromegaly involving the lumbar spine before the clinical worsening of " +
-//        "sinusitis",
-//      Nil.toSet)
-//
-//    val dd = new ParsedFactor("6(dd)",
-//      "having Paget's disease of bone involving the lumbar spine before the clinical " +
-//        "worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val ee = new ParsedFactor("6(ee)",
-//      "inability to obtain appropriate clinical management for sinusitis",
-//      Nil.toSet)
-//
-//    assert(bopFixture.result.getAggravationFactors.contains(q))
-//    assert(bopFixture.result.getAggravationFactors.contains(r))
-//    assert(bopFixture.result.getAggravationFactors.contains(s))
-//    assert(bopFixture.result.getAggravationFactors.contains(t))
-//    assert(bopFixture.result.getAggravationFactors.contains(u))
-//    assert(bopFixture.result.getAggravationFactors.contains(v))
-//    assert(bopFixture.result.getAggravationFactors.contains(w))
-//    assert(bopFixture.result.getAggravationFactors.contains(x))
-//    assert(bopFixture.result.getAggravationFactors.contains(y))
-//    assert(bopFixture.result.getAggravationFactors.contains(z))
-//    assert(bopFixture.result.getAggravationFactors.contains(aa))
-//    assert(bopFixture.result.getAggravationFactors.contains(bb))
-//    assert(bopFixture.result.getAggravationFactors.contains(cc))
-//    assert(bopFixture.result.getAggravationFactors.contains(dd))
-//    assert(bopFixture.result.getAggravationFactors.contains(ee))
-//  }
+  test("Parse entire BoP sinusitis SoP")
+  {
+    System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
+    assert(bopFixture.result != null)
+  }
+
+  test("Parse BoP sinusitis register ID") {
+    assert(bopFixture.result.getRegisterId === "F2010L00554")
+  }
+
+  test("Parse BoP sinusitis instrument number") {
+    val instrumentNumber = bopFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 10)
+    assert(instrumentNumber.getYear === 2010)
+  }
+
+  test("Parse BoP sinusitis citation") {
+    assert(bopFixture.result.getCitation === "Statement of Principles concerning " +
+      "sinusitis No. 10 of 2010")
+  }
+
+  test("Parse BoP sinusitis condition name") {
+    assert(bopFixture.result.getConditionName === "sinusitis")
+  }
+
+  test("Parse BoP sinusitis effective from date") {
+    assert(bopFixture.result.getEffectiveFromDate === LocalDate.of(2010, 3, 10))
+  }
+
+  test("Parse BoP sinusitis standard of proof") {
+    assert(bopFixture.result.getStandardOfProof === StandardOfProof.BalanceOfProbabilities)
+  }
+
+  // ICD codes
+  test("Parse BoP sinusitis ICD codes") {
+    val icdCodes = bopFixture.result.getICDCodes
+    assert(icdCodes.size() === 2)
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "J01")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "J32")))
+  }
+
+  // Onset factors
+  test("Parse BoP sinusitis onset factors") {
+    val a = new ParsedFactor("6(a)",
+      "having a viral respiratory tract infection at the time of the clinical onset of sinusitis",
+      Set(respiratoryDef))
+
+    val b = new ParsedFactor("6(b)",
+      "having impaired drainage of the sinus at the time of the clinical onset of sinusitis",
+      Set(drainageDef))
+
+    val c = new ParsedFactor("6(c)",
+      "being infected with human immunodeficiency virus at the time of the clinical onset of sinusitis",
+      Nil.toSet)
+
+    val d = new ParsedFactor("6(d)",
+      "being in an immunocompromised state at the time of the clinical onset of sinusitis",
+      Set(immunocompromisedDef))
+
+    val e = new ParsedFactor("6(e)",
+      "having diabetes mellitus at the time of the clinical onset of sinusitis",
+      Nil.toSet)
+
+    val f = new ParsedFactor("6(f)",
+      "inhaling a specified substance which results in:\r\n(i) acute nasal symptoms or signs " +
+        "within 48 hours of the inhalation; and\r\n(ii) scarring or erosion of the nasal or " +
+        "sinus mucosa, before the clinical onset of sinusitis",
+      Set(nasalDef, substanceDef))
+
+    val g = new ParsedFactor("6(g)",
+      "for sinusitis affecting the maxillary sinus only, having a specified dental condition " +
+        "affecting the tissues adjacent to the affected maxillary sinus at the time of " +
+        "the clinical onset of sinusitis",
+      Set(dentalDef))
+
+    val h = new ParsedFactor("6(h)",
+      "having allergic rhinitis at the time of the clinical onset of sinusitis",
+      Nil.toSet)
+
+    val i = new ParsedFactor("6(i)",
+      "having sinus barotrauma at the time of the clinical onset of sinusitis",
+      Nil.toSet)
+
+    val j = new ParsedFactor("6(j)",
+      "undergoing a course of therapeutic radiation to the head within the six weeks " +
+        "before the clinical onset of sinusitis",
+      Set(radiationDef))
+
+    val onsetFactors = bopFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 10)
+    assert(onsetFactors.contains(a))
+    assert(onsetFactors.contains(b))
+    assert(onsetFactors.contains(c))
+    assert(onsetFactors.contains(d))
+    assert(onsetFactors.contains(e))
+    assert(onsetFactors.contains(f))
+    assert(onsetFactors.contains(g))
+    assert(onsetFactors.contains(h))
+    assert(onsetFactors.contains(i))
+    assert(onsetFactors.contains(j))
+  }
+
+  // Aggravation factors
+  test("Parse BoP sinusitis aggravation factors") {
+    val k = new ParsedFactor("6(k)",
+      "having a viral respiratory tract infection at the time of the clinical worsening of sinusitis",
+      Set(respiratoryDef))
+
+    val l = new ParsedFactor("6(l)",
+      "having impaired drainage of the sinus at the time of the clinical worsening of sinusitis",
+      Set(drainageDef))
+
+    val m = new ParsedFactor("6(m)",
+      "being infected with human immunodeficiency virus at the time of the clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val n = new ParsedFactor("6(n)",
+      "being in an immunocompromised state at the time of the clinical worsening of sinusitis",
+      Set(immunocompromisedDef))
+
+    val o = new ParsedFactor("6(o)",
+      "having diabetes mellitus at the time of the clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val p = new ParsedFactor("6(p)",
+      "inhaling a specified substance which results in:\r\n(i) acute nasal symptoms or " +
+        "signs within 48 hours of the inhalation; and\r\n(ii) scarring or erosion of the " +
+        "nasal or sinus mucosa,\r\nbefore the clinical worsening of sinusitis",
+      Set(nasalDef, substanceDef))
+
+    val q = new ParsedFactor("6(q)",
+      "for sinusitis affecting the maxillary sinus only, having a specified dental " +
+        "condition affecting the tissues adjacent to the affected maxillary sinus at " +
+        "the time of the clinical worsening of sinusitis",
+      Set(dentalDef))
+
+    val r = new ParsedFactor("6(r)",
+      "having allergic rhinitis at the time of the clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val s = new ParsedFactor("6(s)",
+      "having sinus barotrauma at the time of the clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val t = new ParsedFactor("6(t)",
+      "undergoing a course of therapeutic radiation to the head within the six " +
+        "weeks before the clinical worsening of sinusitis",
+      Set(radiationDef))
+
+    val u = new ParsedFactor("6(u)",
+      "inability to obtain appropriate clinical management for sinusitis",
+      Nil.toSet)
+
+    val aggravationFactors = bopFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 11)
+    assert(aggravationFactors.contains(k))
+    assert(aggravationFactors.contains(l))
+    assert(aggravationFactors.contains(m))
+    assert(aggravationFactors.contains(n))
+    assert(aggravationFactors.contains(o))
+    assert(aggravationFactors.contains(p))
+    assert(aggravationFactors.contains(q))
+    assert(aggravationFactors.contains(r))
+    assert(aggravationFactors.contains(s))
+    assert(aggravationFactors.contains(t))
+    assert(aggravationFactors.contains(u))
+  }
 
 }
