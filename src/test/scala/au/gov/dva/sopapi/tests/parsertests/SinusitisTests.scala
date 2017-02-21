@@ -140,7 +140,7 @@ class SinusitisTests extends FunSuite {
 
     val f = new ParsedFactor("6(f)",
       "inhaling a specified substance which results in:\r\n(i) acute nasal symptoms or signs within " +
-        "48 hours of the\r\ninhalation; and\r\n(ii) scarring or erosion of the nasal or sinus mucosa,\r\n" +
+        "48 hours of the inhalation; and\r\n(ii) scarring or erosion of the nasal or sinus mucosa,\r\n" +
         "before the clinical onset of sinusitis",
       Set(nasalDef, substanceDef))
 
@@ -161,7 +161,7 @@ class SinusitisTests extends FunSuite {
     val j = new ParsedFactor("6(j)",
       "undergoing a course of therapeutic radiation to the head within the six " +
         "weeks before the clinical onset of sinusitis",
-      Nil.toSet)
+      Set(radiationDef))
 
     val k = new ParsedFactor("6(k)",
       "smoking on average at least ten cigarettes per day, or the equivalent thereof in " +
@@ -189,128 +189,85 @@ class SinusitisTests extends FunSuite {
     assert(onsetFactors.contains(l))
   }
 
-//  // Aggravation factors
-//  test("Parse RH sinusitis aggravation factors") {
-//val m = new ParsedFactor("6(m)",
-//  "flying in a powered aircraft as operational aircrew, for a cumulative total of at " +
-//    "least 1 000 hours within the 25 years before the clinical onset of sinusitis",
-//  Nil.toSet)
-//
-//  val n = new ParsedFactor("6(n)",
-//    "extreme forward flexion of the lumbar spine for a cumulative total of at least " +
-//      "1 500 hours before the clinical onset of sinusitis",
-//    Nil.toSet)
-//
-//  val o = new ParsedFactor("6(o)",
-//    "having acromegaly involving the lumbar spine before the clinical onset of sinusitis",
-//    Nil.toSet)
-//
-//  val p = new ParsedFactor("6(p)",
-//    "having Paget's disease of bone involving the lumbar spine before the clinical onset of sinusitis",
-//    Nil.toSet)
+  // Aggravation factors
+  test("Parse RH sinusitis aggravation factors") {
+    val m = new ParsedFactor("6(m)",
+      "having a viral respiratory tract infection at the time of the clinical worsening of sinusitis",
+      Set(respiratoryDef))
 
-//    val q = new ParsedFactor("6(q)",
-//      "having inflammatory joint disease in the lumbar spine before the clinical " +
-//        "worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val r = new ParsedFactor("6(r)",
-//      "having an infection of the affected joint as specified at least one " +
-//        "year before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val s = new ParsedFactor("6(s)",
-//      "having an intra-articular fracture of the lumbar spine at least one " +
-//        "year before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val t = new ParsedFactor("6(t)",
-//      "having a specified spinal condition affecting the lumbar spine for at " +
-//        "least the one year before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val u = new ParsedFactor("6(u)",
-//      "having leg length inequality for at least the two years before the " +
-//        "clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val v = new ParsedFactor("6(v)",
-//      "having a depositional joint disease in the lumbar spine before the " +
-//        "clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val w = new ParsedFactor("6(w)",
-//      "having trauma to the lumbar spine at least one year before the clinical " +
-//        "worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val x = new ParsedFactor("6(x)",
-//      "having a lumbar intervertebral disc prolapse before the clinical worsening " +
-//        "of sinusitis at the level of the intervertebral disc prolapse",
-//      Nil.toSet)
-//
-//    val y = new ParsedFactor("6(y)",
-//      "lifting loads of at least 25 kilograms while bearing weight through the " +
-//        "lumbar spine to a cumulative total of at least 120 000 kilograms within " +
-//        "any ten year period before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val z = new ParsedFactor("6(z)",
-//      "carrying loads of at least 25 kilograms while bearing weight through the " +
-//        "lumbar spine to a cumulative total of at least 3 800 hours within any ten " +
-//        "year period before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val aa = new ParsedFactor("6(aa)",
-//      "being obese for at least ten years before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val bb = new ParsedFactor("6(bb)",
-//      "flying in a powered aircraft as operational aircrew, for a cumulative total of at " +
-//        "least 1 000 hours within the 25 years before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val cc = new ParsedFactor("6(cc)",
-//      "extreme forward flexion of the lumbar spine for a cumulative total of at least " +
-//        "1 500 hours before the clinical worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val dd = new ParsedFactor("6(dd)",
-//      "having acromegaly involving the lumbar spine before the clinical worsening of " +
-//        "sinusitis",
-//      Nil.toSet)
-//
-//    val ee = new ParsedFactor("6(ee)",
-//      "having Paget's disease of bone involving the lumbar spine before the clinical " +
-//        "worsening of sinusitis",
-//      Nil.toSet)
-//
-//    val ff = new ParsedFactor("6(ff)",
-//      "inability to obtain appropriate clinical management for sinusitis",
-//      Nil.toSet)
-//
-//  assert(rhFixture.result.getOnsetFactors.contains(m))
-//  assert(rhFixture.result.getOnsetFactors.contains(n))
-//  assert(rhFixture.result.getOnsetFactors.contains(o))
-//  assert(rhFixture.result.getOnsetFactors.contains(p))
-//    assert(rhFixture.result.getAggravationFactors.contains(q))
-//    assert(rhFixture.result.getAggravationFactors.contains(r))
-//    assert(rhFixture.result.getAggravationFactors.contains(s))
-//    assert(rhFixture.result.getAggravationFactors.contains(t))
-//    assert(rhFixture.result.getAggravationFactors.contains(u))
-//    assert(rhFixture.result.getAggravationFactors.contains(v))
-//    assert(rhFixture.result.getAggravationFactors.contains(w))
-//    assert(rhFixture.result.getAggravationFactors.contains(x))
-//    assert(rhFixture.result.getAggravationFactors.contains(y))
-//    assert(rhFixture.result.getAggravationFactors.contains(z))
-//    assert(rhFixture.result.getAggravationFactors.contains(aa))
-//    assert(rhFixture.result.getAggravationFactors.contains(bb))
-//    assert(rhFixture.result.getAggravationFactors.contains(cc))
-//    assert(rhFixture.result.getAggravationFactors.contains(dd))
-//    assert(rhFixture.result.getAggravationFactors.contains(ee))
-//    assert(rhFixture.result.getAggravationFactors.contains(ff))
-//  }
-//
+    val n = new ParsedFactor("6(n)",
+      "having impaired drainage of the sinus at the time of the clinical worsening of sinusitis",
+      Set(drainageDef))
+
+    val o = new ParsedFactor("6(o)",
+      "being infected with human immunodeficiency virus at the time of the " +
+        "clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val p = new ParsedFactor("6(p)",
+      "being in an immunocompromised state at the time of the clinical worsening of sinusitis",
+      Set(immunocompromisedDef))
+
+    val q = new ParsedFactor("6(q)",
+      "having diabetes mellitus at the time of the clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val r = new ParsedFactor("6(r)",
+      "inhaling a specified substance which results in:\r\n(i) acute nasal symptoms or signs " +
+        "within 48 hours of the inhalation; and\r\n(ii) scarring or erosion of the nasal or " +
+        "sinus mucosa,\r\nbefore the clinical worsening of sinusitis",
+      Set(nasalDef, substanceDef))
+
+    val s = new ParsedFactor("6(s)",
+      "for sinusitis affecting the maxillary sinus only, having a specified dental condition " +
+        "affecting the tissues adjacent to the affected maxillary sinus at the time " +
+        "of the clinical worsening of sinusitis",
+      Set(dentalDef))
+
+    val t = new ParsedFactor("6(t)",
+      "having allergic rhinitis at the time of the clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val u = new ParsedFactor("6(u)",
+      "having sinus barotrauma at the time of the clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val v = new ParsedFactor("6(v)",
+      "undergoing a course of therapeutic radiation to the head within the " +
+        "six weeks before the clinical worsening of sinusitis",
+      Set(radiationDef))
+
+    val w = new ParsedFactor("6(w)",
+      "smoking on average at least ten cigarettes per day, or the equivalent thereof in " +
+        "other tobacco products and having smoked at least one pack year of cigarettes, " +
+        "or the equivalent thereof in other tobacco products, at the time of the " +
+        "clinical worsening of sinusitis",
+      Set(cigsPerDayDef, cigsPackYearDef))
+
+    val x = new ParsedFactor("6(x)",
+      "having gastroesophageal reflux disease at the time of the clinical worsening of sinusitis",
+      Nil.toSet)
+
+    val y = new ParsedFactor("6(y)",
+      "inability to obtain appropriate clinical management for sinusitis",
+      Nil.toSet)
+
+    val aggravationFactors = rhFixture.result.getAggravationFactors
+    assert(aggravationFactors.contains(m))
+    assert(aggravationFactors.contains(n))
+    assert(aggravationFactors.contains(o))
+    assert(aggravationFactors.contains(p))
+    assert(aggravationFactors.contains(q))
+    assert(aggravationFactors.contains(r))
+    assert(aggravationFactors.contains(s))
+    assert(aggravationFactors.contains(t))
+    assert(aggravationFactors.contains(u))
+    assert(aggravationFactors.contains(v))
+    assert(aggravationFactors.contains(w))
+    assert(aggravationFactors.contains(x))
+    assert(aggravationFactors.contains(y))
+  }
+
 //  test("Parse entire BoP LS SoP")
 //  {
 //    System.out.println(TestUtils.prettyPrint(StoredSop.toJson(bopFixture.result)))
