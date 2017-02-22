@@ -33,8 +33,9 @@ class CartilageTearTests extends FunSuite {
   }
 
   test("Parse RH acute articular cartilage tear instrument number") {
-    assert(rhFixture.result.getInstrumentNumber.getNumber === 53)
-    assert(rhFixture.result.getInstrumentNumber.getYear === 2010)
+    val instrumentNumber = rhFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 53)
+    assert(instrumentNumber.getYear === 2010)
   }
 
   test("Parse RH acute articular cartilage tear citation") {
@@ -66,7 +67,9 @@ class CartilageTearTests extends FunSuite {
         "at the time of the clinical onset of acute articular cartilage tear",
       Nil.toSet)
 
-    assert(rhFixture.result.getOnsetFactors.contains(a))
+    val onsetFactors = rhFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 1)
+    assert(onsetFactors.contains(a))
   }
 
   // Aggravation factors
@@ -75,7 +78,9 @@ class CartilageTearTests extends FunSuite {
       "inability to obtain appropriate clinical management for acute articular cartilage tear",
       Nil.toSet)
 
-    assert(rhFixture.result.getAggravationFactors.contains(b))
+    val aggravationFactors = rhFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 1)
+    assert(aggravationFactors.contains(b))
   }
 
   test("Parse entire BoP acute articular cartilage tear SoP") {
@@ -89,8 +94,9 @@ class CartilageTearTests extends FunSuite {
   }
 
   test("Parse BoP acute articular cartilage tear instrument number") {
-    assert(bopFixture.result.getInstrumentNumber.getNumber === 54)
-    assert(bopFixture.result.getInstrumentNumber.getYear === 2010)
+    val instrumentNumber = bopFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 54)
+    assert(instrumentNumber.getYear === 2010)
   }
 
   test("Parse BoP acute articular cartilage tear citation") {
@@ -122,7 +128,9 @@ class CartilageTearTests extends FunSuite {
         "time of the clinical onset of acute articular cartilage tear",
       Nil.toSet)
 
-    assert(bopFixture.result.getOnsetFactors.contains(a))
+    val onsetFactors = bopFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 1)
+    assert(onsetFactors.contains(a))
   }
 
   // Aggravation factors
@@ -131,7 +139,9 @@ class CartilageTearTests extends FunSuite {
       "inability to obtain appropriate clinical management for acute articular cartilage tear",
       Nil.toSet)
 
-    assert(bopFixture.result.getAggravationFactors.contains(b))
+    val aggravationFactors = bopFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 1)
+    assert(aggravationFactors.contains(b))
   }
 
 }

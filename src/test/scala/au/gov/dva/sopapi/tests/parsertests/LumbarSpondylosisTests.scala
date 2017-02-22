@@ -33,8 +33,9 @@ class LumbarSpondylosisTests extends FunSuite {
   }
 
   test("Parse RH lumbar spondylosis instrument number") {
-    assert(rhFixture.result.getInstrumentNumber.getNumber === 62)
-    assert(rhFixture.result.getInstrumentNumber.getYear === 2014)
+    val instrumentNumber = rhFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 62)
+    assert(instrumentNumber.getYear === 2014)
   }
 
   test("Parse RH lumbar spondylosis citation") {
@@ -56,15 +57,17 @@ class LumbarSpondylosisTests extends FunSuite {
 
   // ICD codes
   test("Parse RH lumbar spondylosis ICD codes") {
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.27")))
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.86")))
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.87")))
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.96")))
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.97")))
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M51.3")))
+    val icdCodes = rhFixture.result.getICDCodes
+    assert(icdCodes.size() === 9)
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.27")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.86")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.87")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.96")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.97")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M51.3")))
   }
 
   // Onset factors
@@ -147,22 +150,24 @@ class LumbarSpondylosisTests extends FunSuite {
       "having Paget's disease of bone involving the lumbar spine before the clinical onset of lumbar spondylosis",
       Nil.toSet)
 
-    assert(rhFixture.result.getOnsetFactors.contains(a))
-    assert(rhFixture.result.getOnsetFactors.contains(b))
-    assert(rhFixture.result.getOnsetFactors.contains(c))
-    assert(rhFixture.result.getOnsetFactors.contains(d))
-    assert(rhFixture.result.getOnsetFactors.contains(e))
-    assert(rhFixture.result.getOnsetFactors.contains(f))
-    assert(rhFixture.result.getOnsetFactors.contains(g))
-    assert(rhFixture.result.getOnsetFactors.contains(h))
-    assert(rhFixture.result.getOnsetFactors.contains(i))
-    assert(rhFixture.result.getOnsetFactors.contains(j))
-    assert(rhFixture.result.getOnsetFactors.contains(k))
-    assert(rhFixture.result.getOnsetFactors.contains(l))
-    assert(rhFixture.result.getOnsetFactors.contains(m))
-    assert(rhFixture.result.getOnsetFactors.contains(n))
-    assert(rhFixture.result.getOnsetFactors.contains(o))
-    assert(rhFixture.result.getOnsetFactors.contains(p))
+    val onsetFactors = rhFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 16)
+    assert(onsetFactors.contains(a))
+    assert(onsetFactors.contains(b))
+    assert(onsetFactors.contains(c))
+    assert(onsetFactors.contains(d))
+    assert(onsetFactors.contains(e))
+    assert(onsetFactors.contains(f))
+    assert(onsetFactors.contains(g))
+    assert(onsetFactors.contains(h))
+    assert(onsetFactors.contains(i))
+    assert(onsetFactors.contains(j))
+    assert(onsetFactors.contains(k))
+    assert(onsetFactors.contains(l))
+    assert(onsetFactors.contains(m))
+    assert(onsetFactors.contains(n))
+    assert(onsetFactors.contains(o))
+    assert(onsetFactors.contains(p))
   }
 
   // Aggravation factors
@@ -247,22 +252,24 @@ class LumbarSpondylosisTests extends FunSuite {
       "inability to obtain appropriate clinical management for lumbar spondylosis",
       Nil.toSet)
 
-    assert(rhFixture.result.getAggravationFactors.contains(q))
-    assert(rhFixture.result.getAggravationFactors.contains(r))
-    assert(rhFixture.result.getAggravationFactors.contains(s))
-    assert(rhFixture.result.getAggravationFactors.contains(t))
-    assert(rhFixture.result.getAggravationFactors.contains(u))
-    assert(rhFixture.result.getAggravationFactors.contains(v))
-    assert(rhFixture.result.getAggravationFactors.contains(w))
-    assert(rhFixture.result.getAggravationFactors.contains(x))
-    assert(rhFixture.result.getAggravationFactors.contains(y))
-    assert(rhFixture.result.getAggravationFactors.contains(z))
-    assert(rhFixture.result.getAggravationFactors.contains(aa))
-    assert(rhFixture.result.getAggravationFactors.contains(bb))
-    assert(rhFixture.result.getAggravationFactors.contains(cc))
-    assert(rhFixture.result.getAggravationFactors.contains(dd))
-    assert(rhFixture.result.getAggravationFactors.contains(ee))
-    assert(rhFixture.result.getAggravationFactors.contains(ff))
+    val aggravationFactors = rhFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 16)
+    assert(aggravationFactors.contains(q))
+    assert(aggravationFactors.contains(r))
+    assert(aggravationFactors.contains(s))
+    assert(aggravationFactors.contains(t))
+    assert(aggravationFactors.contains(u))
+    assert(aggravationFactors.contains(v))
+    assert(aggravationFactors.contains(w))
+    assert(aggravationFactors.contains(x))
+    assert(aggravationFactors.contains(y))
+    assert(aggravationFactors.contains(z))
+    assert(aggravationFactors.contains(aa))
+    assert(aggravationFactors.contains(bb))
+    assert(aggravationFactors.contains(cc))
+    assert(aggravationFactors.contains(dd))
+    assert(aggravationFactors.contains(ee))
+    assert(aggravationFactors.contains(ff))
   }
 
   test("Parse entire BoP LS SoP")
@@ -276,8 +283,9 @@ class LumbarSpondylosisTests extends FunSuite {
   }
 
   test("Parse BoP lumbar spondylosis instrument number") {
-    assert(bopFixture.result.getInstrumentNumber.getNumber === 63)
-    assert(bopFixture.result.getInstrumentNumber.getYear === 2014)
+    val instrumentNumber = bopFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 63)
+    assert(instrumentNumber.getYear === 2014)
   }
 
   test("Parse BoP lumbar spondylosis citation") {
@@ -299,15 +307,17 @@ class LumbarSpondylosisTests extends FunSuite {
 
   // ICD codes
   test("Parse BoP lumbar spondylosis ICD codes") {
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.27")))
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.86")))
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.87")))
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.96")))
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M47.97")))
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "M51.3")))
+    val icdCodes = bopFixture.result.getICDCodes
+    assert(icdCodes.size() === 9)
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.16")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.17")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.26")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.27")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.86")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.87")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.96")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M47.97")))
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "M51.3")))
   }
 
   // Onset factors
@@ -391,21 +401,23 @@ class LumbarSpondylosisTests extends FunSuite {
         "lumbar spondylosis",
       Nil.toSet)
 
-    assert(bopFixture.result.getOnsetFactors.contains(a))
-    assert(bopFixture.result.getOnsetFactors.contains(b))
-    assert(bopFixture.result.getOnsetFactors.contains(c))
-    assert(bopFixture.result.getOnsetFactors.contains(d))
-    assert(bopFixture.result.getOnsetFactors.contains(e))
-    assert(bopFixture.result.getOnsetFactors.contains(f))
-    assert(bopFixture.result.getOnsetFactors.contains(g))
-    assert(bopFixture.result.getOnsetFactors.contains(h))
-    assert(bopFixture.result.getOnsetFactors.contains(i))
-    assert(bopFixture.result.getOnsetFactors.contains(j))
-    assert(bopFixture.result.getOnsetFactors.contains(k))
-    assert(bopFixture.result.getOnsetFactors.contains(l))
-    assert(bopFixture.result.getOnsetFactors.contains(m))
-    assert(bopFixture.result.getOnsetFactors.contains(n))
-    assert(bopFixture.result.getOnsetFactors.contains(o))
+    val onsetFactors = bopFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 15)
+    assert(onsetFactors.contains(a))
+    assert(onsetFactors.contains(b))
+    assert(onsetFactors.contains(c))
+    assert(onsetFactors.contains(d))
+    assert(onsetFactors.contains(e))
+    assert(onsetFactors.contains(f))
+    assert(onsetFactors.contains(g))
+    assert(onsetFactors.contains(h))
+    assert(onsetFactors.contains(i))
+    assert(onsetFactors.contains(j))
+    assert(onsetFactors.contains(k))
+    assert(onsetFactors.contains(l))
+    assert(onsetFactors.contains(m))
+    assert(onsetFactors.contains(n))
+    assert(onsetFactors.contains(o))
   }
 
   // Aggravation factors
@@ -494,21 +506,24 @@ class LumbarSpondylosisTests extends FunSuite {
       "inability to obtain appropriate clinical management for lumbar spondylosis",
       Nil.toSet)
 
-    assert(bopFixture.result.getAggravationFactors.contains(q))
-    assert(bopFixture.result.getAggravationFactors.contains(r))
-    assert(bopFixture.result.getAggravationFactors.contains(s))
-    assert(bopFixture.result.getAggravationFactors.contains(t))
-    assert(bopFixture.result.getAggravationFactors.contains(u))
-    assert(bopFixture.result.getAggravationFactors.contains(v))
-    assert(bopFixture.result.getAggravationFactors.contains(w))
-    assert(bopFixture.result.getAggravationFactors.contains(x))
-    assert(bopFixture.result.getAggravationFactors.contains(y))
-    assert(bopFixture.result.getAggravationFactors.contains(z))
-    assert(bopFixture.result.getAggravationFactors.contains(aa))
-    assert(bopFixture.result.getAggravationFactors.contains(bb))
-    assert(bopFixture.result.getAggravationFactors.contains(cc))
-    assert(bopFixture.result.getAggravationFactors.contains(dd))
-    assert(bopFixture.result.getAggravationFactors.contains(ee))
+    val aggravationFactors = bopFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 16)
+    assert(aggravationFactors.contains(p))
+    assert(aggravationFactors.contains(q))
+    assert(aggravationFactors.contains(r))
+    assert(aggravationFactors.contains(s))
+    assert(aggravationFactors.contains(t))
+    assert(aggravationFactors.contains(u))
+    assert(aggravationFactors.contains(v))
+    assert(aggravationFactors.contains(w))
+    assert(aggravationFactors.contains(x))
+    assert(aggravationFactors.contains(y))
+    assert(aggravationFactors.contains(z))
+    assert(aggravationFactors.contains(aa))
+    assert(aggravationFactors.contains(bb))
+    assert(aggravationFactors.contains(cc))
+    assert(aggravationFactors.contains(dd))
+    assert(aggravationFactors.contains(ee))
   }
 
 }

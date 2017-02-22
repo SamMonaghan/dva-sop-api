@@ -33,8 +33,9 @@ class MunitionsDischargeTests extends FunSuite {
   }
 
   test("Parse RH physical injury due to munitions discharge instrument number") {
-    assert(rhFixture.result.getInstrumentNumber.getNumber === 48)
-    assert(rhFixture.result.getInstrumentNumber.getYear === 2012)
+    val instrumentNumber = rhFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 48)
+    assert(instrumentNumber.getYear === 2012)
   }
 
   test("Parse RH physical injury due to munitions discharge citation") {
@@ -65,7 +66,9 @@ class MunitionsDischargeTests extends FunSuite {
       "sustaining physical injury due to munitions discharge",
       Nil.toSet)
 
-    assert(rhFixture.result.getOnsetFactors.contains(a))
+    val onsetFactors = rhFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 1)
+    assert(onsetFactors.contains(a))
   }
 
   // Aggravation factors
@@ -75,7 +78,9 @@ class MunitionsDischargeTests extends FunSuite {
         "due to munitions discharge",
       Nil.toSet)
 
-    assert(rhFixture.result.getOnsetFactors.contains(b))
+    val aggravationFactors = rhFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 1)
+    assert(aggravationFactors.contains(b))
   }
 
   test("Parse entire BoP physical injury due to munitions discharge SoP") {
@@ -88,8 +93,9 @@ class MunitionsDischargeTests extends FunSuite {
   }
 
   test("Parse BoP physical injury due to munitions discharge instrument number") {
-    assert(bopFixture.result.getInstrumentNumber.getNumber === 49)
-    assert(bopFixture.result.getInstrumentNumber.getYear === 2012)
+    val instrumentNumber = bopFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 49)
+    assert(instrumentNumber.getYear === 2012)
   }
 
   test("Parse BoP physical injury due to munitions discharge citation") {
@@ -120,7 +126,9 @@ class MunitionsDischargeTests extends FunSuite {
       "sustaining physical injury due to munitions discharge",
       Nil.toSet)
 
-    assert(bopFixture.result.getOnsetFactors.contains(a))
+    val onsetFactors = bopFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 1)
+    assert(onsetFactors.contains(a))
   }
 
   // Aggravation factors
@@ -130,7 +138,9 @@ class MunitionsDischargeTests extends FunSuite {
         "to munitions discharge",
       Nil.toSet)
 
-    assert(bopFixture.result.getAggravationFactors.contains(b))
+    val aggravationFactors = bopFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 1)
+    assert(aggravationFactors.contains(b))
   }
 
 }

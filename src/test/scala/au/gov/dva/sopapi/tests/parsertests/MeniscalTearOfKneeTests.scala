@@ -33,8 +33,9 @@ class MeniscalTearOfKneeTests extends FunSuite {
   }
 
   test("Parse RH acute meniscal tear of the knee instrument number") {
-    assert(rhFixture.result.getInstrumentNumber.getNumber === 55)
-    assert(rhFixture.result.getInstrumentNumber.getYear === 2010)
+    val instrumentNumber = rhFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 55)
+    assert(instrumentNumber.getYear === 2010)
   }
 
   test("Parse RH acute meniscal tear of the knee citation") {
@@ -56,7 +57,9 @@ class MeniscalTearOfKneeTests extends FunSuite {
 
   // ICD codes
   test("Parse RH acute meniscal tear of the knee ICD codes") {
-    assert(rhFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "S83.2")))
+    val icdCodes = rhFixture.result.getICDCodes
+    assert(icdCodes.size() === 1)
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "S83.2")))
   }
 
   // Onset factors
@@ -66,7 +69,9 @@ class MeniscalTearOfKneeTests extends FunSuite {
         "the time of the clinical onset of acute meniscal tear of the knee",
       Nil.toSet)
 
-    assert(rhFixture.result.getOnsetFactors.contains(a))
+    val onsetFactors = rhFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 1)
+    assert(onsetFactors.contains(a))
   }
 
   // Aggravation factors
@@ -75,7 +80,9 @@ class MeniscalTearOfKneeTests extends FunSuite {
       "inability to obtain appropriate clinical management for acute meniscal tear of the knee",
        Nil.toSet)
 
-    assert(rhFixture.result.getOnsetFactors.contains(b))
+    val aggravationFactors = rhFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 1)
+    assert(aggravationFactors.contains(b))
   }
 
   test("Parse entire BoP acute meniscal tear of the knee SoP") {
@@ -88,8 +95,9 @@ class MeniscalTearOfKneeTests extends FunSuite {
   }
 
   test("Parse BoP acute meniscal tear of the knee instrument number") {
-    assert(bopFixture.result.getInstrumentNumber.getNumber === 56)
-    assert(bopFixture.result.getInstrumentNumber.getYear === 2010)
+    val instrumentNumber = bopFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 56)
+    assert(instrumentNumber.getYear === 2010)
   }
 
   test("Parse BoP acute meniscal tear of the knee citation") {
@@ -111,7 +119,9 @@ class MeniscalTearOfKneeTests extends FunSuite {
 
   // ICD codes
   test("Parse BoP acute meniscal tear of the knee ICD codes") {
-    assert(bopFixture.result.getICDCodes.contains(new BasicICDCode("ICD-10-AM", "S83.2")))
+    val icdCodes = bopFixture.result.getICDCodes
+    assert(icdCodes.size() === 1)
+    assert(icdCodes.contains(new BasicICDCode("ICD-10-AM", "S83.2")))
   }
 
   // Onset factors
@@ -121,7 +131,9 @@ class MeniscalTearOfKneeTests extends FunSuite {
         "knee joint at the time of the clinical onset of acute meniscal tear of the knee",
        Nil.toSet)
 
-    assert(bopFixture.result.getOnsetFactors.contains(a))
+    val onsetFactors = bopFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 1)
+    assert(onsetFactors.contains(a))
   }
 
   // Aggravation factors
@@ -130,7 +142,9 @@ class MeniscalTearOfKneeTests extends FunSuite {
       "inability to obtain appropriate clinical management for acute meniscal tear of the knee",
        Nil.toSet)
 
-    assert(bopFixture.result.getAggravationFactors.contains(b))
+    val aggravationFactors = bopFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 1)
+    assert(aggravationFactors.contains(b))
   }
 
 }

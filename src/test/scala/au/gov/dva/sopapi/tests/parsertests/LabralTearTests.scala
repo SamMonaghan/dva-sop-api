@@ -33,8 +33,9 @@ class LabralTearTests extends FunSuite {
   }
 
   test("Parse RH labral tear instrument number") {
-    assert(rhFixture.result.getInstrumentNumber.getNumber === 94)
-    assert(rhFixture.result.getInstrumentNumber.getYear === 2010)
+    val instrumentNumber = rhFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 94)
+    assert(instrumentNumber.getYear === 2010)
   }
 
   test("Parse RH labral tear citation") {
@@ -73,8 +74,10 @@ class LabralTearTests extends FunSuite {
         "clinical onset of labral tear",
       Nil.toSet)
 
-    assert(rhFixture.result.getOnsetFactors.contains(a))
-    assert(rhFixture.result.getOnsetFactors.contains(b))
+    val onsetFactors = rhFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 2)
+    assert(onsetFactors.contains(a))
+    assert(onsetFactors.contains(b))
   }
 
   // Aggravation factors
@@ -83,7 +86,9 @@ class LabralTearTests extends FunSuite {
       "inability to obtain appropriate clinical management for labral tear",
       Nil.toSet)
 
-    assert(rhFixture.result.getAggravationFactors.contains(c))
+    val aggravationFactors = rhFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 1)
+    assert(aggravationFactors.contains(c))
   }
 
   test("Parse entire BoP labral tear SoP") {
@@ -96,8 +101,9 @@ class LabralTearTests extends FunSuite {
   }
 
   test("Parse BoP labral tear instrument number") {
-    assert(bopFixture.result.getInstrumentNumber.getNumber === 95)
-    assert(bopFixture.result.getInstrumentNumber.getYear === 2010)
+    val instrumentNumber = bopFixture.result.getInstrumentNumber
+    assert(instrumentNumber.getNumber === 95)
+    assert(instrumentNumber.getYear === 2010)
   }
 
   test("Parse BoP labral tear citation") {
@@ -136,8 +142,10 @@ class LabralTearTests extends FunSuite {
         "clinical onset of labral tear",
       Nil.toSet)
 
-    assert(bopFixture.result.getOnsetFactors.contains(a))
-    assert(bopFixture.result.getOnsetFactors.contains(b))
+    val onsetFactors = bopFixture.result.getOnsetFactors
+    assert(onsetFactors.size() === 2)
+    assert(onsetFactors.contains(a))
+    assert(onsetFactors.contains(b))
   }
 
   // Aggravation factors
@@ -146,7 +154,9 @@ class LabralTearTests extends FunSuite {
       "inability to obtain appropriate clinical management for labral tear",
       Nil.toSet)
 
-    assert(bopFixture.result.getAggravationFactors.contains(c))
+    val aggravationFactors = bopFixture.result.getAggravationFactors
+    assert(aggravationFactors.size() === 1)
+    assert(aggravationFactors.contains(c))
   }
 
 }
