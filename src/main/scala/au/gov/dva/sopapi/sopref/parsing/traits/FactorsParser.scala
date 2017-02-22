@@ -23,7 +23,7 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     case letter ~ body => (letter, body)
   }
 
-  def subParaList: Parser[List[(String, String)]] = rep1sep(subPara, orTerminator | andTerminator)
+  def subParaList: Parser[List[(String, String)]] = rep1sep(subPara, orTerminator | andTerminator | semiColonTerminator)
 
   def tail: Parser[String] = not(orTerminator) ~> """; [a-z\s]+""".r
 
@@ -84,9 +84,9 @@ trait BodyTextParsers extends RegexParsers {
 }
 
 trait TerminatorParsers extends RegexParsers {
-
   def orTerminator : Parser[String] = """; or""".r
   def andTerminator : Parser[String] = """; and""".r
+  def semiColonTerminator : Parser[String] = """;""".r
   def periodTerminator: Parser[String] = """\.$""".r
 }
 
