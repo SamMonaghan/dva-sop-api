@@ -2,6 +2,7 @@ package au.gov.dva.sopapi.sopref.parsing.traits
 
 import au.gov.dva.sopapi.dtos.StandardOfProof
 import au.gov.dva.sopapi.exceptions.SopParserError
+import au.gov.dva.sopapi.sopref.parsing.SoPExtractorUtilities
 import au.gov.dva.sopapi.sopref.parsing.implementations.model.{FactorInfo, FactorInfoWithSubParas, FactorInfoWithoutSubParas}
 
 import scala.util.parsing.combinator.RegexParsers
@@ -55,6 +56,11 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
       (standard,factorList)
     }
   }
+
+  // todo:
+  // split factors sections
+  // invoke parser per section
+
 
   def parseFactorsSection(factorsSectionText : String) : (StandardOfProof,List[FactorInfo]) = {
     val result = this.parseAll(factorsSection,factorsSectionText)

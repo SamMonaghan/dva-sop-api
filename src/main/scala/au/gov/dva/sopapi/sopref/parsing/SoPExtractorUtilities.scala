@@ -12,7 +12,7 @@ object SoPExtractorUtilities {
 
   def getSections(cleansedSoPText: String, sectionHeaderLineRegex: Regex): List[List[String]] = {
     val acc = List[List[String]]();
-    val lines = cleansedSoPText.split("[\r\n]+").toList // todo: change to platfrom indep line sep
+    val lines = cleansedSoPText.split("[\r\n]+").toList // todo: change to platform indep line sep
     divideRecursive(List.empty, sectionHeaderLineRegex, acc, lines)
   }
 
@@ -85,47 +85,10 @@ object SoPExtractorUtilities {
       val factorLines = remainingLines.takeWhile(l => !l.startsWith(nextLetter)) // todo: what if a letter is missing, eg repealed?
       divideFactorSectionRecursive(lettersSequence, nextLetterIndex + 1, factorLines :: acc, remainingLines.drop(factorLines.size))
     }
-
   }
 
   // edge case is where h para has sub para beginning with i
   // can tell this because first line of h para ends in ,
-
-
-
-  def capitaliseMainFactorParaLetters(linesOfFactorSection: List[String]) = {
-
-    linesOfFactorSection.indices
-      .map(index => {
-        val currentLine = linesOfFactorSection(index)
-        if (!currentLine.startsWith("(")) currentLine
-        else if (currentLine.endsWith(",")) capitaliseParaLetter(currentLine)
-        else if (isParaExceptSmallRomans(currentLine)) capitaliseParaLetter(currentLine)
-        else currentLine
-      })
-  }
-
-
-  private def isParaExceptSmallRomans(line: String) = {
-    val letterRegexExcludingSmallRomans = """^\(([^xiv]+)\)""".r
-    !letterRegexExcludingSmallRomans.findAllMatchIn(line).isEmpty
-  }
-
-  private def getLettersForLine(line: String): String = {
-    val regex = """^\(([a-z]+)\)""".r
-    val m = regex.findFirstMatchIn(line)
-    if (m.isEmpty)
-      throw new SopParserError("Cannot identify the paragraph letters for for this line when extracting factor text: " + line)
-    m.get.group(1)
-  }
-
-  private def capitaliseParaLetter(line: String): String = {
-
-    val lineLetters = getLettersForLine(line);
-    val upperLetters = lineLetters.toUpperCase()
-    line.replaceFirst(lineLetters, upperLetters)
-  }
-
 
 }
 

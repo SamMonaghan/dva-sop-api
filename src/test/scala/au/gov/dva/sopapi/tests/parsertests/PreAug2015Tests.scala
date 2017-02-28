@@ -66,20 +66,6 @@ class PreAug2015Tests extends FunSuite{
 
 
 
-  test("Main para capitaliser")
-  {
-    val input = ParserTestUtils.produceCleansedText("F2013L01129","sops_rh/F2013L01129.pdf")
-    val factorsSection: (Int, List[String]) = SoPExtractorUtilities.getSection(input, """^Factors$""".r)
-
-
-    val factorsSectionLines = factorsSection._2
-    val result = SoPExtractorUtilities.capitaliseMainFactorParaLetters(factorsSectionLines)
-    println(result.mkString(" "))
-  }
-
-
-
-
 
 
 
