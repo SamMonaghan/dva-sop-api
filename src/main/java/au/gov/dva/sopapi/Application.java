@@ -119,7 +119,6 @@ public class Application implements spark.servlet.SparkApplication {
 
 
     private void startScheduledLoadingOfSops(LocalTime runTime) {
-        // idea: provide antecedent sop register ID also
         startDailyExecutor(runTime,() -> {
             AutoUpdate.patchSoPChanges(_repository);
             _cache.refresh(_repository);

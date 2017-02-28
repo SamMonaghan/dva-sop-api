@@ -1,6 +1,5 @@
 package au.gov.dva.dvasopapi.tests;
 
-import au.gov.dva.dvasopapi.tests.categories.IntegrationTest;
 import au.gov.dva.sopapi.DateTimeUtils;
 import au.gov.dva.sopapi.interfaces.InstrumentChangeFactory;
 import au.gov.dva.sopapi.interfaces.LegislationRegisterEmailClient;
@@ -9,10 +8,8 @@ import au.gov.dva.sopapi.interfaces.model.InstrumentChangeBase;
 import au.gov.dva.sopapi.interfaces.model.LegislationRegisterEmailUpdate;
 import au.gov.dva.sopapi.sopref.data.FederalRegisterOfLegislationClient;
 import au.gov.dva.sopapi.sopref.data.JsonUtils;
-import au.gov.dva.sopapi.sopref.data.updates.LegRegChangeDetector;
 import au.gov.dva.sopapi.sopref.data.updates.changefactories.EmailSubscriptionInstrumentChangeFactory;
 import au.gov.dva.sopapi.sopref.data.updates.types.NewInstrument;
-import au.gov.dva.sopapi.sopref.data.updates.types.Replacement;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +21,6 @@ import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -45,7 +41,7 @@ public class AutoUpdateTests {
 
     @Test
     public void serializeNewInstrument() throws JsonProcessingException {
-        InstrumentChange test = new NewInstrument("F2014L83848", DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2015,1,1)));
+        InstrumentChange test = new NewInstrument("F2014L83848", DateTimeUtils.localDateToLastMidnightCanberraTime(LocalDate.of(2015,1,1)));
         JsonNode node = test.toJson();
         System.out.print(TestUtils.prettyPrint(node));
         Assert.assertTrue(node != null);
@@ -71,7 +67,7 @@ public class AutoUpdateTests {
         ImmutableList<String> rh = copyOf(rhList);
         ImmutableList<String> bop = copyOf(bopList);
         ImmutableList<String> both =  new ImmutableList.Builder<String>().addAll(rh).addAll(bop).build();
-        OffsetDateTime creationDate = DateTimeUtils.localDateToMidnightACTDate(LocalDate.of(2017,1,6));
+        OffsetDateTime creationDate = DateTimeUtils.localDateToLastMidnightCanberraTime(LocalDate.of(2017,1,6));
         Stream<JsonNode> instrumentChangeStream = both.stream()
                 .map(id -> new NewInstrument(id,creationDate))
                 .map(ni -> ni.toJson());
@@ -91,54 +87,6 @@ public class AutoUpdateTests {
         Assert.assertTrue(result.contentEquals("F2014C383817"));
     }
 
-    @Test
-    @Category(IntegrationTest.class)
-    public void testBulkRedirectTargetGet() {
-        ImmutableSet<String> testSourceIds = ImmutableSet.of(
-                "F2014L01390", // Statement of Principles concerning anxiety disorder No. 103 of 2014,  already amended with compilation
-                "F2014L01389", // Statement of Principles concerning anxiety disorder No. 102 of 2014,  already amended with compilation
-                "F2010L00557"  // Statement of Principles concerning osteoarthritis No. 13 of 2010, already amended with compilation
-        );
-
-        LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislationClient());
-        ImmutableSet<InstrumentChange> newCompilations = underTest.detectNewCompilations(testSourceIds);
-
-        for (InstrumentChange s : newCompilations)
-        {
-            System.out.println(s);
-        }
-
-        Assert.assertTrue(newCompilations.size() == 3);
-    }
-
-    @Test
-    @Category(IntegrationTest.class)
-    public void testGetRepealingRegisterId() {
-        ImmutableSet<String> testSourceIds = ImmutableSet.of(
-                "F2008L03179"
-        );
-        String expectedIdOfRepealingInstrument = "F2017L00016";
-
-        LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislationClient());
-        ImmutableSet<InstrumentChange> results  = underTest.detectReplacements(testSourceIds);
-        results.stream().forEach(r -> System.out.println(r));
-        Replacement result = (Replacement)results.asList().get(0);
-        Assert.assertTrue(result.getSourceInstrumentId().contentEquals(testSourceIds.asList().get(0)));
-        Assert.assertTrue(result.getTargetInstrumentId().contentEquals(expectedIdOfRepealingInstrument));
-    }
-
-    @Test
-    @Category(IntegrationTest.class)
-    // This test is obviously going to start failing if the instrument is actually repealed.
-    public void testGetRepealingIdWhenNoneExists()
-    {
-        ImmutableSet<String> testSourceIds = ImmutableSet.of(
-                "F2014L00930"
-        );
-        LegRegChangeDetector underTest = new LegRegChangeDetector(new FederalRegisterOfLegislationClient());
-        ImmutableSet<InstrumentChange> results = underTest.detectReplacements(testSourceIds);
-        Assert.assertTrue(results.isEmpty());
-    }
 
 
     private class TestEmailUpdate implements LegislationRegisterEmailUpdate

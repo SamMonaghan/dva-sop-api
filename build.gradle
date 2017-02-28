@@ -50,6 +50,11 @@ task copyWar(type: Copy, dependsOn: 'war') {
     rename { String fileName -> 'ROOT.war' }
 }
 
+task explodeWar(type: Copy, dependsOn: 'copyWar') {
+    from zipTree('deploy/webapps/ROOT.war')
+    into 'deploy/webapps/ROOT'
+}
+
 
 test {
     exclude 'au/gov/dva/dvasopapi/tests/localonly/**'
@@ -62,6 +67,7 @@ configurations.all {
 dependencies {
     zinc 'com.typesafe.zinc:zinc:0.3.9'
     compile project(':dtos')
+    compile project(':appSettings')
 
     compile group: 'com.sparkjava', name: 'spark-core', version: '2.5.2'
     compile group: 'org.scala-lang', name: 'scala-library', version: '2.12.1'
@@ -76,8 +82,12 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '20.0'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.10.1'
     compile group: 'org.asynchttpclient', name: 'async-http-client', version: '2.0.24'
+
+    // Logging
+    compile 'org.slf4j:slf4j-api:1.7.21'
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.7'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+
     compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.3'
     compile group: 'com.microsoft.azure', name: 'azure-storage', version: '4.4.0'
     compile group: 'com.microsoft.azure', name: 'azure-core', version: '0.9.7'
@@ -99,13 +109,12 @@ dependencies {
     testCompile 'info.solidsoft.mockito:mockito-java8:2.0.0'
 }
 
-
 project(':client') {
     dependencies {
         project(':dtos')
+        project(':appSettings')
     }
 }
-
 
 
 ScalaCompileOptions.metaClass.daemonServer = true

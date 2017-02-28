@@ -27,8 +27,6 @@ public class FederalRegisterOfLegislationClient implements RegisterClient {
     final static Logger logger = LoggerFactory.getLogger(FederalRegisterOfLegislationClient.class);
 
     private static AsyncHttpClient asyncHttpClient = asyncHttpClient();
-
-
     @Override
     public CompletableFuture<String> getRedirectTargetRegisterId(String registerId) {
         URL urlForWhichToGetRedirect = BuildUrl.toGetRedirect(registerId);
