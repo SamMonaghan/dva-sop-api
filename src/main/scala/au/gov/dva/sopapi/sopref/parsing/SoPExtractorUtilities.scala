@@ -68,10 +68,10 @@ object SoPExtractorUtilities {
     combined.map(i => "(" + i + ")")
   }
 
-  def splitFactorsSectionToHeaderAndRest(factorsSection: List[String]) : (String, List[String]) = {
-    val(headerLines,rest) = factorsSection.span(l => !l.startsWith("("))
+  def splitFactorsSectionToHeaderAndRest(factorsSection: List[String]): (String, List[String]) = {
+    val (headerLines, rest) = factorsSection.span(l => !l.startsWith("("))
     if (headerLines.isEmpty || rest.isEmpty) throw new SopParserError(s"Cannot split this factors section to head and then the rest: ${factorsSection.mkString(Properties.lineSeparator)}")
-    (headerLines.mkString(" "),rest)
+    (headerLines.mkString(" "), rest)
   }
 
   def splitFactorsSectionByFactor(factorsSectionExcludingHead: List[String]): List[List[String]] = {
@@ -79,15 +79,41 @@ object SoPExtractorUtilities {
     divideFactorSectionRecursive(lettersSequence, 1, List.empty, factorsSectionExcludingHead).reverse
   }
 
-  def divideFactorSectionRecursive(lettersSequence: List[String], nextLetterIndex: Int, acc: List[List[String]], remainingLines: List[String]): List[List[String]] = {
+  def divideFactorSectionRecursive(lettersSequence: List[String], nextLetterIndex: Int, acc: List[List[String]], remainingLines: List[String])
+  : List[List[String]] = {
     if (remainingLines.isEmpty)
       acc
     else {
-      val nextLetter = lettersSequence(nextLetterIndex)
-
-      val factorLines = remainingLines.takeWhile(l => !l.startsWith(nextLetter)) // todo: what if a letter is missing, eg repealed?
-      divideFactorSectionRecursive(lettersSequence, nextLetterIndex + 1, factorLines :: acc, remainingLines.drop(factorLines.size))
+      val (factorLines, rest) = partition(lettersSequence, nextLetterIndex, remainingLines)
+      divideFactorSectionRecursive(lettersSequence, nextLetterIndex + 1, factorLines :: acc, rest)
     }
+  }
+
+  private def partition(letterSequence: List[String], nextLetterIndex: Int, remainingLines: List[String]): (List[String], List[String]) = {
+
+    // edge case of (i) following (h)
+    if (letterSequence(nextLetterIndex - 1) == "(h)" && letterSequence(nextLetterIndex) == "(i)") {
+      if (remainingLines.head.endsWith(",")) {
+        val indexOfFirstLittleRomanI = remainingLines.indexWhere(line => lineStartsWithLetter("(i)", line))
+        val linesIncludingFirstLittleI = remainingLines.take(indexOfFirstLittleRomanI + 1)
+        val linesToNextLittleI = remainingLines.drop(linesIncludingFirstLittleI.size)
+          .takeWhile(line => !lineStartsWithLetter("(i)", line))
+        val allFactorLines = linesIncludingFirstLittleI ++ linesToNextLittleI
+        val rest = remainingLines.drop(allFactorLines.size)
+        return (allFactorLines,rest)
+      }
+
+    }
+
+    val nextLetter = letterSequence(nextLetterIndex)
+    remainingLines.span(l => !l.startsWith(nextLetter))
+
+    // todo: what if a letter is missing, eg repealed?
+  }
+
+  private def lineStartsWithLetter(letter: String, line: String) = {
+    val letterFollowedBySpace = letter + " ";
+    line.startsWith(letterFollowedBySpace)
   }
 
   // edge case is where h para has sub para beginning with i
