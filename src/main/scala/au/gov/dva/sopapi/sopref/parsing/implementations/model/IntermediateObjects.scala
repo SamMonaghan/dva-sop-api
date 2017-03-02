@@ -8,6 +8,15 @@ abstract class FactorInfo {
   def getText : String
 }
 
+class FactorInformation(paragraphLetter: String, factorText: String) extends FactorInfo
+{
+  override def getLetter: String = paragraphLetter.toLowerCase()
+
+  override def getText: String = factorText
+
+  override def toString: String = getLetter + " " + factorText
+}
+
 class FactorInfoWithoutSubParas(mainParaLetter : String, bodyText: String) extends FactorInfo
 {
   override def getLetter: String = mainParaLetter.toLowerCase()
