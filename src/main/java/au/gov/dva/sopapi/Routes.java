@@ -4,9 +4,11 @@ import au.gov.dva.sopapi.dtos.DvaSopApiDtoError;
 import au.gov.dva.sopapi.dtos.IncidentType;
 import au.gov.dva.sopapi.dtos.QueryParamLabels;
 import au.gov.dva.sopapi.dtos.StandardOfProof;
-import au.gov.dva.sopapi.dtos.sopref.OperationsResponseDto;
+import au.gov.dva.sopapi.dtos.sopref.OperationsResponse;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportRequestDto;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportResponseDto;
+import au.gov.dva.sopapi.exceptions.ProcessingRuleError;
+import au.gov.dva.sopapi.interfaces.CaseTrace;
 import au.gov.dva.sopapi.interfaces.model.Deployment;
 import au.gov.dva.sopapi.interfaces.model.ServiceDetermination;
 import au.gov.dva.sopapi.interfaces.model.SoP;
@@ -17,6 +19,7 @@ import au.gov.dva.sopapi.sopref.SoPs;
 import au.gov.dva.sopapi.sopref.data.servicedeterminations.ServiceDeterminationPair;
 import au.gov.dva.sopapi.sopref.data.sops.BasicICDCode;
 import au.gov.dva.sopapi.sopsupport.SopSupport;
+import au.gov.dva.sopapi.sopsupport.SopSupportCaseTrace;
 import au.gov.dva.sopapi.sopsupport.processingrules.ProcessingRuleFunctions;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -34,10 +37,12 @@ import spark.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 import static spark.Spark.get;
+import static spark.Spark.post;
 
 class Routes {
 
@@ -61,10 +66,10 @@ class Routes {
 
             ServiceDeterminationPair latestServiceDeterminationPair = Operations.getLatestDeterminationPair(cache.get_allServiceDeterminations());
 
-            OperationsResponseDto operationsResponseDto = DtoTransformations.buildOperationsResponseDto(latestServiceDeterminationPair);
+            OperationsResponse operationsResponse = DtoTransformations.buildOperationsResponseDto(latestServiceDeterminationPair);
 
             setResponseHeaders(res, true, 200);
-            String json = OperationsResponseDto.toJsonString(operationsResponseDto);
+            String json = OperationsResponse.toJsonString(operationsResponse);
             return json;
         });
 
@@ -78,7 +83,7 @@ class Routes {
             QueryParamsMap queryParamsMap = req.queryMap();
             String icdCodeValue = queryParamsMap.get("icdCodeValue").value();
             String icdCodeVersion = queryParamsMap.get("icdCodeVersion").value();
-            String standardOfProof = queryParamsMap.get("standardOfProof").value();
+            String standardOfProof = queryParamsMap.get("standardOfProof").value(); // todo: make optional
             String conditionName = queryParamsMap.get("conditionName").value();
             String incidentType = queryParamsMap.get("incidentType").value();
 
@@ -106,20 +111,24 @@ class Routes {
             }
         });
 
-        get(SharedConstants.Routes.GET_SERVICE_CONNECTION, ((req, res) -> {
+        post(SharedConstants.Routes.GET_SERVICE_CONNECTION, ((req, res) -> {
             if (validateHeaders() && !responseTypeAcceptable(req)) {
                 setResponseHeaders(res, false, 406);
                 return buildAcceptableContentTypesError();
             }
 
             try {
-                SopSupportRequestDto sopSupportRequestDto = SopSupportRequestDto.fromJsonString(req.body());
+                SopSupportRequestDto sopSupportRequestDto = SopSupportRequestDto.fromJsonString(cleanseJson(req.body()));
 
                 ImmutableSet<SoPPair> soPPairs = SoPs.groupSopsToPairs(cache.get_allSops());
                 ImmutableSet<ServiceDetermination> serviceDeterminations = cache.get_allServiceDeterminations();
                 ServiceDeterminationPair serviceDeterminationPair = Operations.getLatestDeterminationPair(serviceDeterminations);
                 Predicate<Deployment> isOperational = ProcessingRuleFunctions.getIsOperationalPredicate(serviceDeterminationPair);
-                SopSupportResponseDto sopSupportResponseDto = SopSupport.applyRules(sopSupportRequestDto, soPPairs, isOperational);
+                CaseTrace caseTrace = new SopSupportCaseTrace(UUID.randomUUID().toString());
+                caseTrace.addTrace(req.body());
+                SopSupportResponseDto sopSupportResponseDto = SopSupport.applyRules(sopSupportRequestDto, soPPairs, isOperational, caseTrace);
+                if (AppSettings.getEnvironment().isDev())
+                    logger.trace(caseTrace.toString());
                 setResponseHeaders(res, true, 200);
                 return SopSupportResponseDto.toJsonString(sopSupportResponseDto);
             } catch (DvaSopApiDtoError e) {
@@ -133,6 +142,12 @@ class Routes {
                 }
                 return sb.toString();
             }
+            catch (ProcessingRuleError e)
+            {
+                logger.error("Error applying rule.", e);
+                setResponseHeaders(res,false,400);
+                return e.getMessage();
+            }
         }));
     }
 
@@ -140,7 +155,7 @@ class Routes {
         List<String> errors = new ArrayList<>();
 
         if (conditionname == null) {
-            String missingICDCodeError = "Need ICD code (query parameter '" + QueryParamLabels.ICD_CODE_VALUE + "') and ICD code version (query paramater '" + QueryParamLabels.ICD_CODE_VERSION + "') if condition name (query parameter '" + QueryParamLabels.CONDITION_NAME + "') is not provided.";
+            String missingICDCodeError = "Need ICD code (query parameter '" + QueryParamLabels.ICD_CODE_VALUE + "') and ICD code version (query parameter '" + QueryParamLabels.ICD_CODE_VERSION + "') if condition name (query parameter '" + QueryParamLabels.CONDITION_NAME + "') is not provided.";
             if (icdCodeValue == null)
                 errors.add(buildQueryParamErrorMessage(QueryParamLabels.ICD_CODE_VALUE, missingICDCodeError));
 
@@ -241,5 +256,8 @@ class Routes {
         return AppSettings.getEnvironment() == AppSettings.Environment.prod;
     }
 
-
+    private static String cleanseJson(String incomingJson)
+    {
+        return incomingJson.replace("\uFEFF","");
+    }
 }
