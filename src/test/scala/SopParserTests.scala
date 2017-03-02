@@ -18,6 +18,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 import scala.io.Source
+import scala.util.Properties
 
 
 @RunWith(classOf[JUnitRunner])
@@ -234,8 +235,10 @@ class SopParserTests extends FunSuite {
   {
     val input = ParserTestUtils.resourceToString("sleepApnoeaFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
     val(header,rest) = SoPExtractorUtilities.splitFactorsSectionToHeaderAndRest(input)
-    println(header)
-    println(rest.mkString(" "))
+    println("HEADER: " + header)
+    println("REST: " + rest.mkString(Properties.lineSeparator))
+    assert(!header.isEmpty && !rest.isEmpty)
+
 
   }
 }
