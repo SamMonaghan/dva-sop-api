@@ -24,15 +24,6 @@ import scala.util.Properties
 
 @RunWith(classOf[JUnitRunner])
 class SopParserTests extends FunSuite {
-  test("Cleanse LS raw text") {
-    val rawText = ParserTestUtils.resourceToString("lsConvertedToText.txt");
-    val result = GenericCleanser.cleanse(rawText)
-
-    assert(result.length() > 0)
-    System.out.println("START:")
-    System.out.print(result)
-    System.out.println("END")
-  }
 
   test("Extract Lumbar Spondylosis factors section from cleansed text") {
     val testInput = ParserTestUtils.resourceToString("lsCleansedText.txt")
@@ -74,14 +65,6 @@ class SopParserTests extends FunSuite {
   }
 
 
-  test("Ls parser implements interface correctly") {
-
-    val testInput = ParserTestUtils.resourceToString("lsExtractedFactorsText.txt")
-    val underTest = PreAugust2015Parser;
-    val result = underTest.parseFactors(testInput)
-    assert(result._1 == StandardOfProof.ReasonableHypothesis)
-    assert(result._2.size == 32)
-  }
 
   test("Parse instrument number") {
     val testInput = "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014."
@@ -276,5 +259,7 @@ class SopParserTests extends FunSuite {
      println(result)
 
   }
+
+
 }
 
