@@ -35,7 +35,7 @@ class SopParserTests extends FunSuite {
   test("Extract Lumbar Spondylosis factors section from cleansed text") {
     val testInput = ParserTestUtils.resourceToString("lsCleansedText.txt")
     val underTest = PreAugust2015Extractor
-    val result = underTest.extractFactorSection(testInput)
+    val result = underTest.extractFactorsSection(testInput)
     System.out.print(result);
     assert(result._1 == 6)
   }
@@ -230,5 +230,13 @@ class SopParserTests extends FunSuite {
     println(result)
   }
 
+  test("Split factors section to head and rest")
+  {
+    val input = ParserTestUtils.resourceToString("sleepApnoeaFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
+    val(header,rest) = SoPExtractorUtilities.splitFactorsSectionToHeaderAndRest(input)
+    println(header)
+    println(rest.mkString(" "))
+
+  }
 }
 

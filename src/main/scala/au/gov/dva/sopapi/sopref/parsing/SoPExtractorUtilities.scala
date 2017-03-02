@@ -5,6 +5,7 @@ import au.gov.dva.sopapi.exceptions.SopParserError
 import scala.collection.immutable.{IndexedSeq, Seq}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.util.Properties
 import scala.util.matching.Regex
 
 
@@ -47,7 +48,7 @@ object SoPExtractorUtilities {
 
   def getSection(cleansedSopText: String, paragraphLineRegex: Regex): (Int, List[String]) = {
     val sectionHeaderLineRegex = """^([0-9]+)\.\s""".r
-    val allSections = getSections(cleansedSopText, sectionHeaderLineRegex).map(s => parseSectionBlock(s))
+    val allSections: List[(Option[Int], String, List[String])] = getSections(cleansedSopText, sectionHeaderLineRegex).map(s => parseSectionBlock(s))
 
     val sectionForSpecifiedPara = allSections.find(s => paragraphLineRegex.findFirstIn(s._2).nonEmpty)
     if (sectionForSpecifiedPara.isEmpty)
@@ -67,13 +68,18 @@ object SoPExtractorUtilities {
     combined.map(i => "(" + i + ")")
   }
 
+  def splitFactorsSectionToHeaderAndRest(factorsSection: List[String]) : (String, List[String]) = {
+    val(headerLines,rest) = factorsSection.span(l => !l.startsWith("("))
+    if (headerLines.isEmpty || rest.isEmpty) throw new SopParserError(s"Cannot split this factors section to head and then the rest: ${factorsSection.mkString(Properties.lineSeparator)}")
+    (headerLines.mkString(" "),rest)
+  }
+
   def splitFactorsSectionByFactor(factorsSection: List[String]): List[List[String]] = {
 
     val lettersSequence = getMainParaLetterSequence.toList
     // skip the head
-    val sectionWithoutHead = factorsSection.dropWhile(l => !l.startsWith("("));
-    divideFactorSectionRecursive(lettersSequence, 1, List.empty, sectionWithoutHead).reverse
-
+    //divideFactorSectionRecursive(lettersSequence, 1, List.empty, sectionWithoutHead).reverse
+    return null;
   }
 
   def divideFactorSectionRecursive(lettersSequence: List[String], nextLetterIndex: Int, acc: List[List[String]], remainingLines: List[String]): List[List[String]] = {

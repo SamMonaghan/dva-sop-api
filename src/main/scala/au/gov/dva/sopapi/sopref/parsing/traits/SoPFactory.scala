@@ -17,10 +17,11 @@ trait SoPFactory {
 
     val definedTermsList: List[DefinedTerm] = parser.parseDefinitions(extractor.extractDefinitionsSection(cleansedText))
 
-    val factorsSection: (Int, String) = extractor.extractFactorSection(cleansedText)
-    val factors: (StandardOfProof, List[FactorInfo]) = parser.parseFactors(factorsSection._2)
+    val(factorsSectionNumber,sectionText): (Int, String) = extractor.extractFactorsSection(cleansedText);
 
-    val factorObjects: List[Factor] = this.buildFactorObjectsFromInfo(factors._2,factorsSection._1,definedTermsList)
+    val(standard, factorInfos) : (StandardOfProof, List[FactorInfo]) =  parser.parseFactors(sectionText)
+
+    val factorObjects: List[Factor] = this.buildFactorObjectsFromInfo(factorInfos,factorsSectionNumber,definedTermsList)
 
     val startAndEndOfAggravationParas = parser.parseStartAndEndAggravationParas(extractor.extractAggravationSection(cleansedText))
 
@@ -28,13 +29,12 @@ trait SoPFactory {
 
     val effectiveFromDate: LocalDate = parser.parseDateOfEffect(extractor.extractDateOfEffectSection(cleansedText))
 
-    val standardOfProof = factors._1
 
     val icdCodes: List[ICDCode] = extractor.extractICDCodes(cleansedText)
 
     val conditionName = PreAugust2015Parser.parseConditionNameFromCitation(citation);
 
-    new ParsedSop(registerId,instrumentNumber,citation,aggravationFactors, onsetFactors, effectiveFromDate,standardOfProof,icdCodes,conditionName)
+    new ParsedSop(registerId,instrumentNumber,citation,aggravationFactors, onsetFactors, effectiveFromDate,standard,icdCodes,conditionName)
   }
 
   def stripParaNumber(paraWithNumber : String): String = {

@@ -63,11 +63,19 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
 
 
   def parseFactorsSection(factorsSectionText : String) : (StandardOfProof,List[FactorInfo]) = {
-    val result = this.parseAll(factorsSection,factorsSectionText)
-    if (result.successful)
-      return result.get;
+    val splitToLines: List[String] = factorsSectionText.split("[\r\n]+").toList;
+    val(header,rest) = SoPExtractorUtilities.splitFactorsSectionToHeaderAndRest(splitToLines)
+
+    val groupedToCollectionsOfFactorLines: List[String] =  SoPExtractorUtilities.splitFactorsSectionByFactor(rest)
+      .map(factorLineCollection =>  factorLineCollection.mkString(" "))
+    val parsedFactors  = groupedToCollectionsOfFactorLines
+      .map(factorLines => this.parseAll(this.factor,factorLines))
+
+    val standard = extractStandardOfProofFromHeader(header)
+    if (parsedFactors.forall(pf => pf.successful))
+      return (standard, parsedFactors.map(pf => pf.get))
     else {
-      throw new SopParserError(s"Could not parse factors section: $result${scala.util.Properties.lineSeparator}$factorsSectionText.")
+      throw new SopParserError(s"Could not parse factors section: ${factorsSectionText}")
     }
   }
 

@@ -34,7 +34,7 @@ class OsteoarthritisTests extends FunSuite {
   }
 
   test("Extract factors section from RH cleansed text") {
-    val result = PreAugust2015Extractor.extractFactorSection(ParserTestUtils.resourceToString("osteoarthritisCleansedText.txt"))
+    val result = PreAugust2015Extractor.extractFactorsSection(ParserTestUtils.resourceToString("osteoarthritisCleansedText.txt"))
     println(result)
     assert(result != null)
   }
