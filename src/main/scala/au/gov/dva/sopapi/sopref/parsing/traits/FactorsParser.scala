@@ -5,6 +5,7 @@ import au.gov.dva.sopapi.exceptions.SopParserError
 import au.gov.dva.sopapi.sopref.parsing.SoPExtractorUtilities
 import au.gov.dva.sopapi.sopref.parsing.implementations.model.{FactorInfo, FactorInfoWithSubParas, FactorInfoWithoutSubParas}
 
+import scala.util.Properties
 import scala.util.parsing.combinator.RegexParsers
 
 
@@ -20,25 +21,25 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
 
   def subParaLetter: Parser[String] = """\([ixv]+\)""".r
 
-  def subPara: Parser[(String, String)] = subParaLetter ~ subParaBodyText ^^ {
-    case letter ~ body => (letter, body)
+  def subPara: Parser[(String, String, Option[String])] = subParaLetter ~ subParaBodyText ~ opt(andTerminator | orTerminator) ^^ {
+    case letter ~ body ~ terminator => (letter, body,terminator)
   }
 
-  def subParaList: Parser[List[(String, String)]] = rep1sep(subPara, orTerminator | andTerminator | semiColonTerminator)
+  def subParaList: Parser[List[(String, String,Option[String])]] = rep1(subPara)
 
   def tail: Parser[String] = not(orTerminator) ~> """; [a-z\s]+""".r
 
-  def completeFactorWithSubParas: Parser[(String,String,List[(String,String)],Option[String])] = mainParaLetter ~ head ~ subParaList ~ opt(tail) ^^ {
-    case mainParaLetter ~ head ~ paralist ~ tailOption => {
-      (mainParaLetter,head,paralist,tailOption)
+  def completeFactorWithSubParas: Parser[(String,String,List[(String,String,Option[String])],Option[String])] = mainParaLetter ~ head ~ subParaList ~ opt(tail) ^^ {
+    case mainParaLetter ~ head ~ subParalist ~ tailOption => {
+      (mainParaLetter,head,subParalist,tailOption)
     }
   }
 
-  def twoLevelPara : Parser[FactorInfoWithSubParas] = mainParaLetter ~ head ~ subParaList ~ opt(tail) ^^ {
-    case  mainParaLetter ~ head ~ paralist ~ tailOption => new FactorInfoWithSubParas(mainParaLetter,head,paralist,tailOption)
+  def twoLevelPara : Parser[FactorInfoWithSubParas] = mainParaLetter ~ head ~ subParaList ~ opt(tail) <~ opt(orTerminator) ^^ {
+    case  mainParaLetter ~ head ~ subParaList ~ tailOption => new FactorInfoWithSubParas(mainParaLetter,head,subParaList,tailOption)
   }
 
-  def singleLevelPara : Parser[FactorInfoWithoutSubParas] = mainParaLetter ~ mainFactorBodyText ^^ {
+  def singleLevelPara : Parser[FactorInfoWithoutSubParas] = mainParaLetter ~ mainFactorBodyText <~ opt(orTerminator | andTerminator | semiColonTerminator) ^^ {
     case para ~ text => new FactorInfoWithoutSubParas(para,text)
   }
 
@@ -46,36 +47,25 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     case factor => factor
   }
 
-  def factorList : Parser[List[FactorInfo]] = rep1sep(factor, orTerminator) ^^ {
-    case lf => lf
-  }
-
-  def factorsSection : Parser[(StandardOfProof,List[FactorInfo])] = factorsSectionHead ~ factorList <~ periodTerminator ^^ {
-    case standardOfProof ~ factorList => {
-      val standard = extractStandardOfProofFromHeader(standardOfProof)
-      (standard,factorList)
-    }
-  }
-
-  // todo:
-  // split factors sections
-  // invoke parser per section
-
 
   def parseFactorsSection(factorsSectionText : String) : (StandardOfProof,List[FactorInfo]) = {
     val splitToLines: List[String] = factorsSectionText.split("[\r\n]+").toList;
-    val(header,rest) = SoPExtractorUtilities.splitFactorsSectionToHeaderAndRest(splitToLines)
+    val(header: String,rest: List[String]) = SoPExtractorUtilities.splitFactorsSectionToHeaderAndRest(splitToLines)
 
-    val groupedToCollectionsOfFactorLines: List[String] =  SoPExtractorUtilities.splitFactorsSectionByFactor(rest)
+    val groupedToCollectionsOfFactors: List[String] =  SoPExtractorUtilities.splitFactorsSectionByFactor(rest)
       .map(factorLineCollection =>  factorLineCollection.mkString(" "))
-    val parsedFactors  = groupedToCollectionsOfFactorLines
-      .map(factorLines => this.parseAll(this.factor,factorLines))
+
+    assert(groupedToCollectionsOfFactors.forall(i => !i.endsWith(" ") && !i.startsWith(" ")))
+
+    val parsedFactors  = groupedToCollectionsOfFactors
+      .map(this.parseAll(this.factor,_))
 
     val standard = extractStandardOfProofFromHeader(header)
     if (parsedFactors.forall(pf => pf.successful))
       return (standard, parsedFactors.map(pf => pf.get))
     else {
-      throw new SopParserError(s"Could not parse factors section: ${factorsSectionText}")
+      val unsucessfulSections = parsedFactors.filter(!_.successful)
+      throw new SopParserError(s"Could not parse factors section: ${unsucessfulSections.map(us => us.get).mkString(Properties.lineSeparator)}")
     }
   }
 

@@ -18,9 +18,21 @@ class FactorInfoWithoutSubParas(mainParaLetter : String, bodyText: String) exten
 }
 
 
-class FactorInfoWithSubParas(mainParaLetter : String, head : String, subparas : List[(String,String)], tail :  Option[String]) extends FactorInfo
+class FactorInfoWithSubParas(mainParaLetter : String, head : String, subParas : List[(String,String, Option[String])], tail :  Option[String]) extends FactorInfo
 {
-  private def format: String = getLetter + " " +  head + "," + Properties.lineSeparator + subparas.map(sp => sp._1 + " " + sp._2).mkString("; or" + Properties.lineSeparator) + formatTail(tail)
+
+  private def format = {
+    val lastSubParaWithoutTerimator: (String, String, Option[String]) = (subParas.last._1, subParas.last._2, Some(""))
+    val allButLast: List[(String, String, Option[String])] = subParas.take(subParas.size - 1)
+    val all: List[(String, String, Option[String])] = allButLast :+ lastSubParaWithoutTerimator
+    val formatted =  getLetter + " " +  head + "," + Properties.lineSeparator + all.map(formatSubPara(_))
+      .mkString(Properties.lineSeparator) + formatTail(tail)
+    formatted
+  }
+
+  private def formatSubPara(subPara : (String,String,Option[String])) = {
+    subPara._1 + " " + subPara._2 + subPara._3.getOrElse(";")
+  }
 
   private def formatTail(tailOption : Option[String]) = if (tailOption.isDefined) "," + Properties.lineSeparator + tailOption.get
   else "";
