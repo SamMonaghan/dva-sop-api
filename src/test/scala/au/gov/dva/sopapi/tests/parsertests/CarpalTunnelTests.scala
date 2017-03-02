@@ -29,7 +29,7 @@ class CarpalTunnelTests extends FunSuite {
       "the distal portions, the nose, ears, jaws, fingers and\ntoes")
 
   val amyloidosisDef = new ParsedDefinedTerm("amyloidosis",
-    "means the accumulation of insoluble fibrillar proteins\nin organs or tissues of the " +
+    "means the accumulation of insoluble fibrillar proteins in\norgans or tissues of the " +
       "body such that vital function is compromised")
 
   val aromataseDef = new ParsedDefinedTerm("an aromatase inhibitor",
@@ -135,22 +135,22 @@ class CarpalTunnelTests extends FunSuite {
       Nil.toSet)
 
     val d = new ParsedFactor("6(d)",
-      "(d) having an injury to the affected wrist or hand which does not involve a\nfracture or " +
-        "a dislocation but which:\n(i) alters the normal contour of the carpal tunnel; or\n" +
-        "(ii) damages the flexor tendons within the carpal tunnel,\nwithin the one year before " +
+      "having an injury to the affected wrist or hand which does not involve a fracture or " +
+        "a dislocation but which: (i) alters the normal contour of the carpal tunnel; or " +
+        "(ii) damages the flexor tendons within the carpal tunnel, within the one year before " +
         "the clinical onset of carpal tunnel syndrome",
       Nil.toSet)
 
     val e = new ParsedFactor("6(e)",
-      "(e) having a fracture or dislocation to the distal radius, the distal ulna, a carpal bone " +
-        "or a metacarpal bone of the affected side which:\n(i) alters the normal contour of " +
-        "the carpal tunnel; or\n(ii) damages the flexor tendons within the carpal tunnel,\n" +
+      "having a fracture or dislocation to the distal radius, the distal ulna, a carpal bone " +
+        "or a metacarpal bone of the affected side which: (i) alters the normal contour of " +
+        "the carpal tunnel; or (ii) damages the flexor tendons within the carpal tunnel, " +
         "before the clinical onset of carpal tunnel syndrome",
       Nil.toSet)
 
     val f = new ParsedFactor("6(f)",
-      "(f) having surgery to the affected wrist or hand which:\n(i) alters the normal contour of " +
-        "the carpal tunnel; or\n(ii) damages the flexor tendons within the carpal tunnel,\n" +
+      "having surgery to the affected wrist or hand which: (i) alters the normal contour of " +
+        "the carpal tunnel; or (ii) damages the flexor tendons within the carpal tunnel, " +
         "within the one year before the clinical onset of carpal tunnel syndrome",
       Nil.toSet)
 
@@ -280,21 +280,21 @@ class CarpalTunnelTests extends FunSuite {
 
     val z = new ParsedFactor("6(z)",
       "having an injury to the affected wrist or hand which does not involve a fracture or a " +
-        "dislocation but which:\n(i) alters the normal contour of the carpal tunnel; or\n" +
-        "(ii) damages the flexor tendons within the carpal tunnel,\nwithin the one year " +
+        "dislocation but which: (i) alters the normal contour of the carpal tunnel; or " +
+        "(ii) damages the flexor tendons within the carpal tunnel, within the one year " +
         "before the clinical worsening of carpal tunnel syndrome",
       Nil.toSet)
 
     val aa = new ParsedFactor("6(aa)",
       "having a fracture or dislocation to the distal radius, the distal ulna, a carpal bone " +
-        "or a metacarpal bone of the affected side which:\n(i) alters the normal contour of the " +
-        "carpal tunnel; or\n(ii) damages the flexor tendons within the carpal tunnel,\n" +
+        "or a metacarpal bone of the affected side which: (i) alters the normal contour of the " +
+        "carpal tunnel; or (ii) damages the flexor tendons within the carpal tunnel, " +
         "before the clinical worsening of carpal tunnel syndrome",
       Nil.toSet)
 
     val bb = new ParsedFactor("6(bb)",
-      "having surgery to the affected wrist or hand which:\n(i) alters the normal contour of " +
-        "the carpal tunnel; or\n(ii) damages the flexor tendons within the carpal tunnel,\n" +
+      "having surgery to the affected wrist or hand which: (i) alters the normal contour of " +
+        "the carpal tunnel; or (ii) damages the flexor tendons within the carpal tunnel, " +
         "within the one year before the clinical worsening of carpal tunnel syndrome",
       Nil.toSet)
 
@@ -469,22 +469,22 @@ class CarpalTunnelTests extends FunSuite {
       Nil.toSet)
 
     val d = new ParsedFactor("6(d)",
-      "(d) having an injury to the affected wrist or hand which does not involve a fracture or " +
-        "a dislocation but which:\n(i) alters the normal contour of the carpal tunnel; or\n" +
-        "(ii) damages the flexor tendons within the carpal tunnel,\nwithin the one year " +
+      "having an injury to the affected wrist or hand which does not involve a fracture or " +
+        "a dislocation but which: (i) alters the normal contour of the carpal tunnel; or " +
+        "(ii) damages the flexor tendons within the carpal tunnel, within the one year " +
         "before the clinical onset of carpal tunnel syndrome",
       Nil.toSet)
 
     val e = new ParsedFactor("6(e)",
-      "(e) having a fracture or dislocation to the distal radius, the distal ulna, a carpal bone " +
-        "or a metacarpal bone of the affected side which:\n(i) alters the normal contour of " +
-        "the carpal tunnel; or\n(ii) damages the flexor tendons within the carpal tunnel,\n" +
+      "having a fracture or dislocation to the distal radius, the distal ulna, a carpal bone " +
+        "or a metacarpal bone of the affected side which: (i) alters the normal contour of " +
+        "the carpal tunnel; or (ii) damages the flexor tendons within the carpal tunnel, " +
         "before the clinical onset of carpal tunnel syndrome",
       Nil.toSet)
 
     val f = new ParsedFactor("6(f)",
-      "(f) having surgery to the affected wrist or hand which:\n(i) alters the normal contour of " +
-        "the carpal tunnel; or\n(ii) damages the flexor tendons within the carpal tunnel,\n" +
+      "having surgery to the affected wrist or hand which: (i) alters the normal contour of " +
+        "the carpal tunnel; or (ii) damages the flexor tendons within the carpal tunnel, " +
         "within the one year before the clinical onset of carpal tunnel syndrome",
       Nil.toSet)
 
@@ -562,7 +562,7 @@ class CarpalTunnelTests extends FunSuite {
       "being pregnant within the three months before the clinical onset of carpal tunnel syndrome",
       Nil.toSet)
 
-    val onsetFactors = rhFixture.result.getOnsetFactors
+    val onsetFactors = bopFixture.result.getOnsetFactors
     assert(onsetFactors.size() === 22)
     assert(onsetFactors.contains(a))
     assert(onsetFactors.contains(b))
@@ -614,21 +614,21 @@ class CarpalTunnelTests extends FunSuite {
 
     val z = new ParsedFactor("6(z)",
       "having an injury to the affected wrist or hand which does not involve a fracture or " +
-        "a dislocation but which:\n(i) alters the normal contour of the carpal tunnel; or\n" +
-        "(ii) damages the flexor tendons within the carpal tunnel,\nwithin the one year " +
+        "a dislocation but which: (i) alters the normal contour of the carpal tunnel; or " +
+        "(ii) damages the flexor tendons within the carpal tunnel, within the one year " +
         "before the clinical worsening of carpal tunnel syndrome",
       Nil.toSet)
 
     val aa = new ParsedFactor("6(aa)",
       "having a fracture or dislocation to the distal radius, the distal ulna, a carpal bone " +
-        "or a metacarpal bone of the affected side which:\n(i) alters the normal contour of the " +
-        "carpal tunnel; or\n(ii) damages the flexor tendons within the carpal tunnel,\n" +
+        "or a metacarpal bone of the affected side which: (i) alters the normal contour of the " +
+        "carpal tunnel; or (ii) damages the flexor tendons within the carpal tunnel, " +
         "before the clinical worsening of carpal tunnel syndrome",
       Nil.toSet)
 
     val bb = new ParsedFactor("6(bb)",
-      "having surgery to the affected wrist or hand which:\n(i) alters the normal contour of " +
-        "the carpal tunnel; or\n(ii) damages the flexor tendons within the carpal tunnel,\n" +
+      "having surgery to the affected wrist or hand which: (i) alters the normal contour of " +
+        "the carpal tunnel; or (ii) damages the flexor tendons within the carpal tunnel, " +
         "within the one year before the clinical worsening of carpal tunnel syndrome",
       Nil.toSet)
 
@@ -711,7 +711,7 @@ class CarpalTunnelTests extends FunSuite {
       "inability to obtain appropriate clinical management for carpal tunnel syndrome",
       Nil.toSet)
 
-    val aggravationFactors = rhFixture.result.getAggravationFactors
+    val aggravationFactors =  bopFixture.result.getAggravationFactors
     assert(aggravationFactors.size() === 23)
     assert(aggravationFactors.contains(w))
     assert(aggravationFactors.contains(x))
