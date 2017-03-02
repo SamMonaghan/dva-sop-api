@@ -209,9 +209,10 @@ class SopParserTests extends FunSuite {
   test("Split factor section to individual factors for osteo")
   {
     val input = ParserTestUtils.resourceToString("osteoFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
-    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(input)
+    val excludingHead = input.drop(4)
+    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(excludingHead)
     println(result)
-    assert(result.size == 40)
+    assert(result.size == 40 && result.forall(l => l.head.startsWith("(")))
 
   }
 
@@ -219,7 +220,9 @@ class SopParserTests extends FunSuite {
   {
     // this one is tricky because the (h) para has sub paras starting with (i) and the next main para also starts with (i)
     val input = ParserTestUtils.resourceToString("sleepApnoeaFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
-    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(input)
+    val excludingHeader = input.drop(3)
+
+    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(excludingHeader)
     val hFactor = result.find(f => f.head.startsWith("(h)"))
     println(result)
     assert(hFactor.get.size > 1)

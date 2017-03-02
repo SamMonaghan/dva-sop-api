@@ -74,12 +74,9 @@ object SoPExtractorUtilities {
     (headerLines.mkString(" "),rest)
   }
 
-  def splitFactorsSectionByFactor(factorsSection: List[String]): List[List[String]] = {
-
+  def splitFactorsSectionByFactor(factorsSectionExcludingHead: List[String]): List[List[String]] = {
     val lettersSequence = getMainParaLetterSequence.toList
-    // skip the head
-    //divideFactorSectionRecursive(lettersSequence, 1, List.empty, sectionWithoutHead).reverse
-    return null;
+    divideFactorSectionRecursive(lettersSequence, 1, List.empty, factorsSectionExcludingHead).reverse
   }
 
   def divideFactorSectionRecursive(lettersSequence: List[String], nextLetterIndex: Int, acc: List[List[String]], remainingLines: List[String]): List[List[String]] = {
