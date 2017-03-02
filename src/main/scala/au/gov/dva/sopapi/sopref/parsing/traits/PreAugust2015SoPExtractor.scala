@@ -12,6 +12,12 @@ trait PreAugust2015SoPExtractor extends SoPExtractor {
     (factorsSection._1,factorsSection._2.mkString(" "))
   }
 
+  def extractFactorsSection(plainTextSop: String): (Int, List[String]) = {
+    val headingRegex = """^Factors$""".r
+    val factorsSection = SoPExtractorUtilities.getSection(plainTextSop, headingRegex)
+    (factorsSection._1, factorsSection._2)
+  }
+
   override def extractDefinitionsSection(plainTextSop: String): String = {
     val headingRegex = """^Other definitions$""".r
     val definitionsSection = SoPExtractorUtilities.getSection(plainTextSop,headingRegex);
