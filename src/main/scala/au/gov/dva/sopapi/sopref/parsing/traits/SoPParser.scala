@@ -8,6 +8,7 @@ import au.gov.dva.sopapi.sopref.parsing.implementations.model.FactorInfo
 
 trait SoPParser {
   def parseFactors(factorsSection : String) : (StandardOfProof, List[FactorInfo])
+  def parseFactorParagraph(factorParagraph: String): FactorInfo
   def parseInstrumentNumber(citationSection : String) : InstrumentNumber
   def parseDefinitions(definitionsSection : String) : List[DefinedTerm]
   def parseDateOfEffect(dateOfEffectSection : String) : LocalDate
@@ -15,6 +16,7 @@ trait SoPParser {
   def parseStartAndEndAggravationParas(aggravationSection : String) : (String,String)
   def parseCitation(citationSection : String) : String
   def parseConditionNameFromCitation(citation : String) : String
+  def parseStandardOfProof(factorsSection: String): StandardOfProof
 }
 
 

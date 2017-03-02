@@ -2,7 +2,7 @@ package au.gov.dva.sopapi.sopref.parsing.traits
 
 import au.gov.dva.sopapi.dtos.StandardOfProof
 import au.gov.dva.sopapi.exceptions.SopParserError
-import au.gov.dva.sopapi.sopref.parsing.implementations.model.{FactorInfo, FactorInfoWithSubParas, FactorInfoWithoutSubParas}
+import au.gov.dva.sopapi.sopref.parsing.implementations.model.{FactorInfo, FactorInfoWithSubParas, FactorInfoWithoutSubParas, FactorInformation}
 
 import scala.util.parsing.combinator.RegexParsers
 
@@ -65,6 +65,43 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     }
   }
 
+  def removeFactorTerminator(paragraph: String): String = {
+    if (paragraph.endsWith("; or"))
+      paragraph.dropRight(4)
+    else if (paragraph.endsWith("."))
+      paragraph.dropRight(1)
+    else
+      paragraph
+  }
+
+  def paragraph: Parser[FactorInformation] = mainParaLetter ~ factorText ^^ {
+    case paragraph ~ text =>
+      new FactorInformation(paragraph, removeFactorTerminator(text))
+  }
+
+  def parseFactorParagraph(factorText: String): FactorInformation = {
+    val result = this.parseAll(paragraph, factorText)
+    if (result.successful)
+      result.get
+    else
+      throw new SopParserError(s"Could not parse factor paragraph: $result${scala.util.Properties.lineSeparator}$factorText")
+  }
+
+  def standardOfProof: Parser[StandardOfProof] = factorsSectionHead <~ factorText ^^ {
+    case sectionHead =>
+      val standard = extractStandardOfProofFromHeader(sectionHead)
+      standard
+  }
+
+  def parseStandardOfProof(factorsSectionText: String): StandardOfProof = {
+    val result = this.parseAll(standardOfProof, factorsSectionText)
+    if (result.successful)
+      result.get
+    else {
+      throw new SopParserError(s"Could not parse standard of proof: $result${scala.util.Properties.lineSeparator}$factorsSectionText")
+    }
+  }
+
   private def extractStandardOfProofFromHeader(headerText: String): StandardOfProof = {
     if (headerText.contains("balance of probabilities"))
       return StandardOfProof.BalanceOfProbabilities
@@ -78,9 +115,9 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
 }
 
 trait BodyTextParsers extends RegexParsers {
-
   def mainFactorBodyText : Parser[String] = """(([A-Za-z0-9\-'’,\)\(\s]|\.(?=[A-Za-z0-9])))+""".r
   def subParaBodyText: Parser[String] = """([a-z0-9-,\s]|\.(?=[A-Za-z0-9]))+""".r
+  def factorText : Parser[String] = """.+(?!\.$)""".r
 }
 
 trait TerminatorParsers extends RegexParsers {

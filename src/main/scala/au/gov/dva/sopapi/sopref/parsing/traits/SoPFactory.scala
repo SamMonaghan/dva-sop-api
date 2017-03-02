@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 import au.gov.dva.sopapi.dtos.StandardOfProof
 import au.gov.dva.sopapi.interfaces.model.{DefinedTerm, Factor, ICDCode, SoP}
+import au.gov.dva.sopapi.sopref.parsing.SoPExtractorUtilities
 import au.gov.dva.sopapi.sopref.parsing.implementations.model.{FactorInfo, ParsedFactor, ParsedSop}
 import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.PreAugust2015Parser
 
@@ -17,10 +18,12 @@ trait SoPFactory {
 
     val definedTermsList: List[DefinedTerm] = parser.parseDefinitions(extractor.extractDefinitionsSection(cleansedText))
 
-    val factorsSection: (Int, String) = extractor.extractFactorSection(cleansedText)
-    val factors: (StandardOfProof, List[FactorInfo]) = parser.parseFactors(factorsSection._2)
+    val factorsSection: (Int, List[String]) = extractor.extractFactorsSection(cleansedText)
 
-    val factorObjects: List[Factor] = this.buildFactorObjectsFromInfo(factors._2,factorsSection._1,definedTermsList)
+    val splitFactors: List[String] = SoPExtractorUtilities.splitFactorsSectionByFactor(factorsSection._2).map(f => combineFactorLines(f))
+    val factorInfos: List[FactorInfo] = splitFactors.map(f => parser.parseFactorParagraph(f))
+
+    val factorObjects: List[Factor] = this.buildFactorObjectsFromInfo(factorInfos, factorsSection._1, definedTermsList)
 
     val startAndEndOfAggravationParas = parser.parseStartAndEndAggravationParas(extractor.extractAggravationSection(cleansedText))
 
@@ -28,13 +31,24 @@ trait SoPFactory {
 
     val effectiveFromDate: LocalDate = parser.parseDateOfEffect(extractor.extractDateOfEffectSection(cleansedText))
 
-    val standardOfProof = factors._1
+    val standardOfProof = parser.parseStandardOfProof(factorsSection._2.mkString(" "))
 
     val icdCodes: List[ICDCode] = extractor.extractICDCodes(cleansedText)
 
     val conditionName = PreAugust2015Parser.parseConditionNameFromCitation(citation);
 
     new ParsedSop(registerId,instrumentNumber,citation,aggravationFactors, onsetFactors, effectiveFromDate,standardOfProof,icdCodes,conditionName)
+  }
+
+  def combineFactorLines(factorLines: List[String]): String = {
+    factorLines.foldLeft("") {
+      (line: String, nextLine: String) =>
+        if (line.endsWith("-"))
+          // Concatenate hyphenated lines without a space
+          line.splitAt(line.lastIndexOf("-"))._1.concat(nextLine)
+        else
+          line.concat(" ").concat(nextLine)
+    }
   }
 
   def stripParaNumber(paraWithNumber : String): String = {
