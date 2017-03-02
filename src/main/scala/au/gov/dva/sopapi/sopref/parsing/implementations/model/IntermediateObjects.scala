@@ -25,8 +25,7 @@ class FactorInfoWithSubParas(mainParaLetter : String, head : String, subParas : 
     val lastSubParaWithoutTerimator: (String, String, Option[String]) = (subParas.last._1, subParas.last._2, Some(""))
     val allButLast: List[(String, String, Option[String])] = subParas.take(subParas.size - 1)
     val all: List[(String, String, Option[String])] = allButLast :+ lastSubParaWithoutTerimator
-    val formatted =  getLetter + " " +  head + "," + Properties.lineSeparator + all.map(formatSubPara(_))
-      .mkString(Properties.lineSeparator) + formatTail(tail)
+    val formatted =  getLetter + " " +  head + ":" + Properties.lineSeparator + (all.map(formatSubPara(_)).mkString(Properties.lineSeparator)) + formatTail(tail)
     formatted
   }
 
@@ -34,7 +33,7 @@ class FactorInfoWithSubParas(mainParaLetter : String, head : String, subParas : 
     subPara._1 + " " + subPara._2 + subPara._3.getOrElse(";")
   }
 
-  private def formatTail(tailOption : Option[String]) = if (tailOption.isDefined) "," + Properties.lineSeparator + tailOption.get
+  private def formatTail(tailOption : Option[String]) = if (tailOption.isDefined) ";" + Properties.lineSeparator + tailOption.get
   else "";
 
   override def toString: String = format

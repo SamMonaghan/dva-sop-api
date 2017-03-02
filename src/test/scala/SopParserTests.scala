@@ -252,8 +252,8 @@ class SopParserTests extends FunSuite {
 
   test("Parse two level para with tail")
   {
-    val input = "(ee) fo osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait; for at least three years before the clinical worsening of osteoarthritis in that joint; or"
-     val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.twoLevelPara, input)
+    val input = "(ee) for osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait; for at least three years before the clinical worsening of osteoarthritis in that joint; or"
+     val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.factor, input)
     println(result)
     assert(result.successful)
 
@@ -272,7 +272,9 @@ class SopParserTests extends FunSuite {
 
     val input = ParserTestUtils.resourceToString("osteoFactorLines.txt");
     val result = PreAugust2015Parser.parseFactorsSection(input)
-    println(result)
+    assert(result._2.size == 40)
+     println(result)
+
   }
 }
 

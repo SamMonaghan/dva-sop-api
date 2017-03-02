@@ -27,7 +27,7 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
 
   def subParaList: Parser[List[(String, String,Option[String])]] = rep1(subPara)
 
-  def tail: Parser[String] = not(orTerminator) ~> """; [a-z\s]+""".r
+  def tail: Parser[String] = not(orTerminator) ~> ";" ~> """[a-z\s]+""".r
 
   def completeFactorWithSubParas: Parser[(String,String,List[(String,String,Option[String])],Option[String])] = mainParaLetter ~ head ~ subParaList ~ opt(tail) ^^ {
     case mainParaLetter ~ head ~ subParalist ~ tailOption => {
@@ -35,15 +35,15 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     }
   }
 
-  def twoLevelPara : Parser[FactorInfoWithSubParas] = mainParaLetter ~ head ~ subParaList ~ opt(tail) <~ opt(orTerminator) ^^ {
+  def twoLevelPara : Parser[FactorInfoWithSubParas] = mainParaLetter ~ head ~ subParaList ~ opt(tail) ^^ {
     case  mainParaLetter ~ head ~ subParaList ~ tailOption => new FactorInfoWithSubParas(mainParaLetter,head,subParaList,tailOption)
   }
 
-  def singleLevelPara : Parser[FactorInfoWithoutSubParas] = mainParaLetter ~ mainFactorBodyText <~ opt(orTerminator | andTerminator | semiColonTerminator) ^^ {
+  def singleLevelPara : Parser[FactorInfoWithoutSubParas] = mainParaLetter ~ mainFactorBodyText ^^ {
     case para ~ text => new FactorInfoWithoutSubParas(para,text)
   }
 
-  def factor : Parser[FactorInfo] = twoLevelPara | singleLevelPara ^^ {
+  def factor : Parser[FactorInfo] = (twoLevelPara | singleLevelPara) <~ opt(orTerminator | periodTerminator) ^^ {
     case factor => factor
   }
 
