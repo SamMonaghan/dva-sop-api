@@ -44,7 +44,7 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
   }
 
   def subParaWithOptTail: Parser[(String, String, Option[String])] = subParaLetter ~ subParaBodyText ~ opt(orTerminator | periodTerminator | tail) ^^ {
-    case letter ~ body ~  tail => (letter, body, tail)
+    case letter ~ body ~ tail => (letter, body, tail)
   }
 
   def factor: Parser[FactorInfo] = (twoLevelPara | singleLevelPara) <~ opt(orTerminator | periodTerminator) ^^ {
@@ -55,6 +55,15 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     case letter ~ body => (letter, body)
   }
 
+  def splitOutTailIfAny(lastSubParaWithLineBreaks: String): (String, Option[String]) = {
+    val asLines = lastSubParaWithLineBreaks.split("[\r\n]+").toList
+    val reversed = asLines.reverse
+    val tail = reversed.takeWhile(l => !l.endsWith(";")).reverse
+    if (tail.size < asLines.size) {
+      return (asLines.take(asLines.size - tail.size).mkString(Properties.lineSeparator), Some(tail.mkString(Properties.lineSeparator)))
+    }
+    else return (lastSubParaWithLineBreaks, None)
+  }
 
   def parseSingleFactor(singleFactorTextInclLineBreaks: String): FactorInfo = {
     // split to head and rest

@@ -50,16 +50,14 @@ class SingleFactorParsingTests extends FunSuite {
 
   }
 
-  test("Split head from rest for individual factor")
-  {
+  test("Split head from rest for individual factor") {
     val input = "(b) for central sleep apnoea only,\n(i) having congestive cardiac failure at the time of the clinical\nonset of sleep apnoea; or\n(ii) using a long-acting opioid at an average daily morphine\nequivalent dose of at least 75 milligrams for at least the two\nmonths before the clinical onset of sleep apnoea; or"
     val inputSplitToLines = input.split("[\r\n]+").toList
     val result = SoPExtractorUtilities.splitFactorToHeaderAndRest(inputSplitToLines)
     assert(!result._2.isEmpty)
   }
 
-  test("Parse single factor from text incl line breaks")
-  {
+  test("Parse single factor from text incl line breaks without tail") {
 
     val input = "(b) for central sleep apnoea only,\n(i) having congestive cardiac failure at the time of the clinical\nonset of sleep apnoea; or\n(ii) using a long-acting opioid at an average daily morphine\nequivalent dose of at least 75 milligrams for at least the two\nmonths before the clinical onset of sleep apnoea; or"
     val result = factorsParserUnderTest.parseSingleFactor(input)
@@ -67,8 +65,18 @@ class SingleFactorParsingTests extends FunSuite {
 
   }
 
+  test("Parse single factor from text incl line breaks and with tail") {
+    val input = "(ee) for osteoarthritis of a joint of the lower limb only,\n(i) having an amputation involving either leg; or\n(ii) having an asymmetric gait;\nfor at least three years before the clinical worsening of\nosteoarthritis in that joint; or"
+    val result = factorsParserUnderTest.parseSingleFactor(input)
+    println(result)
+  }
 
+  test("Split tail from last factor") {
+     val lastFactor = "(ii) having an asymmetric gait;\nfor at least three years before the clinical worsening of\nosteoarthritis in that joint; or";
+      val result = factorsParserUnderTest.splitOutTailIfAny(lastFactor)
 
+    println(result._2.get)
+  }
 
 
 }
