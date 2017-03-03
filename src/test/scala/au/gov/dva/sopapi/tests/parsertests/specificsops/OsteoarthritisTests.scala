@@ -1,12 +1,10 @@
 
-package au.gov.dva.sopapi.tests.parsertests
+package au.gov.dva.sopapi.tests.parsertests.specificsops
 
-import au.gov.dva.sopapi.sopref.parsing.traits
 import au.gov.dva.dvasopapi.tests.TestUtils
 import au.gov.dva.sopapi.sopref.data.sops.StoredSop
-import au.gov.dva.sopapi.sopref.parsing.implementations.cleansers.GenericCleanser
 import au.gov.dva.sopapi.sopref.parsing.implementations.extractors.PreAugust2015Extractor
-import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.{OsteoarthritisParser, PreAugust2015Parser}
+import au.gov.dva.sopapi.sopref.parsing.implementations.parsers.OsteoarthritisParser
 import au.gov.dva.sopapi.tests.parsers.ParserTestUtils
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

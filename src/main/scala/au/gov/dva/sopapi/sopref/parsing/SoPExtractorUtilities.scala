@@ -68,25 +68,47 @@ object SoPExtractorUtilities {
     combined.map(i => "(" + i + ")")
   }
 
+  def getSubParaLetterSequence = {
+    List("i","ii","iii","iv","v","vi","vii","viii","ix","x","xi","xii","xiii")
+      .map(i => ("(" + i + ")"))
+  }
+
   def splitFactorsSectionToHeaderAndRest(factorsSection: List[String]): (String, List[String]) = {
     val (headerLines, rest) = factorsSection.span(l => !l.startsWith("("))
     if (headerLines.isEmpty || rest.isEmpty) throw new SopParserError(s"Cannot split this factors section to head and then the rest: ${factorsSection.mkString(Properties.lineSeparator)}")
     (headerLines.mkString(" "), rest)
   }
 
-  def splitFactorsSectionByFactor(factorsSectionExcludingHead: List[String]): List[List[String]] = {
-    val lettersSequence = getMainParaLetterSequence.toList
-    divideFactorSectionRecursive(lettersSequence, 1, List.empty, factorsSectionExcludingHead).reverse
+  def splitFactorToHeaderAndRest(singleFactor : List[String]) : (String, List[String]) = {
+    if (singleFactor.size == 1)
+      return (singleFactor(0),List.empty)
+    else {
+
+      val headerLines = singleFactor.head :: singleFactor.tail.takeWhile(l => !l.startsWith("("))
+      val rest = singleFactor.drop(headerLines.size)
+      return (headerLines.mkString(" "),rest)
+    }
+
   }
 
-  def divideFactorSectionRecursive(lettersSequence: List[String], nextLetterIndex: Int, acc: List[List[String]], remainingLines: List[String])
+  def splitFactorsSectionByFactor(factorsSectionExcludingHead: List[String]): List[List[String]] = {
+    val lettersSequence = getMainParaLetterSequence.toList
+    divideSectionRecursively(lettersSequence, 1, List.empty, factorsSectionExcludingHead).reverse
+  }
+
+  def divideSectionRecursively(lettersSequence: List[String], nextLetterIndex: Int, acc: List[List[String]], remainingLines: List[String])
   : List[List[String]] = {
     if (remainingLines.isEmpty)
       acc
     else {
       val (factorLines, rest) = partition(lettersSequence, nextLetterIndex, remainingLines)
-      divideFactorSectionRecursive(lettersSequence, nextLetterIndex + 1, factorLines :: acc, rest)
+      divideSectionRecursively(lettersSequence, nextLetterIndex + 1, acc :+ factorLines, rest)
     }
+  }
+
+  def splitFactorToSubFactors(factorLines : List[String]) : List[List[String]] = {
+    val romanNumeralsSequence = getSubParaLetterSequence
+    divideSectionRecursively(romanNumeralsSequence,1,List.empty,factorLines)
   }
 
   private def partition(letterSequence: List[String], nextLetterIndex: Int, remainingLines: List[String]): (List[String], List[String]) = {
@@ -116,8 +138,7 @@ object SoPExtractorUtilities {
     line.startsWith(letterFollowedBySpace)
   }
 
-  // edge case is where h para has sub para beginning with i
-  // can tell this because first line of h para ends in ,
+
 
 }
 

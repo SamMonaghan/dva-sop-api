@@ -46,7 +46,7 @@ trait GenericTextCleanser extends SoPCleanser {
   }
 
   private def replaceCurlyApostrophe(raw: String): String = {
-    val curlyApostrophe = """\u2019""".r
+    val curlyApostrophe = """\u2019|\u0092""".r
     regexReplace(curlyApostrophe, raw, "'")
   }
 

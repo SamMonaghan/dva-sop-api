@@ -1,5 +1,5 @@
 
-package au.gov.dva.sopapi.tests.parsertests
+package au.gov.dva.sopapi.tests.parsertests.specificsops
 
 import java.time.LocalDate
 

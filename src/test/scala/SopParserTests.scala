@@ -65,7 +65,6 @@ class SopParserTests extends FunSuite {
   }
 
 
-
   test("Parse instrument number") {
     val testInput = "This Instrument may be cited as Statement of Principles concerning lumbar spondylosis No. 62 of 2014."
     val result = PreAugust2015Parser.parseInstrumentNumber(testInput)
@@ -174,90 +173,6 @@ class SopParserTests extends FunSuite {
     val result = SoPExtractorUtilities.getSection(cleansedText, factorsRegex)
     assert(result != null)
     System.out.print(result)
-  }
-
-  test("Split factors sections to individual factors for ls") {
-    val input = ParserTestUtils.resourceToString("lsFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
-    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(input)
-    assert(result.size == 31)
-    println(result)
-  }
-
-  test("Split factor section to individual factors for osteo") {
-    val input = ParserTestUtils.resourceToString("osteoFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
-    val excludingHead = input.drop(4)
-    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(excludingHead)
-    println(result)
-    assert(result.size == 40 && result.forall(l => l.head.startsWith("(")))
-
-  }
-
-  test("Split factors for sleep apnoae") {
-    // this one is tricky because the (h) para has sub paras starting with (i) and the next main para also starts with (i)
-    val input = ParserTestUtils.resourceToString("sleepApnoeaFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
-    val excludingHeader = input.drop(3)
-
-    val result = SoPExtractorUtilities.splitFactorsSectionByFactor(excludingHeader)
-    val hFactor = result.find(f => f.head.startsWith("(h)"))
-    println(result)
-    assert(hFactor.get.size > 1)
-  }
-
-  test("Get sequence of main factors") {
-    val result = SoPExtractorUtilities.getMainParaLetterSequence
-    println(result)
-  }
-
-  test("Split factors section to head and rest") {
-    val input = ParserTestUtils.resourceToString("sleepApnoeaFactorLines.txt").split(scala.util.Properties.lineSeparator).toList
-    val (header, rest) = SoPExtractorUtilities.splitFactorsSectionToHeaderAndRest(input)
-    println("HEADER: " + header)
-    println("REST: " + rest.mkString(Properties.lineSeparator))
-    assert(!header.isEmpty && !rest.isEmpty)
-  }
-
-  object factorsParserUnderTest extends FactorsParser
-
-  test("Parse single level para") {
-
-    val input = "(r) having a disorder associated with loss of pain sensation or proprioception involving the affected joint before the clinical onset of osteoarthritis in that joint; or"
-    val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.factor, input)
-    println(result)
-    assert(result.successful)
-  }
-
-  test("Parse two level para") {
-    val input = "(h) for obstructive sleep apnoea only, (i) having chronic obstruction or chronic narrowing of the upper airway at the time of the clinical worsening of sleep apnoea; or (ii) being obese at the time of the clinical worsening of sleep apnoea; or (iii) having hypothyroidism at the time of the clinical worsening of sleep apnoea; or (iv) having acromegaly at the time of the clinical worsening of sleep apnoea; or (v) being treated with antiretroviral therapy for human immunodeficiency virus infection before the clinical worsening of sleep apnoea; or"
-    val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.twoLevelPara, input)
-    println(result)
-    assert(result.successful)
-  }
-
-  test("Parse two level para with tail")
-  {
-    val input = "(ee) for osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait; for at least three years before the clinical worsening of osteoarthritis in that joint; or"
-     val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.factor, input)
-    println(result)
-    assert(result.successful)
-
-  }
-
-  test("Parse two level para without tail")
-  {
-   val input =  "(k) for osteoarthritis of a joint of the upper limb only, (i) performing any combination of repetitive activities or forceful activities for an average of at least 30 hours per week, for a continuous period of at least ten years before the clinical onset of osteoarthritis in that joint; or (ii) using a hand-held, vibrating, percussive, industrial tool on more days than not, for at least 10 years before the clinical onset of osteoarthritis in that joint; or"
-
-    val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.twoLevelPara, input)
-    println(result)
-    assert(result.successful)
-  }
-
-  test("Parse factors section for osteo") {
-
-    val input = ParserTestUtils.resourceToString("osteoFactorLines.txt");
-    val result = PreAugust2015Parser.parseFactorsSection(input)
-    assert(result._2.size == 40)
-     println(result)
-
   }
 
 

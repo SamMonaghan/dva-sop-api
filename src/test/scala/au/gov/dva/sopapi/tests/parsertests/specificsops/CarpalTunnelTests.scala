@@ -1,5 +1,5 @@
 
-package au.gov.dva.sopapi.tests.parsertests
+package au.gov.dva.sopapi.tests.parsertests.specificsops
 
 import java.time.LocalDate
 
@@ -445,7 +445,7 @@ class CarpalTunnelTests extends FunSuite {
   }
 
   // Onset factors
-  test("Parse BoP carpal tunnel syndrome onset factors") {
+  ignore("Parse BoP carpal tunnel syndrome onset factors") {
     val a = new ParsedFactor("6(a)",
       "performing any combination of repetitive activities or forceful activities with the " +
         "affected hand for at least 260 hours within a period of 210 consecutive days before " +
