@@ -94,19 +94,15 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
       throw new SopParserError(msg)
     }
     else {
-      val last = restSplitToSubParas.takeRight(1).map(this.parseAll(this.subParaWithOptTail, _)).headOption
-      if (last.isEmpty) throw new SopParserError("Last sub para is not defined: " + Properties.lineSeparator + singleFactorTextInclLineBreaks)
-      val lastParaParseResult = last.get
-      if (!lastParaParseResult.successful) throw new SopParserError("Could not parse last sub para: " + lastParaParseResult.toString)
+      val(lastPara,tail) = splitOutTailIfAny(rest.takeRight(1).head)
+      val lastParaParseResult = this.parseAll(this.subPara,lastPara)
+      if (!lastParaParseResult.successful) throw new SopParserError(lastParaParseResult.toString)
 
       val headLetter = headParseResult.get._1
       val headText = headParseResult.get._2
       val allSubParaInfosButLast: List[(String, String, Option[String])] = parseSubFactorsExceptLast.map(r => r.get)
-      // option in last sub para is tail, not terminator
-      val lastSubParaInfoResult = last.get.get
-      val lastSubParaInfo: (String, String, Option[String]) = (lastSubParaInfoResult._1, lastSubParaInfoResult._2, None)
-      val allSubParas = allSubParaInfosButLast :+ lastSubParaInfo
-      val tail = lastSubParaInfo._3
+      val lastSubParaInfoResult: (String, String, Option[String]) = lastParaParseResult.get
+      val allSubParas = allSubParaInfosButLast :+ lastSubParaInfoResult
       return new FactorInfoWithSubParas(headLetter, headText, allSubParas, tail)
 
     }
