@@ -91,6 +91,17 @@ object SoPExtractorUtilities {
 
   }
 
+  def splitOutTailIfAny(lastSubParaWithLineBreaks: String): (String, Option[String]) = {
+    val asLines = lastSubParaWithLineBreaks.split("[\r\n]+").toList
+    val reversed = asLines.reverse
+    val tail = reversed.takeWhile(l => !l.endsWith(";")).reverse
+    if (tail.size < asLines.size) {
+      val partWithoutTail = asLines.take(asLines.size - tail.size)
+      return (partWithoutTail.mkString(Properties.lineSeparator), Some(tail.mkString(Properties.lineSeparator)))
+    }
+    else return (lastSubParaWithLineBreaks, None)
+  }
+
   def splitFactorsSectionByFactor(factorsSectionExcludingHead: List[String]): List[List[String]] = {
     val lettersSequence = getMainParaLetterSequence.toList
     divideSectionRecursively(lettersSequence, 1, List.empty, factorsSectionExcludingHead).reverse

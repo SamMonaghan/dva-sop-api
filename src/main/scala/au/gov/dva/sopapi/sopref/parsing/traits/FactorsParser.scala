@@ -43,9 +43,6 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     case para ~ text => new FactorInfoWithoutSubParas(para, text)
   }
 
-  def subParaWithOptTail: Parser[(String, String, Option[String])] = subParaLetter ~ subParaBodyText ~ opt(orTerminator | periodTerminator | tail) ^^ {
-    case letter ~ body ~ tail => (letter, body, tail)
-  }
 
   def factor: Parser[FactorInfo] = (twoLevelPara | singleLevelPara) <~ opt(orTerminator | periodTerminator) ^^ {
     case factor => factor
@@ -55,15 +52,7 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     case letter ~ body => (letter, body)
   }
 
-  def splitOutTailIfAny(lastSubParaWithLineBreaks: String): (String, Option[String]) = {
-    val asLines = lastSubParaWithLineBreaks.split("[\r\n]+").toList
-    val reversed = asLines.reverse
-    val tail = reversed.takeWhile(l => !l.endsWith(";")).reverse
-    if (tail.size < asLines.size) {
-      return (asLines.take(asLines.size - tail.size).mkString(Properties.lineSeparator), Some(tail.mkString(Properties.lineSeparator)))
-    }
-    else return (lastSubParaWithLineBreaks, None)
-  }
+
 
   def parseSingleFactor(singleFactorTextInclLineBreaks: String): FactorInfo = {
     // split to head and rest
@@ -94,9 +83,10 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
       throw new SopParserError(msg)
     }
     else {
-      val(lastPara,tail) = splitOutTailIfAny(rest.takeRight(1).head)
+
+      val(lastPara,tail) = SoPExtractorUtilities.splitOutTailIfAny(restSplitToSubParas.takeRight(1).head)
       val lastParaParseResult = this.parseAll(this.subPara,lastPara)
-      if (!lastParaParseResult.successful) throw new SopParserError(lastParaParseResult.toString)
+       if (!lastParaParseResult.successful) throw new SopParserError(lastParaParseResult.toString)
 
       val headLetter = headParseResult.get._1
       val headText = headParseResult.get._2

@@ -12,6 +12,28 @@ class SingleFactorParsingTests extends FunSuite {
 
   object factorsParserUnderTest extends FactorsParser
 
+
+  test("Split sub paras") {
+
+    val input = "(i) having an amputation involving either leg; or\n(ii) having an asymmetric gait;\nfor at least three years before the clinical worsening of\nosteoarthritis in that joint; or"
+    val result = SoPExtractorUtilities.splitFactorToSubFactors(input.split("[\r\n]+").toList)
+    assert(result.size == 2 && result(1).size == 3)
+  }
+
+  test("Split last sub para to sub para and tail with semi colon end")
+  {
+    val input = "(ii) having an asymmetric gait;\nfor at least three years before the clinical worsening of\nosteoarthritis in that joint; or"
+    val result = SoPExtractorUtilities.splitOutTailIfAny(input)
+    assert(result._2.isDefined && result._1.size + result._2.get.size == input.size)
+  }
+
+  test("Do not split last sub para to sub para and tail with comma end")
+  {
+    val input = "(ii) having an asymmetric gait,\nfor at least three years before the clinical worsening of\nosteoarthritis in that joint; or"
+    val result = SoPExtractorUtilities.splitOutTailIfAny(input)
+    assert(result._2.isEmpty && result._1.size == input.size)
+  }
+
   test("Parse single level para") {
 
     val input = "(r) having a disorder associated with loss of pain sensation or proprioception involving the affected joint before the clinical onset of osteoarthritis in that joint; or"
@@ -28,10 +50,11 @@ class SingleFactorParsingTests extends FunSuite {
   }
 
   test("Parse two level para with tail") {
-    val input = "(ee) for osteoarthritis of a joint of the lower limb only, (i) having an amputation involving either leg; or (ii) having an asymmetric gait; for at least three years before the clinical worsening of osteoarthritis in that joint; or"
-    val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.factor, input)
+    val input = "(ee) for osteoarthritis of a joint of the lower limb only,\n(i) having an amputation involving either leg; or\n(ii) having an asymmetric gait;\nfor at least three years before the clinical worsening of\nosteoarthritis in that joint; or"
+
+    val result = factorsParserUnderTest.parseSingleFactor(input)
     println(result)
-    assert(result.successful)
+
 
   }
 
@@ -71,11 +94,15 @@ class SingleFactorParsingTests extends FunSuite {
     println(result)
   }
 
+
+
+
   test("Split tail from last factor") {
      val lastFactor = "(ii) having an asymmetric gait;\nfor at least three years before the clinical worsening of\nosteoarthritis in that joint; or";
-      val result = factorsParserUnderTest.splitOutTailIfAny(lastFactor)
+      val result = SoPExtractorUtilities.splitOutTailIfAny(lastFactor)
 
-    println(result._2.get)
+    println("PARA: " + result._1)
+    println("TAIL: " +  result._2.get)
   }
 
 
