@@ -25,28 +25,17 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     case letter ~ body ~ terminator => (letter, body, terminator)
   }
 
-  def subParaList: Parser[List[(String, String, Option[String])]] = rep1(subPara)
 
   def tail: Parser[String] = not(orTerminator) ~> (";" | ",") ~> Properties.lineSeparator ~> """[a-z,\s]+""".r <~ (periodTerminator | orTerminator)
 
-  def completeFactorWithSubParas: Parser[(String, String, List[(String, String, Option[String])], Option[String])] = mainParaLetter ~ head ~ subParaList ~ opt(tail) ^^ {
-    case mainParaLetter ~ head ~ subParalist ~ tailOption => {
-      (mainParaLetter, head, subParalist, tailOption)
-    }
-  }
 
-  def twoLevelPara: Parser[FactorInfoWithSubParas] = mainParaLetter ~ head ~ subParaList ~ opt(tail) ^^ {
-    case mainParaLetter ~ head ~ subParaList ~ tailOption => new FactorInfoWithSubParas(mainParaLetter, head, subParaList, tailOption)
-  }
+
 
   def singleLevelPara: Parser[FactorInfoWithoutSubParas] = mainParaLetter ~ mainFactorBodyText <~ opt(orTerminator | periodTerminator) ^^ {
     case para ~ text => new FactorInfoWithoutSubParas(para, text)
   }
 
 
-  def factor: Parser[FactorInfo] = (twoLevelPara | singleLevelPara) <~ opt(orTerminator | periodTerminator) ^^ {
-    case factor => factor
-  }
 
   def factorHead: Parser[(String, String)] = mainParaLetter ~ mainFactorBodyText <~ opt(":" | ",") ^^ {
     case letter ~ body => (letter, body)
@@ -110,16 +99,10 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     assert(groupedToCollectionsOfFactors.forall(i => !i.endsWith(" ") && !i.startsWith(" ")))
 
     val parsedFactors = groupedToCollectionsOfFactors
-      .map(this.parseAll(this.factor, _))
+      .map(parseSingleFactor(_))
 
     val standard = extractStandardOfProofFromHeader(header)
-    if (parsedFactors.forall(pf => pf.successful))
-      return (standard, parsedFactors.map(pf => pf.get))
-    else {
-      val unsucessfulSections = parsedFactors.filter(!_.successful)
-      val msg = unsucessfulSections.map(us => us.toString).mkString(Properties.lineSeparator)
-      throw new SopParserError(msg)
-    }
+    (standard,parsedFactors)
   }
 
   private def extractStandardOfProofFromHeader(headerText: String): StandardOfProof = {
