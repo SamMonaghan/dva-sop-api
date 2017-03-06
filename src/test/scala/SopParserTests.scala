@@ -175,6 +175,11 @@ class SopParserTests extends FunSuite {
     System.out.print(result)
   }
 
+  test("Take until letter appears a number of times") {
+    val input = List("(hh) blah", "(i) blah blah", "(ii) blah blah", "(iii)", "(iv)", "(ii) main para again","(jj) main para")
+    val result = SoPExtractorUtilities.splitWithSkip(input,2,l => l.startsWith("(ii)"))
+    assert(result._1.size == 5 && result._2.size == 2)
+  }
 
 }
 

@@ -125,7 +125,7 @@ object SoPExtractorUtilities {
   private def partition(letterSequence: List[String], nextLetterIndex: Int, remainingLines: List[String]): (List[String], List[String]) = {
 
 
-
+  
     // edge case of (i) following (h)
     if (letterSequence(nextLetterIndex - 1) == "(h)" && letterSequence(nextLetterIndex) == "(i)") {
       if (remainingLines.head.endsWith(",")) {
@@ -155,19 +155,27 @@ object SoPExtractorUtilities {
     val nextLetter = letterSequence(nextLetterIndex)
     remainingLines.span(l => !l.startsWith(nextLetter))
 
-
-    // todo: what if a letter is missing, eg repealed?
-    // todo: what if
   }
 
-  private def spanWithSkip(lines: List[String], nextLetter: String, numberToSkip: Int): (List[String], List[String]) = {
-    var found = 0
-    lines.span(line => {
-      if (lineStartsWithLetter(nextLetter,line)) found = found + 1
-      found == numberToSkip + 1
-    })
-
+  def splitWithSkip(lines: List[String], numberOfTimes: Int, test: String => Boolean): (List[String],List[String]) = {
+    val firstPart = takeUntilTestPassedNTimes(lines,numberOfTimes,test)
+    (firstPart,lines.drop(firstPart.size))
   }
+
+
+  def takeUntilTestPassedNTimes(lines: List[String], numberOfTimes: Int, test: String => Boolean): List[String] = {
+    def takeRecursive(remaining: List[String], acc: List[String], timesPassed : Int, maxTimes: Int, test: String => Boolean): List[String] = {
+      if (lines.isEmpty) return acc
+      else {
+        val passOnCurrent = if (test(remaining.head)) 1 else 0
+        if (passOnCurrent + timesPassed == maxTimes) return acc
+        else takeRecursive(remaining.tail, acc :+ remaining.head, timesPassed + passOnCurrent, maxTimes, test)
+      }
+    }
+    takeRecursive(lines,List(),0,numberOfTimes,test)
+  }
+
+
 
   private def lineStartsWithLetter(letter: String, line: String) = {
     val letterFollowedBySpace = letter + " ";
