@@ -69,7 +69,7 @@ object SoPExtractorUtilities {
   }
 
   def getSubParaLetterSequence = {
-    List("i","ii","iii","iv","v","vi","vii","viii","ix","x","xi","xii","xiii")
+    List("i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii", "xiii")
       .map(i => ("(" + i + ")"))
   }
 
@@ -79,14 +79,14 @@ object SoPExtractorUtilities {
     (headerLines.mkString(" "), rest)
   }
 
-  def splitFactorToHeaderAndRest(singleFactor : List[String]) : (String, List[String]) = {
+  def splitFactorToHeaderAndRest(singleFactor: List[String]): (String, List[String]) = {
     if (singleFactor.size == 1)
-      return (singleFactor(0),List.empty)
+      return (singleFactor(0), List.empty)
     else {
 
       val headerLines = singleFactor.head :: singleFactor.tail.takeWhile(l => !l.startsWith("("))
       val rest = singleFactor.drop(headerLines.size)
-      return (headerLines.mkString(" "),rest)
+      return (headerLines.mkString(" "), rest)
     }
 
   }
@@ -104,7 +104,7 @@ object SoPExtractorUtilities {
 
   def splitFactorsSectionByFactor(factorsSectionExcludingHead: List[String]): List[List[String]] = {
     val lettersSequence = getMainParaLetterSequence.toList
-    divideSectionRecursively(lettersSequence, 1, List.empty, factorsSectionExcludingHead).reverse
+    divideSectionRecursively(lettersSequence, 1, List.empty, factorsSectionExcludingHead)
   }
 
   def divideSectionRecursively(lettersSequence: List[String], nextLetterIndex: Int, acc: List[List[String]], remainingLines: List[String])
@@ -117,12 +117,14 @@ object SoPExtractorUtilities {
     }
   }
 
-  def splitFactorToSubFactors(factorLines : List[String]) : List[List[String]] = {
+  def splitFactorToSubFactors(factorLines: List[String]): List[List[String]] = {
     val romanNumeralsSequence = getSubParaLetterSequence
-    divideSectionRecursively(romanNumeralsSequence,1,List.empty,factorLines)
+    divideSectionRecursively(romanNumeralsSequence, 1, List.empty, factorLines)
   }
 
   private def partition(letterSequence: List[String], nextLetterIndex: Int, remainingLines: List[String]): (List[String], List[String]) = {
+
+
 
     // edge case of (i) following (h)
     if (letterSequence(nextLetterIndex - 1) == "(h)" && letterSequence(nextLetterIndex) == "(i)") {
@@ -133,22 +135,44 @@ object SoPExtractorUtilities {
           .takeWhile(line => !lineStartsWithLetter("(i)", line))
         val allFactorLines = linesIncludingFirstLittleI ++ linesToNextLittleI
         val rest = remainingLines.drop(allFactorLines.size)
-        return (allFactorLines,rest)
+        return (allFactorLines, rest)
       }
+    }
 
+    // edge case of (ii) following (hh)
+    if (letterSequence(nextLetterIndex - 1) == "(hh)" && letterSequence(nextLetterIndex) == "(ii)") {
+      if (remainingLines.head.endsWith(",")) {
+        val indexOfFirstLittleRomanI = remainingLines.indexWhere(line => lineStartsWithLetter("(ii)", line))
+        val linesIncludingFirstLittleI = remainingLines.take(indexOfFirstLittleRomanI + 1)
+        val linesToNextLittleI = remainingLines.drop(linesIncludingFirstLittleI.size)
+          .takeWhile(line => !lineStartsWithLetter("(ii)", line))
+        val allFactorLines = linesIncludingFirstLittleI ++ linesToNextLittleI
+        val rest = remainingLines.drop(allFactorLines.size)
+        return (allFactorLines, rest)
+      }
     }
 
     val nextLetter = letterSequence(nextLetterIndex)
     remainingLines.span(l => !l.startsWith(nextLetter))
 
+
     // todo: what if a letter is missing, eg repealed?
+    // todo: what if
+  }
+
+  private def spanWithSkip(lines: List[String], nextLetter: String, numberToSkip: Int): (List[String], List[String]) = {
+    var found = 0
+    lines.span(line => {
+      if (lineStartsWithLetter(nextLetter,line)) found = found + 1
+      found == numberToSkip + 1
+    })
+
   }
 
   private def lineStartsWithLetter(letter: String, line: String) = {
     val letterFollowedBySpace = letter + " ";
     line.startsWith(letterFollowedBySpace)
   }
-
 
 
 }

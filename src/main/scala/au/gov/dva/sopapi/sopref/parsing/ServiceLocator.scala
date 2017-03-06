@@ -1,6 +1,6 @@
 package au.gov.dva.sopapi.sopref.parsing
 
-import au.gov.dva.sopapi.sopref.parsing.implementations.cleansers.GenericCleanser
+import au.gov.dva.sopapi.sopref.parsing.implementations.cleansers.{GenericCleanser, OsteoArthritisCleanser}
 import au.gov.dva.sopapi.sopref.parsing.implementations.sopfactories.{CartilageTearSoPFactory, LsSoPFactory, OsteoarthritisSoPFactory, PreAug2015SoPFactory}
 import au.gov.dva.sopapi.sopref.parsing.traits.{SoPCleanser, SoPFactory}
 
@@ -32,6 +32,7 @@ object ServiceLocator {
 
   def findTextCleanser(registerId : String) : SoPCleanser = {
     registerId match {
+      case "F2011C00491" => OsteoArthritisCleanser
       case _ => GenericCleanser
     }
   }

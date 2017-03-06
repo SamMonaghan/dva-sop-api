@@ -37,16 +37,15 @@ class SingleFactorParsingTests extends FunSuite {
   test("Parse single level para") {
 
     val input = "(r) having a disorder associated with loss of pain sensation or proprioception involving the affected joint before the clinical onset of osteoarthritis in that joint; or"
-    val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.factor, input)
+    val result = factorsParserUnderTest.parseSingleFactor(input)
     println(result)
-    assert(result.successful)
+
   }
 
   test("Parse two level para") {
     val input = "(h) for obstructive sleep apnoea only, (i) having chronic obstruction or chronic narrowing of the upper airway at the time of the clinical worsening of sleep apnoea; or (ii) being obese at the time of the clinical worsening of sleep apnoea; or (iii) having hypothyroidism at the time of the clinical worsening of sleep apnoea; or (iv) having acromegaly at the time of the clinical worsening of sleep apnoea; or (v) being treated with antiretroviral therapy for human immunodeficiency virus infection before the clinical worsening of sleep apnoea; or"
-    val result = factorsParserUnderTest.parseAll(factorsParserUnderTest.twoLevelPara, input)
+    val result = factorsParserUnderTest.parseSingleFactor(input)
     println(result)
-    assert(result.successful)
   }
 
   test("Parse two level para with tail") {
@@ -54,7 +53,6 @@ class SingleFactorParsingTests extends FunSuite {
     val result = factorsParserUnderTest.parseSingleFactor(input)
     println(result)
   }
-
 
 
   test("Split head from rest for individual factor") {

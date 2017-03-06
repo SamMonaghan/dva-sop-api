@@ -17,7 +17,7 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
 
   private def factorsSectionHead: Parser[String] = mainFactorBodyText <~ ":"
 
-  def head: Parser[String] = """[a-z\s]+""".r <~ """[,:]""".r
+  def head: Parser[String] = """[a-z\s]+""".r <~ """[,:\]""".r
 
   def subParaLetter: Parser[String] = """\([ixv]+\)""".r
 
@@ -28,35 +28,30 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
 
   def tail: Parser[String] = not(orTerminator) ~> (";" | ",") ~> Properties.lineSeparator ~> """[a-z,\s]+""".r <~ (periodTerminator | orTerminator)
 
-
-
-
   def singleLevelPara: Parser[FactorInfoWithoutSubParas] = mainParaLetter ~ mainFactorBodyText <~ opt(orTerminator | periodTerminator) ^^ {
     case para ~ text => new FactorInfoWithoutSubParas(para, text)
   }
-
 
 
   def factorHead: Parser[(String, String)] = mainParaLetter ~ mainFactorBodyText <~ opt(":" | ",") ^^ {
     case letter ~ body => (letter, body)
   }
 
-
-
   def parseSingleFactor(singleFactorTextInclLineBreaks: String): FactorInfo = {
-    // split to head and rest
-    // split the rest to sub paras, with any tail stuck on the last para
-    // separate out the tail
-    val (head, rest) = SoPExtractorUtilities.splitFactorToHeaderAndRest(singleFactorTextInclLineBreaks.split("[\r\n]+").toList)
-    assert(!head.isEmpty)
 
-    val headParseResult = this.parseAll(this.factorHead, head)
-    if (!headParseResult.successful) throw new SopParserError(headParseResult.toString)
+    val (headOrAll, rest) = SoPExtractorUtilities.splitFactorToHeaderAndRest(singleFactorTextInclLineBreaks.split("[\r\n]+").toList)
+    assert(!headOrAll.isEmpty)
+
 
     if (rest.isEmpty) {
-      val simpleFactorParseResult = this.parseAll(this.singleLevelPara, head)
+      val simpleFactorParseResult = this.parseAll(this.singleLevelPara, headOrAll)
       if (!simpleFactorParseResult.successful) throw new SopParserError(simpleFactorParseResult.toString)
       else return simpleFactorParseResult.get
+    }
+
+    val headParseResult = this.parseAll(this.factorHead, headOrAll)
+    if (!headParseResult.successful) {
+      throw new SopParserError(headParseResult.toString)
     }
 
     val restSplitToSubParas = SoPExtractorUtilities.splitFactorToSubFactors(rest)
@@ -73,9 +68,11 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     }
     else {
 
-      val(lastPara,tail) = SoPExtractorUtilities.splitOutTailIfAny(restSplitToSubParas.takeRight(1).head)
-      val lastParaParseResult = this.parseAll(this.subPara,lastPara)
-       if (!lastParaParseResult.successful) throw new SopParserError(lastParaParseResult.toString)
+      val (lastPara, tail) = SoPExtractorUtilities.splitOutTailIfAny(restSplitToSubParas.takeRight(1).head)
+      val lastParaParseResult = this.parseAll(this.subPara, lastPara)
+      if (!lastParaParseResult.successful) {
+        throw new SopParserError(lastParaParseResult.toString)
+      }
 
       val headLetter = headParseResult.get._1
       val headText = headParseResult.get._2
@@ -102,7 +99,7 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
       .map(parseSingleFactor(_))
 
     val standard = extractStandardOfProofFromHeader(header)
-    (standard,parsedFactors)
+    (standard, parsedFactors)
   }
 
   private def extractStandardOfProofFromHeader(headerText: String): StandardOfProof = {
