@@ -148,18 +148,17 @@ class DislocationTests extends FunSuite {
       Set(biomechanicalDef))
 
     val g = new ParsedFactor("6(g)",
-      "for rotational atlantoaxial joint dislocation only,\n(i) having an inflammatory " +
-        "or infectious condition involving the ear, nose or throat within the 21 days " +
-        "before the clinical onset of dislocation; or\n(ii) having undergone a surgical " +
-        "procedure involving the head or neck within the 21 days before the clinical " +
-        "onset of dislocation",
+      "for rotational atlantoaxial joint dislocation only,  (i)  having an inflammatory " +
+        "or infectious condition involving the ear, nose or throat within the 21 days before " +
+        "the clinical onset of dislocation; or (ii) having undergone a surgical procedure " +
+        "involving the head or neck within the 21 days before the clinical onset of dislocation",
       Nil.toSet)
 
     val h = new ParsedFactor("6(h)",
-      "for temporomandibular joint dislocation only,\n(i) undergoing tracheal intubation " +
-        "at the time of the clinical onset of dislocation;\n(ii) undergoing intravenous " +
-        "sedation at the time of the clinical onset of dislocation; or\n(iii) undergoing " +
-        "an activity that involves wide opening of the mouth at the time of the clinical " +
+      "for temporomandibular joint dislocation only,  (i)  undergoing tracheal intubation " +
+        "at the time of the clinical onset of dislocation; (ii) undergoing intravenous " +
+        "sedation at the time of the clinical onset of dislocation; or (iii) undergoing an " +
+        "activity that involves wide opening of the mouth at the time of the clinical " +
         "onset of dislocation",
       Set(wideOpeningDef))
 
