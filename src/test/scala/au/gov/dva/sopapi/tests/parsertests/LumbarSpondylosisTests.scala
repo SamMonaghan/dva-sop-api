@@ -51,7 +51,7 @@ class LumbarSpondylosisTests extends FunSuite {
 
   val obeseDef = new ParsedDefinedTerm("being obese",
     "means an increase in body weight by way of fat accumulation\nwhich results in a Body " +
-      "Mass Index (BMI) of thirty or greater.\nThe BMI = W/H2 and where:\nW is the person’s " +
+      "Mass Index (BMI) of thirty or greater.\nThe BMI = W/H^2 and where:\nW is the person’s " +
       "weight in kilograms; and\nH is the person’s height in metres")
 
   val forwardFlexionDef = new ParsedDefinedTerm("extreme forward flexion of the lumbar spine",
@@ -59,7 +59,7 @@ class LumbarSpondylosisTests extends FunSuite {
 
   val gForceDef = new ParsedDefinedTerm("G force",
     "means the ratio of the applied acceleration of the aircraft to the\nacceleration " +
-      "due to gravity, for example, 4G = 4 x 9.81m/s2")
+      "due to gravity, for example, 4G = 4 x 9.81m/s^2")
 
   val inflammatoryJointDef = new ParsedDefinedTerm("inflammatory joint disease",
     "means rheumatoid arthritis, reactive arthritis,\npsoriatic arthropathy, ankylosing " +
