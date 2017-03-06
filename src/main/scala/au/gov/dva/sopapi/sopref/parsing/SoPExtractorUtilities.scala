@@ -125,32 +125,20 @@ object SoPExtractorUtilities {
   private def partition(letterSequence: List[String], nextLetterIndex: Int, remainingLines: List[String]): (List[String], List[String]) = {
 
 
-  
     // edge case of (i) following (h)
     if (letterSequence(nextLetterIndex - 1) == "(h)" && letterSequence(nextLetterIndex) == "(i)") {
       if (remainingLines.head.endsWith(",")) {
-        val indexOfFirstLittleRomanI = remainingLines.indexWhere(line => lineStartsWithLetter("(i)", line))
-        val linesIncludingFirstLittleI = remainingLines.take(indexOfFirstLittleRomanI + 1)
-        val linesToNextLittleI = remainingLines.drop(linesIncludingFirstLittleI.size)
-          .takeWhile(line => !lineStartsWithLetter("(i)", line))
-        val allFactorLines = linesIncludingFirstLittleI ++ linesToNextLittleI
-        val rest = remainingLines.drop(allFactorLines.size)
-        return (allFactorLines, rest)
+        return splitWithSkip(remainingLines,2, lineStartsWithLetter("(i)"));
       }
     }
 
     // edge case of (ii) following (hh)
     if (letterSequence(nextLetterIndex - 1) == "(hh)" && letterSequence(nextLetterIndex) == "(ii)") {
       if (remainingLines.head.endsWith(",")) {
-        val indexOfFirstLittleRomanI = remainingLines.indexWhere(line => lineStartsWithLetter("(ii)", line))
-        val linesIncludingFirstLittleI = remainingLines.take(indexOfFirstLittleRomanI + 1)
-        val linesToNextLittleI = remainingLines.drop(linesIncludingFirstLittleI.size)
-          .takeWhile(line => !lineStartsWithLetter("(ii)", line))
-        val allFactorLines = linesIncludingFirstLittleI ++ linesToNextLittleI
-        val rest = remainingLines.drop(allFactorLines.size)
-        return (allFactorLines, rest)
+        return splitWithSkip(remainingLines,2, lineStartsWithLetter("(ii)"));
       }
     }
+
 
     val nextLetter = letterSequence(nextLetterIndex)
     remainingLines.span(l => !l.startsWith(nextLetter))
@@ -165,7 +153,7 @@ object SoPExtractorUtilities {
 
   def takeUntilTestPassedNTimes(lines: List[String], numberOfTimes: Int, test: String => Boolean): List[String] = {
     def takeRecursive(remaining: List[String], acc: List[String], timesPassed : Int, maxTimes: Int, test: String => Boolean): List[String] = {
-      if (lines.isEmpty) return acc
+      if (remaining.isEmpty) return acc
       else {
         val passOnCurrent = if (test(remaining.head)) 1 else 0
         if (passOnCurrent + timesPassed == maxTimes) return acc
@@ -177,7 +165,7 @@ object SoPExtractorUtilities {
 
 
 
-  private def lineStartsWithLetter(letter: String, line: String) = {
+  private def lineStartsWithLetter(letter: String) (line: String) = {
     val letterFollowedBySpace = letter + " ";
     line.startsWith(letterFollowedBySpace)
   }
