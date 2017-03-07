@@ -54,14 +54,6 @@ class FactorSectionTests extends FunSuite {
   }
 
 
-  test("Parse factors section for osteo") {
-
-    val input = ParserTestUtils.resourceToString("factorSections/osteoFactorLines.txt");
-    val result = PreAugust2015Parser.parseFactorsSection(input)
-    assert(result._2.size == 40)
-    println(result)
-
-  }
 
   test("Parse factors section for carpal tunnel")
   {

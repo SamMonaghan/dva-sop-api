@@ -1,5 +1,8 @@
 package au.gov.dva.sopapi.tests.parsertests
 
+import au.gov.dva.dvasopapi.tests.TestUtils
+import au.gov.dva.sopapi.interfaces.model.SoP
+import au.gov.dva.sopapi.sopref.data.sops.StoredSop
 import au.gov.dva.sopapi.sopref.parsing.SoPExtractorUtilities
 import au.gov.dva.sopapi.tests.parsers.ParserTestUtils
 import org.junit.runner.RunWith
@@ -45,22 +48,24 @@ class PreAug2015Tests extends FunSuite{
 
     test("Push all pre Aug BOP 2015 through pipeline")
      {
-        BoPidsForPreAug2015.foreach(id => {
-          println(id)
-          val result = ParserTestUtils.executeWholeParsingPipeline(id, "sops_bop/" + id + ".pdf")
-          assert(result != null)
 
+        val parseResults: List[SoP] =  BoPidsForPreAug2015.map(id => {
+          ParserTestUtils.executeWholeParsingPipeline(id, "sops_bop/" + id + ".pdf")
         })
+
+        parseResults.foreach(s => println(TestUtils.prettyPrint(StoredSop.toJson(s))))
 
      }
 
   test("Push all pre Aug  2015 RH through pipeline")
   {
-    RHIdsForPreAug2015.foreach(id => {
-      println(id)
-      val result = ParserTestUtils.executeWholeParsingPipeline(id, "sops_rh/" + id + ".pdf")
-      assert(result != null)
+
+    val parseResults = RHIdsForPreAug2015.map(id => {
+      ParserTestUtils.executeWholeParsingPipeline(id, "sops_rh/" + id + ".pdf")
+
     })
+
+    assert(parseResults.size == 15)
 
   }
 

@@ -170,7 +170,4 @@ object SoPExtractorUtilities {
     line.startsWith(letterFollowedBySpace)
   }
 
-
 }
-
-

@@ -42,7 +42,6 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
     val (headOrAll, rest) = SoPExtractorUtilities.splitFactorToHeaderAndRest(singleFactorTextInclLineBreaks.split("[\r\n]+").toList)
     assert(!headOrAll.isEmpty)
 
-
     if (rest.isEmpty) {
       val simpleFactorParseResult = this.parseAll(this.singleLevelPara, headOrAll)
       if (!simpleFactorParseResult.successful) throw new SopParserError(simpleFactorParseResult.toString)
@@ -62,14 +61,14 @@ trait FactorsParser extends RegexParsers with BodyTextParsers with TerminatorPar
       .map(this.parseAll(this.subPara, _))
 
     if (parseSubFactorsExceptLast.exists(p => !p.successful)) {
-      val unsucessful = parseSubFactorsExceptLast.filter(!_.successful)
-      val msg = unsucessful.map(us => us.toString).mkString(Properties.lineSeparator)
+      val unsuccessful = parseSubFactorsExceptLast.filter(!_.successful)
+      val msg = unsuccessful.map(us => us.toString).mkString(Properties.lineSeparator)
       throw new SopParserError(msg)
     }
     else {
 
       val (lastPara, tail) = SoPExtractorUtilities.splitOutTailIfAny(restSplitToSubParas.takeRight(1).head)
-      val lastParaParseResult = this.parseAll(this.subPara, lastPara)
+      val lastParaParseResult = this.parseAll(this.subPara, lastPara.replaceAll("[\r\n]+"," "))
       if (!lastParaParseResult.successful) {
         throw new SopParserError(lastParaParseResult.toString)
       }

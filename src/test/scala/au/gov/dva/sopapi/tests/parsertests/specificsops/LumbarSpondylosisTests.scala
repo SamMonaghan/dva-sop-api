@@ -136,7 +136,7 @@ class LumbarSpondylosisTests extends FunSuite {
 
   // Onset factors
   // Needs lots of work to update this test
-  ignore("Parse RH lumbar spondylosis onset factors") {
+  test("Parse RH lumbar spondylosis onset factors") {
     val a = new ParsedFactor("6(a)",
       "being a prisoner of war before the clinical onset of lumbar spondylosis",
       Nil.toSet)

@@ -22,7 +22,9 @@ class FactorInfoWithSubParas(mainParaLetter : String, head : String, subParas : 
 {
 
   private def format = {
+    assert(!head.contains(Properties.lineSeparator))
     val lastSubParaWithoutTerimator: (String, String, Option[String]) = (subParas.last._1, subParas.last._2, Some(""))
+    assert(!lastSubParaWithoutTerimator._1.contains(Properties.lineSeparator))
     val allButLast: List[(String, String, Option[String])] = subParas.take(subParas.size - 1)
     val all: List[(String, String, Option[String])] = allButLast :+ lastSubParaWithoutTerimator
     val formatted =  getLetter + " " +  head + ":" + Properties.lineSeparator + (all.map(formatSubPara(_)).mkString(Properties.lineSeparator)) + formatTail(tail)
