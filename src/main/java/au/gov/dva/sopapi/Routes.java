@@ -4,15 +4,13 @@ import au.gov.dva.sopapi.dtos.DvaSopApiDtoError;
 import au.gov.dva.sopapi.dtos.IncidentType;
 import au.gov.dva.sopapi.dtos.QueryParamLabels;
 import au.gov.dva.sopapi.dtos.StandardOfProof;
-import au.gov.dva.sopapi.dtos.sopref.OperationsResponseDto;
+import au.gov.dva.sopapi.dtos.sopref.OperationsResponse;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportRequestDto;
 import au.gov.dva.sopapi.dtos.sopsupport.SopSupportResponseDto;
 import au.gov.dva.sopapi.exceptions.ProcessingRuleError;
 import au.gov.dva.sopapi.interfaces.CaseTrace;
-import au.gov.dva.sopapi.interfaces.model.Deployment;
-import au.gov.dva.sopapi.interfaces.model.ServiceDetermination;
-import au.gov.dva.sopapi.interfaces.model.SoP;
-import au.gov.dva.sopapi.interfaces.model.SoPPair;
+import au.gov.dva.sopapi.interfaces.Repository;
+import au.gov.dva.sopapi.interfaces.model.*;
 import au.gov.dva.sopapi.sopref.DtoTransformations;
 import au.gov.dva.sopapi.sopref.Operations;
 import au.gov.dva.sopapi.sopref.SoPs;
@@ -27,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,8 @@ import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,19 +43,41 @@ import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 import static spark.Spark.get;
+import static spark.Spark.post;
 
 class Routes {
 
     private static Cache cache;
     static Logger logger = LoggerFactory.getLogger(Routes.class);
 
+    public static void initStatus(Repository repository, Cache cache)
+    {
+
+        get("/status", (req, res) -> {
+            StringBuilder sb = new StringBuilder();
+
+            int cacheSops = cache.get_allSops().size();
+
+            Optional<OffsetDateTime> lastUpdated = repository.getLastUpdated();
+
+            String lastUpdateTime = lastUpdated.isPresent() ? lastUpdated.get().toString() : "Unknown";
+
+            setResponseHeaders(res,false,200);
+            sb.append(String.format("Number of SoPs available: %d%n", cacheSops));
+            sb.append(String.format("Last checked for updated SoPs and Service Determinations: %s%n", lastUpdateTime));
+
+
+
+            return sb.toString();
+
+        });
+    }
+
+
     public static void init(Cache cache)
     {
         Routes.cache = cache;
 
-        get("/hello", (req, res) -> {
-            return "Hello";
-        });
 
         get(SharedConstants.Routes.GET_OPERATIONS, (req, res) -> {
 
@@ -65,10 +88,10 @@ class Routes {
 
             ServiceDeterminationPair latestServiceDeterminationPair = Operations.getLatestDeterminationPair(cache.get_allServiceDeterminations());
 
-            OperationsResponseDto operationsResponseDto = DtoTransformations.buildOperationsResponseDto(latestServiceDeterminationPair);
+            OperationsResponse operationsResponse = DtoTransformations.buildOperationsResponseDto(latestServiceDeterminationPair);
 
             setResponseHeaders(res, true, 200);
-            String json = OperationsResponseDto.toJsonString(operationsResponseDto);
+            String json = OperationsResponse.toJsonString(operationsResponse);
             return json;
         });
 
@@ -110,7 +133,10 @@ class Routes {
             }
         });
 
-        get(SharedConstants.Routes.GET_SERVICE_CONNECTION, ((req, res) -> {
+
+
+
+        post(SharedConstants.Routes.GET_SERVICE_CONNECTION, ((req, res) -> {
             if (validateHeaders() && !responseTypeAcceptable(req)) {
                 setResponseHeaders(res, false, 406);
                 return buildAcceptableContentTypesError();
@@ -148,13 +174,16 @@ class Routes {
                 return e.getMessage();
             }
         }));
+
+
     }
+
 
     private static List<String> getSopParamsValidationErrors(String icdCodeValue, String icdCodeVersion, String standardOfProof, String conditionname, String incidentType) {
         List<String> errors = new ArrayList<>();
 
         if (conditionname == null) {
-            String missingICDCodeError = "Need ICD code (query parameter '" + QueryParamLabels.ICD_CODE_VALUE + "') and ICD code version (query paramater '" + QueryParamLabels.ICD_CODE_VERSION + "') if condition name (query parameter '" + QueryParamLabels.CONDITION_NAME + "') is not provided.";
+            String missingICDCodeError = "Need ICD code (query parameter '" + QueryParamLabels.ICD_CODE_VALUE + "') and ICD code version (query parameter '" + QueryParamLabels.ICD_CODE_VERSION + "') if condition name (query parameter '" + QueryParamLabels.CONDITION_NAME + "') is not provided.";
             if (icdCodeValue == null)
                 errors.add(buildQueryParamErrorMessage(QueryParamLabels.ICD_CODE_VALUE, missingICDCodeError));
 

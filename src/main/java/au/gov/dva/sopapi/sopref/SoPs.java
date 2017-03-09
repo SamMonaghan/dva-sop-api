@@ -2,8 +2,8 @@ package au.gov.dva.sopapi.sopref;
 
 import au.gov.dva.sopapi.dtos.IncidentType;
 import au.gov.dva.sopapi.dtos.StandardOfProof;
-import au.gov.dva.sopapi.dtos.sopref.SoPDto;
-import au.gov.dva.sopapi.dtos.sopref.SoPRefDto;
+import au.gov.dva.sopapi.dtos.sopref.SoPFactorsResponse;
+import au.gov.dva.sopapi.dtos.sopref.SoPReferenceResponse;
 import au.gov.dva.sopapi.exceptions.DvaSopApiError;
 import au.gov.dva.sopapi.interfaces.model.ICDCode;
 import au.gov.dva.sopapi.interfaces.model.SoP;
@@ -26,11 +26,11 @@ public class SoPs {
 
     public static String buildSopRefJsonResponse(ImmutableSet<SoP> matchingSops, IncidentType incidentType, StandardOfProof standardOfProof) {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<SoPDto> sopDtos = matchingSops.stream()
+        List<SoPFactorsResponse> sopFactorsResponses = matchingSops.stream()
                 .map(s -> DtoTransformations.fromSop(s,standardOfProof,incidentType))
                 .collect(Collectors.toList());
 
-        SoPRefDto dtoToReturn = new SoPRefDto(sopDtos);
+        SoPReferenceResponse dtoToReturn = new SoPReferenceResponse(sopFactorsResponses);
         String jsonString = null;
         try {
             jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dtoToReturn);
@@ -64,12 +64,6 @@ public class SoPs {
 
        Stream<Optional<SoPPair>> pairs = groupedByName.keySet()
                .stream().map(conditionName -> {
-                   Integer countOfSopsForThisCondition = groupedByName.get(conditionName).size();
-                   if (countOfSopsForThisCondition != 2)
-                   {
-                       logger.warn(String.format("No complete SoP pair for condition: %s", conditionName));
-                       return Optional.empty();
-                   }
 
                    Optional<SoP> bopSop = groupedByName.get(conditionName).stream().filter(soP -> soP.getStandardOfProof() == StandardOfProof.BalanceOfProbabilities).findFirst();
                    Optional<SoP> rhSop = groupedByName.get(conditionName).stream().filter(soP -> soP.getStandardOfProof() == StandardOfProof.ReasonableHypothesis).findFirst();
@@ -77,7 +71,7 @@ public class SoPs {
                        return Optional.of(new SoPPair(bopSop.get(), rhSop.get()));
                    }
                    else {
-                       logger.warn(String.format("No complete SoP pair for condition: %s", conditionName));
+                       logger.error(String.format("No complete SoP pair for condition: %s", conditionName));
                        return Optional.empty();
                    }
                });
