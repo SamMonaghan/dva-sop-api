@@ -16,10 +16,13 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ProcessingRuleFunctions {
 
@@ -113,8 +116,7 @@ public class ProcessingRuleFunctions {
     }
 
     public static Rank getRankProximateToDate(ImmutableSet<Service> services, OffsetDateTime testDate) {
-        // todo: find most 'beneficial rank': army first, if there is at least 1 year of service, then if any service of navy,
-        // use navy rank,
+
         logger.trace("Getting the rank on the last service before date " + testDate);
         Optional<Service> relevantService = services.stream()
                 .sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate())) // most recent first
@@ -162,7 +164,7 @@ public class ProcessingRuleFunctions {
     }
 
 
-    public static ImmutableList<FactorWithSatisfaction> withSatsifiedFactors(ImmutableList<Factor> factors, String... factorParagraphs) {
+    public static ImmutableList<FactorWithSatisfaction> withSatisfiedFactors(ImmutableList<Factor> factors, String... factorParagraphs) {
         ImmutableSet<String> specifiedFactors = ImmutableSet.copyOf(Arrays.stream(factorParagraphs).collect(Collectors.toList()));
 
         ImmutableList<FactorWithSatisfaction> factorsWithSatisfaction = factors.stream()
@@ -192,11 +194,44 @@ public class ProcessingRuleFunctions {
         });
     }
 
-    public static Boolean conditionIsBeforeService(Condition condition, ServiceHistory serviceHistory)
-    {
+
+    public static Boolean conditionIsBeforeService(Condition condition, ServiceHistory serviceHistory) {
         return condition.getStartDate().isBefore(serviceHistory.getHireDate());
+
     }
 
+    public static boolean conditionStartedWithinXYearsOfLastDayOfMRCAService(Condition condition, ServiceHistory serviceHistory, int numberOfYears) {
+        OffsetDateTime lastTimeOfMRCAService = getLastTimeOfMRCAServiceOrDefault(serviceHistory, OffsetDateTime.now());
+        OffsetDateTime midnightNextDayAfterLastTimeOfMRCAService = DateTimeUtils.toMidnightAmNextDay(lastTimeOfMRCAService);
+        OffsetDateTime xYearsFromLastDayOfMrcaService = midnightNextDayAfterLastTimeOfMRCAService.plusYears(numberOfYears);
+
+        OffsetDateTime conditionStartDate = condition.getStartDate();
+        OffsetDateTime midnightAmOnDayOfConditionStart = DateTimeUtils.toMightnightAmThisDay(conditionStartDate);
+
+        return midnightAmOnDayOfConditionStart.isBefore(xYearsFromLastDayOfMrcaService);
+    }
+
+    private static OffsetDateTime getLastTimeOfMRCAServiceOrDefault(ServiceHistory serviceHistory, OffsetDateTime defaultDate) {
+        Stream<Service> servicesOrderedMostRecentFirst = serviceHistory.getServices().asList()
+                .stream()
+                .sorted((o1, o2) -> o2.getStartDate().compareTo(o2.getStartDate()));
+
+        Optional<Service> mostRecentService = servicesOrderedMostRecentFirst.findFirst();
+        // no service
+        if (!mostRecentService.isPresent())
+            throw new ProcessingRuleError("No services in service history.");
+
+            // ongoing
+        else if (!mostRecentService.get().getEndDate().isPresent()) {
+            return defaultDate;
+        } else {
+            return mostRecentService.get().getEndDate().get();
+        }
+    }
+
+
 }
+
+
 
 

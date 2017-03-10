@@ -17,10 +17,12 @@ public class LumbarSpondylosisRule implements ProcessingRule, AccumulationRule {
 
     private static Logger logger = LoggerFactory.getLogger(LumbarSpondylosisRule.class.getSimpleName());
 
-    private static SimpleRuleSpec _simpleRuleSpec = new SimpleRuleSpec(
-                new RankSpec(49,3726,23),
-                new RankSpec(37,3280,26),
-                new RankSpec(6,21267,4));
+    private static RuleSpecification _simpleRuleSpec = new SimpleRuleSpec(
+                new RankSpec(Rank.Unknown, 49,3726,26),
+                new RankSpec(Rank.Officer, 49,3726,23),
+                new RankSpec(Rank.OtherRank, 37,3280,26),
+                new RankSpec(Rank.SpecialForces, 6,21267,4)
+            );
 
     public LumbarSpondylosisRule() {
     }
@@ -47,7 +49,9 @@ public class LumbarSpondylosisRule implements ProcessingRule, AccumulationRule {
 
         Rank rank = ProcessingRuleFunctions.getRankProximateToDate(serviceHistory.getServices(),condition.getStartDate());
 
-        Integer minimumRequiredDaysOfOperationalServiceForRank = getMinDaysOfOperationalServiceForRH(rank);
+        RankSpecification specificationForThisRank = _simpleRuleSpec.getSpecOrDefault(rank);
+
+        Integer minimumRequiredDaysOfOperationalServiceForRank =  specificationForThisRank.getRhDaysOfOpServiceInLast10Years();
 
         if (minimumRequiredDaysOfOperationalServiceForRank.longValue() <= daysOfOperationalService)
         {
@@ -61,30 +65,32 @@ public class LumbarSpondylosisRule implements ProcessingRule, AccumulationRule {
     public ImmutableList<FactorWithSatisfaction> getSatisfiedFactors(Condition condition, SoP applicableSop, ServiceHistory serviceHistory) {
         ImmutableList<Factor> applicableFactors =  condition.getApplicableFactors(applicableSop);
 
+        if (!ProcessingRuleFunctions.conditionStartedWithinXYearsOfLastDayOfMRCAService(condition,serviceHistory,25))
+            return ProcessingRuleFunctions.withSatisfiedFactors(applicableFactors);
+
         Optional<Service> serviceDuringWhichConditionStarts =  ProcessingRuleFunctions.identifyServiceDuringOrAfterWhichConditionOccurs(serviceHistory.getServices(),condition.getStartDate());
 
         Rank relevantRank = serviceDuringWhichConditionStarts.get().getRank();
 
-        Integer cftsDaysRequired = _simpleRuleSpec.getSpec(relevantRank).getRequiredWeeksCfts() * 7;
+        RankSpecification specificationForThisRank = _simpleRuleSpec.getSpecOrDefault(relevantRank);
+
+        Integer cftsDaysRequired = specificationForThisRank.getRequiredWeeksCfts() * 7;
 
         Long actualDaysOfCfts = ProcessingRuleFunctions.getDaysOfContinuousFullTimeServiceToDate(serviceHistory,condition.getStartDate());
+
         if (actualDaysOfCfts >= cftsDaysRequired) {
             ImmutableList<FactorWithSatisfaction> inferredFactors =
-                    ProcessingRuleFunctions.withSatsifiedFactors(applicableFactors, "6(j)", "6(y)");
+                    ProcessingRuleFunctions.withSatisfiedFactors(applicableFactors, "6(j)", "6(y)");
 
             return inferredFactors;
         }
         else
         {
-            return ProcessingRuleFunctions.withSatsifiedFactors(applicableFactors);
+            return ProcessingRuleFunctions.withSatisfiedFactors(applicableFactors);
         }
     }
 
 
-    private static Integer getMinDaysOfOperationalServiceForRH(Rank rank)
-    {
-       return _simpleRuleSpec.getSpec(rank).getRhDaysOfOpServiceInLast10Years();
-    }
 
 
     @Override

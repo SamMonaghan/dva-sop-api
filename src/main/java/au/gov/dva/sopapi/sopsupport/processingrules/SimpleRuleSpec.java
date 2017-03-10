@@ -1,31 +1,45 @@
 package au.gov.dva.sopapi.sopsupport.processingrules;
 
 import au.gov.dva.sopapi.dtos.Rank;
+import com.google.common.collect.ImmutableSet;
 
-public class SimpleRuleSpec {
-    private final RankSpec officer;
-    private final RankSpec other;
-    private final RankSpec specialForces;
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-    public SimpleRuleSpec(RankSpec officer, RankSpec other, RankSpec specialForces)
+public class SimpleRuleSpec implements RuleSpecification {
+
+    private RankSpecification defaultSpecification;
+    private final ImmutableSet<RankSpecification> rankSpecs;
+
+    public SimpleRuleSpec(@Nonnull RankSpecification defaultSpecification, RankSpecification... rankSpecifications)
     {
-
-        this.officer = officer;
-        this.other = other;
-        this.specialForces = specialForces;
+        this.defaultSpecification = defaultSpecification;
+        rankSpecs = ImmutableSet.copyOf(Arrays.stream(rankSpecifications).collect(Collectors.toList()));
     }
 
-    public RankSpec getSpec(Rank rank)
+    @Override
+    public Optional<RankSpecification> getSpec(Rank rank)
     {
-        switch (rank)
-        {
-            case Officer: return officer;
-            case OtherRank: return other;
-            case SpecialForces: return specialForces;
-            default: throw new IllegalArgumentException();
+        return rankSpecs.stream()
+                .filter(rankSpecification -> rankSpecification.getRank() == rank)
+                .findFirst();
+    }
+
+    @Override
+    public RankSpecification getSpecOrDefault(Rank rank) {
+        Optional<RankSpecification> setSpec = getSpec(rank);
+        if (!setSpec.isPresent()) {
+            return defaultSpecification;
         }
+        return setSpec.get();
     }
+
 
 }
+
+
 
 
