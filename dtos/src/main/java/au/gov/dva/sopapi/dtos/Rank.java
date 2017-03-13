@@ -19,5 +19,18 @@ public enum Rank {
         }
 
     }
+
+    public static Rank fromString(String rank)
+    {
+        String lowered = rank.toLowerCase();
+        if (lowered.contentEquals("officer"))
+            return Rank.Officer;
+        if (lowered.contentEquals("other rank"))
+            return Rank.OtherRank;
+        if (lowered.contentEquals("special forces"))
+            return Rank.SpecialForces;
+        throw new IllegalArgumentException(String.format("Do not recognise rank: %s", rank));
+    }
+
 }
 
