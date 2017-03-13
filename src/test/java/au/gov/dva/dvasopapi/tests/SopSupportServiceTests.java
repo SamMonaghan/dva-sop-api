@@ -12,7 +12,7 @@ import au.gov.dva.sopapi.interfaces.model.Condition;
 import au.gov.dva.sopapi.interfaces.model.Deployment;
 import au.gov.dva.sopapi.interfaces.model.ServiceHistory;
 import au.gov.dva.sopapi.interfaces.model.SoP;
-import au.gov.dva.sopapi.sopsupport.processingrules.LumbarSpondylosisRule;
+import au.gov.dva.sopapi.sopsupport.processingrules.rules.LumbarSpondylosisRule;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

@@ -5,7 +5,7 @@ import au.gov.dva.sopapi.dtos.sopsupport.components.ConditionDto;
 import au.gov.dva.sopapi.exceptions.ProcessingRuleError;
 import au.gov.dva.sopapi.interfaces.model.Condition;
 import au.gov.dva.sopapi.interfaces.model.SoPPair;
-import au.gov.dva.sopapi.sopsupport.processingrules.LumbarSpondylosisRule;
+import au.gov.dva.sopapi.sopsupport.processingrules.rules.LumbarSpondylosisRule;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Optional;
