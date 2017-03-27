@@ -25,7 +25,7 @@ public class Application implements spark.servlet.SparkApplication {
     private Repository _repository;
     private Cache _cache;
 
-    private static Logger logger = LoggerFactory.getLogger(Application.class);
+    private static Logger logger = LoggerFactory.getLogger("dvasopapi.rootapplicationlogger");
 
     public Application() {
 
@@ -33,31 +33,55 @@ public class Application implements spark.servlet.SparkApplication {
 
     @Override
     public void init() {
+
         _repository = new AzureStorageRepository(AppSettings.AzureStorage.getConnectionString());
-        if (AppSettings.getEnvironment() == AppSettings.Environment.devtestlocal)
+        if (AppSettings.getEnvironment() == AppSettings.Environment.devtestlocal) {
             _repository.purge();
+            updateNow();
+        }
+
         _cache = Cache.getInstance();
         seedStorageIfNecessary();
         autoUpdate();
         Routes.init(_cache);
         Routes.initStatus(_repository,_cache);
 
-
     }
 
     private void seedStorageIfNecessary() {
-        Seeds.queueNewSopChanges(_repository);
-        Seeds.addServiceDeterminations(_repository, new FederalRegisterOfLegislationClient());
+
+        try {
+
+            Seeds.queueNewSopChanges(_repository);
+            Seeds.addServiceDeterminations(_repository, new FederalRegisterOfLegislationClient());
+            Seeds.seedRuleConfiguration(_repository);
+        }
+        catch (Exception e) {
+            logger.error("Exception occurred when attempting to seed initial data to Repository.", e);
+        }
+
+        catch (Error e)
+        {
+            logger.error("Error occurred when attempting to seed initial data to Repository.", e);
+        }
     }
+
 
     private void autoUpdate() {
 
+
         try {
-            updateNow();
             startScheduledUpdates();
-        } catch (DvaSopApiError e) {
-            logger.error("Error occurred during update.", e);
         }
+        catch (Exception e)
+        {
+            logger.error("Exception occurred when attempting to start scheduled Repository updates.", e);
+        }
+        catch (Error e)
+        {
+            logger.error("Error occurred when attempting to start scheduled Repository updates.", e);
+        }
+
     }
 
 
@@ -68,16 +92,27 @@ public class Application implements spark.servlet.SparkApplication {
     }
 
     private void updateNow() {
-        updateSops().run();
-        AutoUpdate.patchSoPChanges(_repository);
-        updateServiceDeterminations().run();
-        _cache.refresh(_repository);
+
+        try {
+            updateSopsChangeList().run();
+            AutoUpdate.patchSoPChanges(_repository);
+            updateServiceDeterminations().run();
+            _cache.refresh(_repository);
+        }
+         catch (Exception e) {
+            logger.error("Exception occurred when attempting immediate Repository update.", e);
+        }
+
+        catch (Error e)
+        {
+            logger.error("Error occurred when attempting immediate Repository update.", e);
+        }
     }
 
 
-    private Runnable updateSops() {
+    private Runnable updateSopsChangeList() {
         return () -> {
-            AutoUpdate.updateChangeList(
+            AutoUpdate.patchChangeList(
                     _repository,
                     new EmailSubscriptionInstrumentChangeFactory(
                             new LegislationRegisterEmailClientImpl("noreply@legislation.gov.au"),
@@ -95,7 +130,6 @@ public class Application implements spark.servlet.SparkApplication {
 
         return () -> {
             AutoUpdate.updateServiceDeterminations(_repository, new FederalRegisterOfLegislationClient());
-
             _cache.refresh(_repository);
         };
     }
@@ -105,7 +139,7 @@ public class Application implements spark.servlet.SparkApplication {
     }
 
     private void startScheduledPollingForSoPChanges(LocalTime runTime) {
-        startDailyExecutor(runTime, updateSops());
+        startDailyExecutor(runTime, updateSopsChangeList());
     }
 
 

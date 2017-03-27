@@ -27,7 +27,8 @@ public class SoPs {
     public static String buildSopRefJsonResponse(ImmutableSet<SoP> matchingSops, IncidentType incidentType, StandardOfProof standardOfProof) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<SoPFactorsResponse> sopFactorsResponses = matchingSops.stream()
-                .map(s -> DtoTransformations.fromSop(s,standardOfProof,incidentType))
+                .filter(s -> s.getStandardOfProof() == standardOfProof)
+                .map(s -> DtoTransformations.fromSop(s,incidentType))
                 .collect(Collectors.toList());
 
         SoPReferenceResponse dtoToReturn = new SoPReferenceResponse(sopFactorsResponses);
@@ -78,7 +79,6 @@ public class SoPs {
 
        List<SoPPair> wherePresent = pairs.filter(p -> p.isPresent()).map(s -> s.get()).collect(Collectors.toList());
        return ImmutableSet.copyOf(wherePresent);
-
     }
 
 
